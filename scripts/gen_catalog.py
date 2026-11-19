@@ -10,6 +10,7 @@ Run from the repository root:
 """
 
 import math
+import re
 import pathlib
 
 import numpy as np
@@ -139,33 +140,19 @@ EXTRA = {
     ),
 }
 
-# Implemented by hand in src/dist/closed_forms.mbt.
-HAND_CONTINUOUS = {
-    "uniform", "expon", "laplace", "logistic", "cauchy", "gumbel_r", "gumbel_l",
-    "weibull_min", "weibull_max", "pareto", "lomax", "rayleigh", "triang",
-    "arcsine", "halfcauchy", "halflogistic", "hypsecant", "genlogistic",
-    "genpareto", "genextreme", "burr", "burr12", "fisk", "powerlaw",
-    "bradford", "loguniform", "anglit", "truncexpon", "exponpow", "exponweib",
-    "gompertz", "kappa3", "dweibull", "truncpareto", "loglaplace",
-    "laplace_asymmetric", "skewcauchy",
-}
-HAND_DISCRETE = {
-    "bernoulli", "geom", "randint", "dlaplace", "planck", "boltzmann", "zipfian",
-}
+def hand_methods():
+    """(type, method) pairs implemented by hand anywhere in src/dist, so the
+    generator never emits a second implementation of them."""
+    found = set()
+    for path in (ROOT / "src/dist").glob("*.mbt"):
+        if path.name.startswith("catalog") or path.name.endswith("_test.mbt"):
+            continue
+        for m in re.finditer(r"pub impl (?:\w+) for (\w+) with (?:fn )?(\w+)\(", path.read_text()):
+            found.add((m.group(1), m.group(2)))
+    return found
 
-# Required methods written by hand (closed_forms.mbt, extras.mbt); the
-# generator emits a stub only for the others.
-HAND_METHODS = {name: {"pdf", "cdf", "quantile"} for name in HAND_CONTINUOUS}
-HAND_METHODS.update({name: {"pmf", "cdf_int", "quantile_int"} for name in HAND_DISCRETE})
-HAND_METHODS.update({
-    "norm": {"pdf", "cdf", "quantile"}, "t": {"pdf", "cdf", "quantile"},
-    "gamma": {"pdf", "cdf", "quantile"}, "chi2": {"pdf", "cdf", "quantile"},
-    "f": {"pdf", "cdf", "quantile"}, "beta": {"pdf", "cdf", "quantile"},
-    "nct": {"cdf"}, "ncx2": {"cdf"}, "ncf": {"cdf"},
-    "binom": {"pmf", "cdf_int", "quantile_int"},
-    "poisson": {"pmf", "cdf_int", "quantile_int"},
-    "hypergeom": {"pmf", "cdf_int", "quantile_int"},
-})
+
+HAND = hand_methods()
 
 
 def field(dist, shape):
@@ -326,7 +313,7 @@ def emit_family(name, kind):
         f"    make: {'p' if free else '_'} => {make},\n"
         f"    params: {'d' if free else '_'} => {params if free else '[]'},\n  }}\n}}"
     )
-    hand = HAND_METHODS.get(name, set())
+    hand = {m for t, m in HAND if t == tname}
     if kind == "c":
         for trait, sig in (
             ("Density", "pdf(self, x)"), ("Cdf", "cdf(self, x)"),
