@@ -53,7 +53,7 @@ test "affine and truncated compose" {
 test "binomial characteristic function" {
   let n = 3
   let p = 0.3
-  let b = @dist.Binomial::new(n, p)
+  let b = @dist.Binomial::new(n=3, p~)
   for t in [0.0, 0.7, 2.5, -4.0] {
     let (re, im) = @dist.Characteristic::cf(b, t)
     let coef = [1.0, 3.0, 3.0, 1.0]
@@ -83,7 +83,7 @@ test "normal characteristic and moment generating functions" {
 
 ///|
 test "gamma moment generating function diverges at the rate" {
-  let g = @dist.Gamma::with_rate(2.0, 3.0)
+  let g = @dist.Gamma::with_rate(2.0, rate=3.0)
   assert_eq(@dist.Mgf::mgf(g, 3.0), None)
   assert_eq(@dist.Mgf::cgf(g, 0.0), Some(0.0))
   assert_true(@dist.Mgf::mgf(g, 1.0) is Some(_))

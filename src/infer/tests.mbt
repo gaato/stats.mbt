@@ -221,7 +221,7 @@ fn clopper_pearson(
     if k == 0L {
       0.0
     } else {
-      let b = @dist.Beta::new(kd, nd - kd + 1.0) catch {
+      let b = @dist.Beta::new(a=kd, b=nd - kd + 1.0) catch {
         _ => raise Degenerate(reason="bad counts")
       }
       @dist.Quantile::quantile(b, tail)
@@ -231,7 +231,7 @@ fn clopper_pearson(
     if k == n {
       1.0
     } else {
-      let b = @dist.Beta::new(kd + 1.0, nd - kd) catch {
+      let b = @dist.Beta::new(a=kd + 1.0, b=nd - kd) catch {
         _ => raise Degenerate(reason="bad counts")
       }
       @dist.Quantile::isf(b, tail)
@@ -268,18 +268,10 @@ pub fn binomial_test(
   if n <= 0L || k < 0L || k > n {
     raise Degenerate(reason="need 0 <= successes <= trials, trials > 0")
   }
-  let d = @dist.Binomial::new(n.to_int(), p0) catch {
+  let d = @dist.Binomial::new(n~, p=p0) catch {
     _ => raise Degenerate(reason="p0 must be in [0, 1]")
   }
-  let p = discrete_p(
-    d,
-    k.to_int(),
-    0,
-    n.to_int(),
-    n.to_double() * p0,
-    alternative,
-    two_sided,
-  )
+  let p = discrete_p(d, k, 0, n, n.to_double() * p0, alternative, two_sided)
   let null_dist = d as &@dist.Univariate
   {
     statistic: k.to_double(),
@@ -422,12 +414,12 @@ pub fn fisher_exact(
   if table.rows != 2 || table.cols != 2 {
     raise Unsupported(reason="Fisher's exact test beyond 2 x 2")
   }
-  let a = table.at(0, 0).to_int()
-  let b = table.at(0, 1).to_int()
-  let c = table.at(1, 0).to_int()
-  let d = table.at(1, 1).to_int()
+  let a = table.at(0, 0)
+  let b = table.at(0, 1)
+  let c = table.at(1, 0)
+  let d = table.at(1, 1)
   let m = a + b + c + d
-  let h = @dist.Hypergeometric::new(m, a + b, a + c) catch {
+  let h = @dist.Hypergeometric::new(population=m, successes=a + b, draws=a + c) catch {
     _ => raise Degenerate(reason="bad table")
   }
   let lo = if a + c - (c + d) > 0 { a + c - (c + d) } else { 0 }
@@ -515,7 +507,7 @@ fn anova_core(
       if !(ssw > 0.0) {
         raise Degenerate(reason="no variance within groups")
       }
-      let f = @dist.FisherF::new(df1, df2) catch {
+      let f = @dist.FisherF::new(dfn=df1, dfd=df2) catch {
         _ => raise Degenerate(reason="too few observations")
       }
       continuous_result(
@@ -554,7 +546,7 @@ fn anova_core(
       let den = 1.0 + 2.0 * (kd - 2.0) / (kd * kd - 1.0) * lam
       let df1 = kd - 1.0
       let df2 = (kd * kd - 1.0) / (3.0 * lam)
-      let f = @dist.FisherF::new(df1, df2) catch {
+      let f = @dist.FisherF::new(dfn=df1, dfd=df2) catch {
         _ => raise Degenerate(reason="too few observations")
       }
       continuous_result(
@@ -756,7 +748,7 @@ pub fn mann_whitney(
   }
   if exact {
     let null_dist = mann_whitney_null(n1, n2)
-    let k = @math.round(u1).to_int()
+    let k = @math.round(u1).to_int64()
     let (upper, lower) = discrete_tails(null_dist, k)
     let p = match alternative {
       Greater => upper

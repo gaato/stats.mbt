@@ -65,7 +65,8 @@ pub fn Constraint::from_unconstrained(self : Constraint, y : Double) -> Double {
 }
 
 ///|
-pub struct ParamSpec {
+#derive(Eq, Debug)
+pub(all) struct ParamSpec {
   name : String
   constraint : Constraint
 }
@@ -73,7 +74,9 @@ pub struct ParamSpec {
 ///|
 /// The free parameters of a family, a constructor from a parameter vector
 /// and the inverse. Fixed hyperparameters are captured by the closures.
-pub struct Family[D] {
+/// A record anyone can build, so a distribution defined outside this
+/// package gets a family, and with it fitting, the same way.
+pub(all) struct Family[D] {
   name : String
   specs : Array[ParamSpec]
   make : (ArrayView[Double]) -> D raise ParamError
@@ -100,11 +103,73 @@ pub fn[D] Family::from_unconstrained(
 }
 
 ///|
+/// The same family with one parameter held at `value` (SciPy's `floc`,
+/// `fscale`, `f0`): it leaves the free parameters, so a fit does not move
+/// it and its count of parameters drops by one.
+/// `Exponential::family().fix("loc", 0.0)` is the one-parameter exponential.
+pub fn[D] Family::fix(
+  self : Family[D],
+  name : String,
+  value : Double,
+) -> Family[D] raise ParamError {
+  let mut at = -1
+  for i, s in self.specs {
+    if s.name == name {
+      at = i
+    }
+  }
+  if at < 0 {
+    raise InvalidParam(
+      name~,
+      value~,
+      reason="the family has no free parameter of this name",
+    )
+  }
+  if !self.specs[at].constraint.contains(value) {
+    raise InvalidParam(name~, value~, reason="outside the parameter's range")
+  }
+  let specs = []
+  for i, s in self.specs {
+    if i != at {
+      specs.push(s)
+    }
+  }
+  let make = self.make
+  let params = self.params
+  {
+    name: self.name,
+    specs,
+    make: p => {
+      let full = FixedArray::makei(p.length() + 1, i => {
+        if i < at {
+          p[i]
+        } else if i == at {
+          value
+        } else {
+          p[i - 1]
+        }
+      })
+      make(full[:])
+    },
+    params: d => {
+      let full = params(d)
+      FixedArray::makei(full.length() - 1, i => {
+        if i < at {
+          full[i]
+        } else {
+          full[i + 1]
+        }
+      })
+    },
+  }
+}
+
+///|
 /// An exponential family: p(x | θ) = h(x) exp(η(θ)·T(x) - A(θ)). Fitting
 /// one by maximum likelihood is matching the mean of T, so `fit` can do it
 /// for every member without an optimiser, and conjugate priors and GLM
 /// links follow from the same pieces.
-pub struct ExpFamily[D] {
+pub(all) struct ExpFamily[D] {
   family : Family[D]
   /// Length of η and T.
   natural_dim : Int32
@@ -120,7 +185,7 @@ pub struct ExpFamily[D] {
 ///|
 /// A prior P conjugate to a likelihood D: the posterior after data is again
 /// a P. A relation between two types, so a record, not a trait.
-pub struct Conjugate[P, D] {
+pub(all) struct Conjugate[P, D] {
   name : String
   update : (P, ArrayView[Double]) -> P raise ParamError
   /// The likelihood for given parameters drawn from the prior.
@@ -143,7 +208,7 @@ pub fn[D : Density] loglik(d : D, data : ArrayView[Double]) -> Double {
 }
 
 ///|
-pub fn[D : Mass] loglik_int(d : D, data : ArrayView[Int32]) -> Double {
+pub fn[D : Mass] loglik_int(d : D, data : ArrayView[Int64]) -> Double {
   let mut sum = 0.0
   let mut c = 0.0
   for k in data {
@@ -157,10 +222,10 @@ pub fn[D : Mass] loglik_int(d : D, data : ArrayView[Int32]) -> Double {
 
 ///|
 /// Gradient of log p(x | θ) with respect to the free parameters of a
-/// family, written into `out`. Families provide it in closed form; it feeds
-/// optimisers and the observed information matrix.
+/// family, one entry per parameter. Families provide it in closed form; it
+/// feeds optimisers and the observed information matrix.
 pub(open) trait Score {
-  fn score_into(Self, Double, FixedArray[Double]) -> Unit
+  fn score(Self, Double) -> FixedArray[Double]
 }
 
 // ---------------------------------------------------------------------------
@@ -223,7 +288,7 @@ pub fn Normal::known_variance_prior(
 
 ///|
 /// η = logit p, T(x) = x, A = n ln(1 + e^η), h(x) = ln C(n, x).
-pub fn Binomial::exp_family(n~ : Int32) -> ExpFamily[Binomial] {
+pub fn Binomial::exp_family(n~ : Int64) -> ExpFamily[Binomial] {
   {
     family: Binomial::family(n~),
     natural_dim: 1,
@@ -237,7 +302,7 @@ pub fn Binomial::exp_family(n~ : Int32) -> ExpFamily[Binomial] {
     },
     from_mean_sufficient: m => {
       let p = m[0] / n.to_double()
-      Binomial::new(n, p) catch {
+      Binomial::new(n~, p~) catch {
         _ => raise OutsideSupport(value=m[0])
       }
     },

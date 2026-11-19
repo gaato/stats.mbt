@@ -1,10 +1,12 @@
 ///|
-/// The two test cases for the capability traits besides the parametric
-/// families: a distribution built from data, and one built from a table of
-/// probabilities (for example an exact rank-test null distribution obtained
-/// by polynomial multiplication or FFT convolution).
+/// Distributions that are not parametric families: one built from data,
+/// one from a table of probabilities on the integers (for example an exact
+/// rank-test null distribution obtained by polynomial multiplication or
+/// FFT convolution), and one from atoms anywhere on the real line.
 
 ///|
+/// The distribution that puts mass 1/n on each of n observed values.
+#derive(Debug)
 pub struct Empirical {
   priv sorted : FixedArray[Double]
   priv quantile_method : @data.QuantileMethod
@@ -30,13 +32,31 @@ pub fn Empirical::new(
 }
 
 ///|
-/// The number of values <= x, by binary search.
-fn Empirical::count_le(self : Empirical, x : Double) -> Int32 {
+/// The observed values, ascending: what a histogram of a bootstrap or
+/// permutation distribution is drawn from.
+pub fn Empirical::values(self : Empirical) -> ArrayView[Double] {
+  self.sorted[:]
+}
+
+///|
+/// The number of observed values.
+pub fn Empirical::length(self : Empirical) -> Int32 {
+  self.sorted.length()
+}
+
+///|
+/// The number of entries of an ascending array that are <= x (`strict`
+/// false) or < x (`strict` true), by binary search.
+fn count_below(
+  sorted : FixedArray[Double],
+  x : Double,
+  strict~ : Bool,
+) -> Int32 {
   let mut lo = 0
-  let mut hi = self.sorted.length()
+  let mut hi = sorted.length()
   while lo < hi {
     let mid = (lo + hi) / 2
-    if self.sorted[mid] <= x {
+    if sorted[mid] < x || (!strict && sorted[mid] == x) {
       lo = mid + 1
     } else {
       hi = mid
@@ -46,35 +66,46 @@ fn Empirical::count_le(self : Empirical, x : Double) -> Int32 {
 }
 
 ///|
-pub impl Cdf for Empirical with fn cdf(self, x) {
-  self.count_le(x).to_double() / self.sorted.length().to_double()
+/// P(X = x): the share of observed values equal to x.
+pub fn Empirical::mass(self : Empirical, x : Double) -> Double {
+  let n = self.sorted.length()
+  (count_below(self.sorted, x, strict=false) -
+  count_below(self.sorted, x, strict=true)).to_double() /
+  n.to_double()
 }
 
 ///|
-pub impl Cdf for Empirical with fn sf(self, x) {
-  (self.sorted.length() - self.count_le(x)).to_double() /
+pub impl Cdf for Empirical with fn cdf(self, x) {
+  count_below(self.sorted, x, strict=false).to_double() /
   self.sorted.length().to_double()
+}
+
+///|
+/// Counted from the top, not taken from the lower tail.
+pub impl Cdf for Empirical with fn sf(self, x) {
+  let n = self.sorted.length()
+  (n - count_below(self.sorted, x, strict=false)).to_double() / n.to_double()
 }
 
 ///|
 /// P(X >= x): the values not below x.
 pub impl Cdf for Empirical with fn sf_at_least(self, x) {
-  let mut lo = 0
-  let mut hi = self.sorted.length()
-  while lo < hi {
-    let mid = (lo + hi) / 2
-    if self.sorted[mid] < x {
-      lo = mid + 1
-    } else {
-      hi = mid
-    }
-  }
-  (self.sorted.length() - lo).to_double() / self.sorted.length().to_double()
+  let n = self.sorted.length()
+  (n - count_below(self.sorted, x, strict=true)).to_double() / n.to_double()
 }
 
 ///|
+/// The sample quantile by the definition chosen at construction.
 pub impl Quantile for Empirical with fn quantile(self, p) {
   @describe.quantile_sorted(self.sorted[:], p, self.quantile_method)
+}
+
+///|
+/// The sample quantile at 1 - q. Unlike for a parametric family this
+/// loses nothing: a sample of n values has no quantile finer than 1/n, and
+/// below that every definition returns the largest value.
+pub impl Quantile for Empirical with fn isf(self, q) {
+  @describe.quantile_sorted(self.sorted[:], 1.0 - q, self.quantile_method)
 }
 
 ///|
@@ -82,6 +113,9 @@ pub impl Quantile for Empirical with fn quantile(self, p) {
 pub impl Sample for Empirical with fn sample(self, rng) {
   self.sorted[@num.uniform_index(rng, self.sorted.length())]
 }
+
+///|
+pub impl Univariate for Empirical
 
 ///|
 pub impl Moments for Empirical with fn mean(self) {
@@ -104,11 +138,77 @@ pub impl Moments for Empirical with fn variance(self) {
 }
 
 ///|
+pub impl Support for Empirical with fn support_lower(self) {
+  self.sorted[0]
+}
+
+///|
+pub impl Support for Empirical with fn support_upper(self) {
+  self.sorted[self.sorted.length() - 1]
+}
+
+///|
+pub extend Empirical with Cdf::{cdf, sf, logcdf, logsf, sf_at_least}
+
+///|
+pub extend Empirical with Quantile::{quantile, isf}
+
+///|
+pub extend Empirical with Sample::{sample, sample_into}
+
+///|
+pub extend Empirical with Moments::{mean, variance}
+
+///|
+pub extend Empirical with Support::{support_lower, support_upper}
+
+///|
+/// Running sums of probabilities from both ends: `lower[i]` is the total
+/// up to and including entry i, `upper[i]` the total after it. Each tail
+/// is then a sum of its own terms, not 1 minus the other.
+fn running_sums(
+  probs : FixedArray[Double],
+) -> (FixedArray[Double], FixedArray[Double]) {
+  let n = probs.length()
+  let lower = FixedArray::make(n, 0.0)
+  let upper = FixedArray::make(n, 0.0)
+  let mut acc = @num.CompensatedSum::zero()
+  for i in 0..<n {
+    acc = acc.add(probs[i])
+    lower[i] = acc.value()
+  }
+  acc = @num.CompensatedSum::zero()
+  for i = n - 1; i >= 0; i = i - 1 {
+    upper[i] = acc.value()
+    acc = acc.add(probs[i])
+  }
+  (lower, upper)
+}
+
+///|
+/// The first index where `reached` holds, for a condition that is false up
+/// to some entry and true from it on; the last index if it never holds.
+fn first_index(n : Int32, reached : (Int32) -> Bool) -> Int32 {
+  let mut lo = 0
+  let mut hi = n - 1
+  while lo < hi {
+    let mid = (lo + hi) / 2
+    if reached(mid) {
+      hi = mid
+    } else {
+      lo = mid + 1
+    }
+  }
+  lo
+}
+
+///|
 /// Probabilities on the integers `offset ..< offset + probs.length()`.
 /// Both prefix and suffix sums are kept, so `sf` far in the upper tail
 /// is a sum of small terms, not 1 minus a number close to 1.
+#derive(Debug)
 pub struct FiniteDiscrete {
-  priv offset : Int32
+  priv offset : Int64
   priv probs : FixedArray[Double]
   priv lower : FixedArray[Double]
   priv upper : FixedArray[Double]
@@ -116,7 +216,7 @@ pub struct FiniteDiscrete {
 
 ///|
 pub fn FiniteDiscrete::new(
-  offset : Int32,
+  offset : Int64,
   probs : ArrayView[Double],
 ) -> FiniteDiscrete raise ParamError {
   let n = probs.length()
@@ -137,74 +237,123 @@ pub fn FiniteDiscrete::new(
       reason="must sum to 1",
     )
   }
-  let lower = FixedArray::make(n, 0.0)
-  let upper = FixedArray::make(n, 0.0)
-  let mut acc = @num.CompensatedSum::zero()
-  for i in 0..<n {
-    acc = acc.add(probs[i])
-    lower[i] = acc.value()
+  let probs = FixedArray::from_iter(probs.iter())
+  let (lower, upper) = running_sums(probs)
+  { offset, probs, lower, upper, }
+}
+
+///|
+/// The integer the first probability belongs to.
+pub fn FiniteDiscrete::offset(self : FiniteDiscrete) -> Int64 {
+  self.offset
+}
+
+///|
+/// The probabilities of `offset`, `offset + 1`, and so on.
+pub fn FiniteDiscrete::probs(self : FiniteDiscrete) -> ArrayView[Double] {
+  self.probs[:]
+}
+
+///|
+/// The position of the integer-valued Double k in the table, as a Double
+/// so that a point far outside it needs no integer conversion.
+fn FiniteDiscrete::position(self : FiniteDiscrete, k : Double) -> Double {
+  k - self.offset.to_double()
+}
+
+///|
+fn FiniteDiscrete::lattice_pmf(self : FiniteDiscrete, k : Double) -> Double {
+  let i = self.position(k)
+  if i < 0.0 || i >= self.probs.length().to_double() {
+    0.0
+  } else {
+    self.probs[i.to_int()]
   }
-  acc = @num.CompensatedSum::zero()
-  for i = n - 1; i >= 0; i = i - 1 {
-    // upper[i] = P(X > offset + i)
-    upper[i] = acc.value()
-    acc = acc.add(probs[i])
+}
+
+///|
+fn FiniteDiscrete::lattice_cdf(self : FiniteDiscrete, k : Double) -> Double {
+  let i = self.position(k)
+  if i < 0.0 {
+    0.0
+  } else if i >= self.probs.length().to_double() {
+    1.0
+  } else {
+    self.lower[i.to_int()]
   }
-  { offset, probs: FixedArray::from_iter(probs.iter()), lower, upper, }
+}
+
+///|
+fn FiniteDiscrete::lattice_sf(self : FiniteDiscrete, k : Double) -> Double {
+  let i = self.position(k)
+  if i < 0.0 {
+    1.0
+  } else if i >= self.probs.length().to_double() {
+    0.0
+  } else {
+    self.upper[i.to_int()]
+  }
 }
 
 ///|
 pub impl Mass for FiniteDiscrete with fn pmf(self, k) {
-  let i = k - self.offset
-  if i < 0 || i >= self.probs.length() {
-    0.0
-  } else {
-    self.probs[i]
-  }
+  self.lattice_pmf(k.to_double())
 }
 
 ///|
 pub impl IntCdf for FiniteDiscrete with fn cdf_int(self, k) {
-  let i = k - self.offset
-  if i < 0 {
-    0.0
-  } else if i >= self.probs.length() {
-    1.0
-  } else {
-    self.lower[i]
-  }
+  self.lattice_cdf(k.to_double())
 }
 
 ///|
 pub impl IntCdf for FiniteDiscrete with fn sf_int(self, k) {
-  let i = k - self.offset
-  if i < 0 {
-    1.0
-  } else if i >= self.probs.length() {
-    0.0
-  } else {
-    self.upper[i]
-  }
+  self.lattice_sf(k.to_double())
 }
 
 ///|
 pub impl IntQuantile for FiniteDiscrete with fn quantile_int(self, p) {
-  let mut lo = 0
-  let mut hi = self.lower.length() - 1
-  while lo < hi {
-    let mid = (lo + hi) / 2
-    if self.lower[mid] >= p {
-      hi = mid
-    } else {
-      lo = mid + 1
-    }
-  }
-  self.offset + lo
+  self.offset +
+  first_index(self.lower.length(), i => self.lower[i] >= p).to_int64()
+}
+
+///|
+pub impl SampleInt for FiniteDiscrete with fn sample_int(self, rng) {
+  IntQuantile::quantile_int(self, @num.uniform_open(rng))
+}
+
+///|
+/// On the real line the distribution function is the step function.
+pub impl Cdf for FiniteDiscrete with fn cdf(self, x) {
+  self.lattice_cdf(@math.floor(x))
+}
+
+///|
+pub impl Cdf for FiniteDiscrete with fn sf(self, x) {
+  self.lattice_sf(@math.floor(x))
+}
+
+///|
+pub impl Cdf for FiniteDiscrete with fn sf_at_least(self, x) {
+  self.lattice_sf(@math.ceil(x) - 1.0)
 }
 
 ///|
 pub impl Quantile for FiniteDiscrete with fn quantile(self, p) {
-  IntQuantile::quantile_int(self, p).to_double()
+  if p.is_nan() {
+    return p
+  }
+  self.offset.to_double() +
+  first_index(self.lower.length(), i => self.lower[i] >= p).to_double()
+}
+
+///|
+/// The smallest k with P(X > k) <= q, on the suffix sums.
+pub impl Quantile for FiniteDiscrete with fn isf(self, q) {
+  if q.is_nan() {
+    return q
+  }
+  self.offset.to_double() +
+  first_index(self.upper.length(), i => self.upper[i] <= q).to_double()
 }
 
 ///|
@@ -216,20 +365,298 @@ pub impl Sample for FiniteDiscrete with fn sample(self, rng) {
 pub impl Univariate for FiniteDiscrete
 
 ///|
-pub impl Univariate for Empirical
-
-///|
-/// On the real line the distribution function is the step function.
-pub impl Cdf for FiniteDiscrete with fn cdf(self, x) {
-  IntCdf::cdf_int(self, @math.floor(x).to_int())
+/// The first integer with positive probability.
+pub impl Support for FiniteDiscrete with fn support_lower(self) {
+  let mut i = 0
+  while i < self.probs.length() - 1 && self.probs[i] == 0.0 {
+    i = i + 1
+  }
+  self.offset.to_double() + i.to_double()
 }
 
 ///|
-pub impl Cdf for FiniteDiscrete with fn sf(self, x) {
-  IntCdf::sf_int(self, @math.floor(x).to_int())
+/// The last integer with positive probability.
+pub impl Support for FiniteDiscrete with fn support_upper(self) {
+  let mut i = self.probs.length() - 1
+  while i > 0 && self.probs[i] == 0.0 {
+    i = i - 1
+  }
+  self.offset.to_double() + i.to_double()
 }
 
 ///|
-pub impl Cdf for FiniteDiscrete with fn sf_at_least(self, x) {
-  IntCdf::sf_int(self, @math.ceil(x).to_int() - 1)
+pub extend FiniteDiscrete with Mass::{pmf, logpmf}
+
+///|
+pub extend FiniteDiscrete with IntCdf::{cdf_int, sf_int}
+
+///|
+pub extend FiniteDiscrete with IntQuantile::{quantile_int}
+
+///|
+pub extend FiniteDiscrete with SampleInt::{sample_int}
+
+///|
+pub extend FiniteDiscrete with Cdf::{cdf, sf, logcdf, logsf, sf_at_least}
+
+///|
+pub extend FiniteDiscrete with Quantile::{quantile, isf}
+
+///|
+pub extend FiniteDiscrete with Sample::{sample, sample_into}
+
+///|
+pub extend FiniteDiscrete with Support::{support_lower, support_upper}
+
+///|
+/// Finitely many atoms anywhere on the real line, each with its
+/// probability: the exact null distribution of a rank statistic with ties
+/// (half-integers), a weighted sample, or an `Empirical` with its repeated
+/// values merged. Unlike `Empirical` it can say how much mass sits on a
+/// point, which the minimum-likelihood two-sided p-value needs.
+///
+/// Values are kept ascending and distinct, with prefix and suffix sums, so
+/// both tails are exact sums of the atoms on their own side.
+#derive(Debug)
+pub struct Atoms {
+  priv values : FixedArray[Double]
+  priv probs : FixedArray[Double]
+  priv lower : FixedArray[Double]
+  priv upper : FixedArray[Double]
 }
+
+///|
+/// From value and probability pairs that are already valid: sorts, merges
+/// equal values, drops atoms without mass and builds the running sums.
+fn Atoms::build(pairs : Array[(Double, Double)]) -> Atoms {
+  pairs.sort_by((a, b) => a.0.compare(b.0))
+  let values = []
+  let probs = []
+  for pair in pairs {
+    let (v, q) = pair
+    if q == 0.0 {
+      continue
+    }
+    let n = values.length()
+    if n > 0 && values[n - 1] == v {
+      probs[n - 1] = probs[n - 1] + q
+    } else {
+      values.push(v)
+      probs.push(q)
+    }
+  }
+  let probs = FixedArray::from_iter(probs.iter())
+  let (lower, upper) = running_sums(probs)
+  { values: FixedArray::from_iter(values.iter()), probs, lower, upper, }
+}
+
+///|
+/// Atoms at `values` with probabilities `probs`, in any order; a value
+/// given twice has its probabilities added. The probabilities must be
+/// non-negative and sum to 1 within rounding.
+pub fn Atoms::new(
+  values : ArrayView[Double],
+  probs : ArrayView[Double],
+) -> Atoms raise ParamError {
+  if values.length() != probs.length() || values.length() == 0 {
+    raise InvalidParam(
+      name="probs",
+      value=probs.length().to_double(),
+      reason="need one probability per value, at least one",
+    )
+  }
+  let mut total = @num.CompensatedSum::zero()
+  let pairs = []
+  for i, v in values {
+    if v.is_nan() || v.is_inf() {
+      raise InvalidParam(name="values", value=v, reason="must be finite")
+    }
+    if !(probs[i] >= 0.0) {
+      raise InvalidParam(name="probs", value=probs[i], reason="must be >= 0")
+    }
+    total = total.add(probs[i])
+    pairs.push((v, probs[i]))
+  }
+  if (total.value() - 1.0).abs() > 1.0e-9 {
+    raise InvalidParam(
+      name="probs",
+      value=total.value(),
+      reason="must sum to 1",
+    )
+  }
+  Atoms::build(pairs)
+}
+
+///|
+/// The distribution of a weighted sample: each value with its weight over
+/// the total weight. The name says that the weights are normalised; `new`
+/// never rescales what it is given.
+pub fn Atoms::from_weighted(w : @data.Weighted) -> Atoms raise ParamError {
+  let mut total = @num.CompensatedSum::zero()
+  for i, v in w.values {
+    if v.is_nan() || v.is_inf() {
+      raise InvalidParam(name="values", value=v, reason="must be finite")
+    }
+    total = total.add(w.weights.values[i])
+  }
+  let sum = total.value()
+  if !(sum > 0.0) || sum.is_inf() {
+    raise InvalidParam(
+      name="weights",
+      value=sum,
+      reason="must have a positive, finite total",
+    )
+  }
+  let pairs = []
+  for i, v in w.values {
+    pairs.push((v, w.weights.values[i] / sum))
+  }
+  Atoms::build(pairs)
+}
+
+///|
+/// The same distribution with repeated values merged into one atom each.
+pub fn Empirical::to_atoms(self : Empirical) -> Atoms {
+  let share = 1.0 / self.sorted.length().to_double()
+  let pairs = []
+  let mut i = 0
+  while i < self.sorted.length() {
+    let mut j = i
+    while j + 1 < self.sorted.length() && self.sorted[j + 1] == self.sorted[i] {
+      j = j + 1
+    }
+    pairs.push((self.sorted[i], (j - i + 1).to_double() * share))
+    i = j + 1
+  }
+  Atoms::build(pairs)
+}
+
+///|
+/// The atoms, ascending and distinct.
+pub fn Atoms::values(self : Atoms) -> ArrayView[Double] {
+  self.values[:]
+}
+
+///|
+/// The probability of each atom, in the order of `values`.
+pub fn Atoms::probs(self : Atoms) -> ArrayView[Double] {
+  self.probs[:]
+}
+
+///|
+/// The number of atoms.
+pub fn Atoms::length(self : Atoms) -> Int32 {
+  self.values.length()
+}
+
+///|
+/// P(X = x): the probability of the atom at x, or 0.
+pub fn Atoms::mass(self : Atoms, x : Double) -> Double {
+  let i = count_below(self.values, x, strict=true)
+  if i < self.values.length() && self.values[i] == x {
+    self.probs[i]
+  } else {
+    0.0
+  }
+}
+
+///|
+pub impl Cdf for Atoms with fn cdf(self, x) {
+  let k = count_below(self.values, x, strict=false)
+  if k == 0 {
+    0.0
+  } else if k == self.values.length() {
+    1.0
+  } else {
+    self.lower[k - 1]
+  }
+}
+
+///|
+pub impl Cdf for Atoms with fn sf(self, x) {
+  let k = count_below(self.values, x, strict=false)
+  if k == 0 {
+    1.0
+  } else {
+    self.upper[k - 1]
+  }
+}
+
+///|
+/// P(X >= x): everything from the first atom not below x.
+pub impl Cdf for Atoms with fn sf_at_least(self, x) {
+  let k = count_below(self.values, x, strict=true)
+  if k == 0 {
+    1.0
+  } else {
+    self.upper[k - 1]
+  }
+}
+
+///|
+pub impl Quantile for Atoms with fn quantile(self, p) {
+  if p.is_nan() {
+    return p
+  }
+  self.values[first_index(self.lower.length(), i => self.lower[i] >= p)]
+}
+
+///|
+pub impl Quantile for Atoms with fn isf(self, q) {
+  if q.is_nan() {
+    return q
+  }
+  self.values[first_index(self.upper.length(), i => self.upper[i] <= q)]
+}
+
+///|
+pub impl Sample for Atoms with fn sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for Atoms
+
+///|
+pub impl Moments for Atoms with fn mean(self) {
+  let mut s = @num.CompensatedSum::zero()
+  for i, v in self.values {
+    s = s.add(self.probs[i] * v)
+  }
+  Some(s.value())
+}
+
+///|
+pub impl Moments for Atoms with fn variance(self) {
+  let m = Moments::mean(self).unwrap()
+  let mut s = @num.CompensatedSum::zero()
+  for i, v in self.values {
+    s = s.add(self.probs[i] * (v - m) * (v - m))
+  }
+  Some(s.value())
+}
+
+///|
+pub impl Support for Atoms with fn support_lower(self) {
+  self.values[0]
+}
+
+///|
+pub impl Support for Atoms with fn support_upper(self) {
+  self.values[self.values.length() - 1]
+}
+
+///|
+pub extend Atoms with Cdf::{cdf, sf, logcdf, logsf, sf_at_least}
+
+///|
+pub extend Atoms with Quantile::{quantile, isf}
+
+///|
+pub extend Atoms with Sample::{sample, sample_into}
+
+///|
+pub extend Atoms with Moments::{mean, variance}
+
+///|
+pub extend Atoms with Support::{support_lower, support_upper}

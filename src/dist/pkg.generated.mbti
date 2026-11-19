@@ -10,7 +10,7 @@ import {
 // Values
 pub fn[D : Density] loglik(D, ArrayView[Double]) -> Double
 
-pub fn[D : Mass] loglik_int(D, ArrayView[Int32]) -> Double
+pub fn[D : Mass] loglik_int(D, ArrayView[Int64]) -> Double
 
 // Errors
 #derive(@debug.Debug)
@@ -27,72 +27,225 @@ pub(all) suberror ParamError {
 
 // Types and methods
 pub struct Affine[D] {
-  // private fields
+  base : D
+  loc : Double
+  scale : Double
 }
-pub fn[D] Affine::new(D, loc~ : Double, scale~ : Double) -> Self[D] raise ParamError
+pub fn[D : Cdf] Affine::cdf(Self[D], Double) -> Double
+pub fn[D : Quantile] Affine::isf(Self[D], Double) -> Double
+pub fn[D : Cdf] Affine::logcdf(Self[D], Double) -> Double
+pub fn[D : Density] Affine::logpdf(Self[D], Double) -> Double
+pub fn[D : Cdf] Affine::logsf(Self[D], Double) -> Double
+pub fn[D : Moments] Affine::mean(Self[D]) -> Double?
+pub fn[D] Affine::new(D, loc? : Double, scale? : Double) -> Self[D] raise ParamError
+pub fn[D : Density] Affine::pdf(Self[D], Double) -> Double
+pub fn[D : Quantile] Affine::quantile(Self[D], Double) -> Double
+pub fn[D : Sample] Affine::sample(Self[D], &@num.RandomSource) -> Double
+pub fn[D : Sample] Affine::sample_into(Self[D], &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn[D : Cdf] Affine::sf(Self[D], Double) -> Double
+pub fn[D : Cdf] Affine::sf_at_least(Self[D], Double) -> Double
+pub fn[D : Support] Affine::support_lower(Self[D]) -> Double
+pub fn[D : Support] Affine::support_upper(Self[D]) -> Double
+pub fn[D : Moments] Affine::variance(Self[D]) -> Double?
 pub impl[D : Cdf] Cdf for Affine[D]
 pub impl[D : Density] Density for Affine[D]
+pub impl[D : Moments] Moments for Affine[D]
 pub impl[D : Quantile] Quantile for Affine[D]
 pub impl[D : Sample] Sample for Affine[D]
+pub impl[D : Support] Support for Affine[D]
+pub impl[D : Univariate] Univariate for Affine[D]
 
+#derive(Eq, @debug.Debug)
 pub struct Alpha {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn Alpha::cdf(Self, Double) -> Double
 pub fn Alpha::family() -> Family[Self]
-pub fn Alpha::new(Double) -> Self raise ParamError
+pub fn Alpha::isf(Self, Double) -> Double
+pub fn Alpha::logcdf(Self, Double) -> Double
+pub fn Alpha::logpdf(Self, Double) -> Double
+pub fn Alpha::logsf(Self, Double) -> Double
+pub fn Alpha::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Alpha::pdf(Self, Double) -> Double
+pub fn Alpha::quantile(Self, Double) -> Double
+pub fn Alpha::sample(Self, &@num.RandomSource) -> Double
+pub fn Alpha::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Alpha::sf(Self, Double) -> Double
+pub fn Alpha::sf_at_least(Self, Double) -> Double
+pub fn Alpha::support_lower(Self) -> Double
+pub fn Alpha::support_upper(Self) -> Double
 pub impl Cdf for Alpha
 pub impl Density for Alpha
 pub impl Quantile for Alpha
 pub impl Sample for Alpha
+pub impl Support for Alpha
 pub impl Univariate for Alpha
 
+#derive(Eq, @debug.Debug)
 pub struct Anglit {
+  loc : Double
+  scale : Double
 }
+pub fn Anglit::cdf(Self, Double) -> Double
 pub fn Anglit::family() -> Family[Self]
-pub fn Anglit::new() -> Self
+pub fn Anglit::isf(Self, Double) -> Double
+pub fn Anglit::logcdf(Self, Double) -> Double
+pub fn Anglit::logpdf(Self, Double) -> Double
+pub fn Anglit::logsf(Self, Double) -> Double
+pub fn Anglit::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Anglit::pdf(Self, Double) -> Double
+pub fn Anglit::quantile(Self, Double) -> Double
+pub fn Anglit::sample(Self, &@num.RandomSource) -> Double
+pub fn Anglit::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Anglit::sf(Self, Double) -> Double
+pub fn Anglit::sf_at_least(Self, Double) -> Double
+pub fn Anglit::support_lower(Self) -> Double
+pub fn Anglit::support_upper(Self) -> Double
 pub impl Cdf for Anglit
 pub impl Density for Anglit
 pub impl Quantile for Anglit
 pub impl Sample for Anglit
+pub impl Support for Anglit
 pub impl Univariate for Anglit
 
+#derive(Eq, @debug.Debug)
 pub struct Arcsine {
+  loc : Double
+  scale : Double
 }
+pub fn Arcsine::cdf(Self, Double) -> Double
 pub fn Arcsine::family() -> Family[Self]
-pub fn Arcsine::new() -> Self
+pub fn Arcsine::isf(Self, Double) -> Double
+pub fn Arcsine::logcdf(Self, Double) -> Double
+pub fn Arcsine::logpdf(Self, Double) -> Double
+pub fn Arcsine::logsf(Self, Double) -> Double
+pub fn Arcsine::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Arcsine::pdf(Self, Double) -> Double
+pub fn Arcsine::quantile(Self, Double) -> Double
+pub fn Arcsine::sample(Self, &@num.RandomSource) -> Double
+pub fn Arcsine::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Arcsine::sf(Self, Double) -> Double
+pub fn Arcsine::sf_at_least(Self, Double) -> Double
+pub fn Arcsine::support_lower(Self) -> Double
+pub fn Arcsine::support_upper(Self) -> Double
 pub impl Cdf for Arcsine
 pub impl Density for Arcsine
 pub impl Quantile for Arcsine
 pub impl Sample for Arcsine
+pub impl Support for Arcsine
 pub impl Univariate for Arcsine
 
+#derive(Eq, @debug.Debug)
 pub struct Argus {
-  // private fields
+  chi : Double
+  loc : Double
+  scale : Double
 }
+pub fn Argus::cdf(Self, Double) -> Double
 pub fn Argus::family() -> Family[Self]
-pub fn Argus::new(Double) -> Self raise ParamError
+pub fn Argus::isf(Self, Double) -> Double
+pub fn Argus::logcdf(Self, Double) -> Double
+pub fn Argus::logpdf(Self, Double) -> Double
+pub fn Argus::logsf(Self, Double) -> Double
+pub fn Argus::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Argus::pdf(Self, Double) -> Double
+pub fn Argus::quantile(Self, Double) -> Double
+pub fn Argus::sample(Self, &@num.RandomSource) -> Double
+pub fn Argus::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Argus::sf(Self, Double) -> Double
+pub fn Argus::sf_at_least(Self, Double) -> Double
+pub fn Argus::support_lower(Self) -> Double
+pub fn Argus::support_upper(Self) -> Double
 pub impl Cdf for Argus
 pub impl Density for Argus
 pub impl Quantile for Argus
 pub impl Sample for Argus
+pub impl Support for Argus
 pub impl Univariate for Argus
 
+#derive(Eq, @debug.Debug)
 pub struct AsymmetricLaplace {
-  // private fields
+  kappa : Double
+  loc : Double
+  scale : Double
 }
+pub fn AsymmetricLaplace::cdf(Self, Double) -> Double
 pub fn AsymmetricLaplace::family() -> Family[Self]
-pub fn AsymmetricLaplace::new(Double) -> Self raise ParamError
+pub fn AsymmetricLaplace::isf(Self, Double) -> Double
+pub fn AsymmetricLaplace::logcdf(Self, Double) -> Double
+pub fn AsymmetricLaplace::logpdf(Self, Double) -> Double
+pub fn AsymmetricLaplace::logsf(Self, Double) -> Double
+pub fn AsymmetricLaplace::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn AsymmetricLaplace::pdf(Self, Double) -> Double
+pub fn AsymmetricLaplace::quantile(Self, Double) -> Double
+pub fn AsymmetricLaplace::sample(Self, &@num.RandomSource) -> Double
+pub fn AsymmetricLaplace::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn AsymmetricLaplace::sf(Self, Double) -> Double
+pub fn AsymmetricLaplace::sf_at_least(Self, Double) -> Double
+pub fn AsymmetricLaplace::support_lower(Self) -> Double
+pub fn AsymmetricLaplace::support_upper(Self) -> Double
 pub impl Cdf for AsymmetricLaplace
 pub impl Density for AsymmetricLaplace
 pub impl Quantile for AsymmetricLaplace
 pub impl Sample for AsymmetricLaplace
+pub impl Support for AsymmetricLaplace
 pub impl Univariate for AsymmetricLaplace
 
-pub struct Bernoulli {
+#derive(@debug.Debug)
+pub struct Atoms {
   // private fields
 }
+pub fn Atoms::cdf(Self, Double) -> Double
+pub fn Atoms::from_weighted(@data.Weighted) -> Self raise ParamError
+pub fn Atoms::isf(Self, Double) -> Double
+pub fn Atoms::length(Self) -> Int32
+pub fn Atoms::logcdf(Self, Double) -> Double
+pub fn Atoms::logsf(Self, Double) -> Double
+pub fn Atoms::mass(Self, Double) -> Double
+pub fn Atoms::mean(Self) -> Double?
+pub fn Atoms::new(ArrayView[Double], ArrayView[Double]) -> Self raise ParamError
+pub fn Atoms::probs(Self) -> ArrayView[Double]
+pub fn Atoms::quantile(Self, Double) -> Double
+pub fn Atoms::sample(Self, &@num.RandomSource) -> Double
+pub fn Atoms::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Atoms::sf(Self, Double) -> Double
+pub fn Atoms::sf_at_least(Self, Double) -> Double
+pub fn Atoms::support_lower(Self) -> Double
+pub fn Atoms::support_upper(Self) -> Double
+pub fn Atoms::values(Self) -> ArrayView[Double]
+pub fn Atoms::variance(Self) -> Double?
+pub impl Cdf for Atoms
+pub impl Moments for Atoms
+pub impl Quantile for Atoms
+pub impl Sample for Atoms
+pub impl Support for Atoms
+pub impl Univariate for Atoms
+
+#derive(Eq, @debug.Debug)
+pub struct Bernoulli {
+  p : Double
+}
+pub fn Bernoulli::cdf(Self, Double) -> Double
+pub fn Bernoulli::cdf_int(Self, Int64) -> Double
 pub fn Bernoulli::family() -> Family[Self]
+pub fn Bernoulli::isf(Self, Double) -> Double
+pub fn Bernoulli::logcdf(Self, Double) -> Double
+pub fn Bernoulli::logpmf(Self, Int64) -> Double
+pub fn Bernoulli::logsf(Self, Double) -> Double
 pub fn Bernoulli::new(Double) -> Self raise ParamError
+pub fn Bernoulli::pmf(Self, Int64) -> Double
+pub fn Bernoulli::quantile(Self, Double) -> Double
+pub fn Bernoulli::quantile_int(Self, Double) -> Int64
+pub fn Bernoulli::sample(Self, &@num.RandomSource) -> Double
+pub fn Bernoulli::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Bernoulli::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Bernoulli::sf(Self, Double) -> Double
+pub fn Bernoulli::sf_at_least(Self, Double) -> Double
+pub fn Bernoulli::sf_int(Self, Int64) -> Double
+pub fn Bernoulli::support_lower(Self) -> Double
+pub fn Bernoulli::support_upper(Self) -> Double
 pub impl Cdf for Bernoulli
 pub impl IntCdf for Bernoulli
 pub impl IntQuantile for Bernoulli
@@ -100,24 +253,63 @@ pub impl Mass for Bernoulli
 pub impl Quantile for Bernoulli
 pub impl Sample for Bernoulli
 pub impl SampleInt for Bernoulli
+pub impl Support for Bernoulli
 pub impl Univariate for Bernoulli
 
+#derive(Eq, @debug.Debug)
 pub struct Beta {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn Beta::cdf(Self, Double) -> Double
 pub fn Beta::family() -> Family[Self]
-pub fn Beta::new(Double, Double) -> Self raise ParamError
+pub fn Beta::isf(Self, Double) -> Double
+pub fn Beta::logcdf(Self, Double) -> Double
+pub fn Beta::logpdf(Self, Double) -> Double
+pub fn Beta::logsf(Self, Double) -> Double
+pub fn Beta::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Beta::pdf(Self, Double) -> Double
+pub fn Beta::quantile(Self, Double) -> Double
+pub fn Beta::sample(Self, &@num.RandomSource) -> Double
+pub fn Beta::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Beta::sf(Self, Double) -> Double
+pub fn Beta::sf_at_least(Self, Double) -> Double
+pub fn Beta::support_lower(Self) -> Double
+pub fn Beta::support_upper(Self) -> Double
 pub impl Cdf for Beta
 pub impl Density for Beta
 pub impl Quantile for Beta
 pub impl Sample for Beta
+pub impl Support for Beta
 pub impl Univariate for Beta
 
+#derive(Eq, @debug.Debug)
 pub struct BetaBinomial {
-  // private fields
+  n : Int64
+  a : Double
+  b : Double
 }
-pub fn BetaBinomial::family(n~ : Int32) -> Family[Self]
-pub fn BetaBinomial::new(Int32, Double, Double) -> Self raise ParamError
+pub fn BetaBinomial::cdf(Self, Double) -> Double
+pub fn BetaBinomial::cdf_int(Self, Int64) -> Double
+pub fn BetaBinomial::family(n~ : Int64) -> Family[Self]
+pub fn BetaBinomial::isf(Self, Double) -> Double
+pub fn BetaBinomial::logcdf(Self, Double) -> Double
+pub fn BetaBinomial::logpmf(Self, Int64) -> Double
+pub fn BetaBinomial::logsf(Self, Double) -> Double
+pub fn BetaBinomial::new(n~ : Int64, a~ : Double, b~ : Double) -> Self raise ParamError
+pub fn BetaBinomial::pmf(Self, Int64) -> Double
+pub fn BetaBinomial::quantile(Self, Double) -> Double
+pub fn BetaBinomial::quantile_int(Self, Double) -> Int64
+pub fn BetaBinomial::sample(Self, &@num.RandomSource) -> Double
+pub fn BetaBinomial::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn BetaBinomial::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn BetaBinomial::sf(Self, Double) -> Double
+pub fn BetaBinomial::sf_at_least(Self, Double) -> Double
+pub fn BetaBinomial::sf_int(Self, Int64) -> Double
+pub fn BetaBinomial::support_lower(Self) -> Double
+pub fn BetaBinomial::support_upper(Self) -> Double
 pub impl Cdf for BetaBinomial
 pub impl IntCdf for BetaBinomial
 pub impl IntQuantile for BetaBinomial
@@ -125,13 +317,34 @@ pub impl Mass for BetaBinomial
 pub impl Quantile for BetaBinomial
 pub impl Sample for BetaBinomial
 pub impl SampleInt for BetaBinomial
+pub impl Support for BetaBinomial
 pub impl Univariate for BetaBinomial
 
+#derive(Eq, @debug.Debug)
 pub struct BetaNegativeBinomial {
-  // private fields
+  n : Int64
+  a : Double
+  b : Double
 }
-pub fn BetaNegativeBinomial::family(n~ : Int32) -> Family[Self]
-pub fn BetaNegativeBinomial::new(Int32, Double, Double) -> Self raise ParamError
+pub fn BetaNegativeBinomial::cdf(Self, Double) -> Double
+pub fn BetaNegativeBinomial::cdf_int(Self, Int64) -> Double
+pub fn BetaNegativeBinomial::family(n~ : Int64) -> Family[Self]
+pub fn BetaNegativeBinomial::isf(Self, Double) -> Double
+pub fn BetaNegativeBinomial::logcdf(Self, Double) -> Double
+pub fn BetaNegativeBinomial::logpmf(Self, Int64) -> Double
+pub fn BetaNegativeBinomial::logsf(Self, Double) -> Double
+pub fn BetaNegativeBinomial::new(n~ : Int64, a~ : Double, b~ : Double) -> Self raise ParamError
+pub fn BetaNegativeBinomial::pmf(Self, Int64) -> Double
+pub fn BetaNegativeBinomial::quantile(Self, Double) -> Double
+pub fn BetaNegativeBinomial::quantile_int(Self, Double) -> Int64
+pub fn BetaNegativeBinomial::sample(Self, &@num.RandomSource) -> Double
+pub fn BetaNegativeBinomial::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn BetaNegativeBinomial::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn BetaNegativeBinomial::sf(Self, Double) -> Double
+pub fn BetaNegativeBinomial::sf_at_least(Self, Double) -> Double
+pub fn BetaNegativeBinomial::sf_int(Self, Int64) -> Double
+pub fn BetaNegativeBinomial::support_lower(Self) -> Double
+pub fn BetaNegativeBinomial::support_upper(Self) -> Double
 pub impl Cdf for BetaNegativeBinomial
 pub impl IntCdf for BetaNegativeBinomial
 pub impl IntQuantile for BetaNegativeBinomial
@@ -139,41 +352,104 @@ pub impl Mass for BetaNegativeBinomial
 pub impl Quantile for BetaNegativeBinomial
 pub impl Sample for BetaNegativeBinomial
 pub impl SampleInt for BetaNegativeBinomial
+pub impl Support for BetaNegativeBinomial
 pub impl Univariate for BetaNegativeBinomial
 
+#derive(Eq, @debug.Debug)
 pub struct BetaPrime {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn BetaPrime::cdf(Self, Double) -> Double
 pub fn BetaPrime::family() -> Family[Self]
-pub fn BetaPrime::new(Double, Double) -> Self raise ParamError
+pub fn BetaPrime::isf(Self, Double) -> Double
+pub fn BetaPrime::logcdf(Self, Double) -> Double
+pub fn BetaPrime::logpdf(Self, Double) -> Double
+pub fn BetaPrime::logsf(Self, Double) -> Double
+pub fn BetaPrime::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn BetaPrime::pdf(Self, Double) -> Double
+pub fn BetaPrime::quantile(Self, Double) -> Double
+pub fn BetaPrime::sample(Self, &@num.RandomSource) -> Double
+pub fn BetaPrime::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn BetaPrime::sf(Self, Double) -> Double
+pub fn BetaPrime::sf_at_least(Self, Double) -> Double
+pub fn BetaPrime::support_lower(Self) -> Double
+pub fn BetaPrime::support_upper(Self) -> Double
 pub impl Cdf for BetaPrime
 pub impl Density for BetaPrime
 pub impl Quantile for BetaPrime
 pub impl Sample for BetaPrime
+pub impl Support for BetaPrime
 pub impl Univariate for BetaPrime
 
+#derive(Eq, @debug.Debug)
 pub struct Binomial {
-  // private fields
+  n : Int64
+  p : Double
 }
-pub fn Binomial::exp_family(n~ : Int32) -> ExpFamily[Self]
-pub fn Binomial::family(n~ : Int32) -> Family[Self]
-pub fn Binomial::new(Int32, Double) -> Self raise ParamError
+pub fn Binomial::cdf(Self, Double) -> Double
+pub fn Binomial::cdf_int(Self, Int64) -> Double
+pub fn Binomial::cf(Self, Double) -> (Double, Double)
+pub fn Binomial::exp_family(n~ : Int64) -> ExpFamily[Self]
+pub fn Binomial::family(n~ : Int64) -> Family[Self]
+pub fn Binomial::isf(Self, Double) -> Double
+pub fn Binomial::logcdf(Self, Double) -> Double
+pub fn Binomial::logpmf(Self, Int64) -> Double
+pub fn Binomial::logsf(Self, Double) -> Double
+pub fn Binomial::mean(Self) -> Double?
+pub fn Binomial::mode(Self) -> Double
+pub fn Binomial::new(n~ : Int64, p~ : Double) -> Self raise ParamError
+pub fn Binomial::pmf(Self, Int64) -> Double
+pub fn Binomial::quantile(Self, Double) -> Double
+pub fn Binomial::quantile_int(Self, Double) -> Int64
+pub fn Binomial::sample(Self, &@num.RandomSource) -> Double
+pub fn Binomial::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Binomial::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Binomial::sf(Self, Double) -> Double
+pub fn Binomial::sf_at_least(Self, Double) -> Double
+pub fn Binomial::sf_int(Self, Int64) -> Double
+pub fn Binomial::support_lower(Self) -> Double
+pub fn Binomial::support_upper(Self) -> Double
+pub fn Binomial::variance(Self) -> Double?
 pub impl Cdf for Binomial
 pub impl Characteristic for Binomial
 pub impl IntCdf for Binomial
 pub impl IntQuantile for Binomial
 pub impl Mass for Binomial
+pub impl Mode for Binomial
 pub impl Moments for Binomial
 pub impl Quantile for Binomial
 pub impl Sample for Binomial
 pub impl SampleInt for Binomial
+pub impl Support for Binomial
 pub impl Univariate for Binomial
 
+#derive(Eq, @debug.Debug)
 pub struct Boltzmann {
-  // private fields
+  lambda : Double
+  n : Int64
 }
-pub fn Boltzmann::family(n~ : Int32) -> Family[Self]
-pub fn Boltzmann::new(Double, Int32) -> Self raise ParamError
+pub fn Boltzmann::cdf(Self, Double) -> Double
+pub fn Boltzmann::cdf_int(Self, Int64) -> Double
+pub fn Boltzmann::family(n~ : Int64) -> Family[Self]
+pub fn Boltzmann::isf(Self, Double) -> Double
+pub fn Boltzmann::logcdf(Self, Double) -> Double
+pub fn Boltzmann::logpmf(Self, Int64) -> Double
+pub fn Boltzmann::logsf(Self, Double) -> Double
+pub fn Boltzmann::new(lambda~ : Double, n~ : Int64) -> Self raise ParamError
+pub fn Boltzmann::pmf(Self, Int64) -> Double
+pub fn Boltzmann::quantile(Self, Double) -> Double
+pub fn Boltzmann::quantile_int(Self, Double) -> Int64
+pub fn Boltzmann::sample(Self, &@num.RandomSource) -> Double
+pub fn Boltzmann::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Boltzmann::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Boltzmann::sf(Self, Double) -> Double
+pub fn Boltzmann::sf_at_least(Self, Double) -> Double
+pub fn Boltzmann::sf_int(Self, Int64) -> Double
+pub fn Boltzmann::support_lower(Self) -> Double
+pub fn Boltzmann::support_upper(Self) -> Double
 pub impl Cdf for Boltzmann
 pub impl IntCdf for Boltzmann
 pub impl IntQuantile for Boltzmann
@@ -181,90 +457,224 @@ pub impl Mass for Boltzmann
 pub impl Quantile for Boltzmann
 pub impl Sample for Boltzmann
 pub impl SampleInt for Boltzmann
+pub impl Support for Boltzmann
 pub impl Univariate for Boltzmann
 
+#derive(Eq, @debug.Debug)
 pub struct Bradford {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn Bradford::cdf(Self, Double) -> Double
 pub fn Bradford::family() -> Family[Self]
-pub fn Bradford::new(Double) -> Self raise ParamError
+pub fn Bradford::isf(Self, Double) -> Double
+pub fn Bradford::logcdf(Self, Double) -> Double
+pub fn Bradford::logpdf(Self, Double) -> Double
+pub fn Bradford::logsf(Self, Double) -> Double
+pub fn Bradford::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Bradford::pdf(Self, Double) -> Double
+pub fn Bradford::quantile(Self, Double) -> Double
+pub fn Bradford::sample(Self, &@num.RandomSource) -> Double
+pub fn Bradford::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Bradford::sf(Self, Double) -> Double
+pub fn Bradford::sf_at_least(Self, Double) -> Double
+pub fn Bradford::support_lower(Self) -> Double
+pub fn Bradford::support_upper(Self) -> Double
 pub impl Cdf for Bradford
 pub impl Density for Bradford
 pub impl Quantile for Bradford
 pub impl Sample for Bradford
+pub impl Support for Bradford
 pub impl Univariate for Bradford
 
+#derive(Eq, @debug.Debug)
 pub struct Burr {
-  // private fields
+  c : Double
+  d : Double
+  loc : Double
+  scale : Double
 }
+pub fn Burr::cdf(Self, Double) -> Double
 pub fn Burr::family() -> Family[Self]
-pub fn Burr::new(Double, Double) -> Self raise ParamError
+pub fn Burr::isf(Self, Double) -> Double
+pub fn Burr::logcdf(Self, Double) -> Double
+pub fn Burr::logpdf(Self, Double) -> Double
+pub fn Burr::logsf(Self, Double) -> Double
+pub fn Burr::new(c~ : Double, d~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Burr::pdf(Self, Double) -> Double
+pub fn Burr::quantile(Self, Double) -> Double
+pub fn Burr::sample(Self, &@num.RandomSource) -> Double
+pub fn Burr::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Burr::sf(Self, Double) -> Double
+pub fn Burr::sf_at_least(Self, Double) -> Double
+pub fn Burr::support_lower(Self) -> Double
+pub fn Burr::support_upper(Self) -> Double
 pub impl Cdf for Burr
 pub impl Density for Burr
 pub impl Quantile for Burr
 pub impl Sample for Burr
+pub impl Support for Burr
 pub impl Univariate for Burr
 
+#derive(Eq, @debug.Debug)
 pub struct Burr12 {
-  // private fields
+  c : Double
+  d : Double
+  loc : Double
+  scale : Double
 }
+pub fn Burr12::cdf(Self, Double) -> Double
 pub fn Burr12::family() -> Family[Self]
-pub fn Burr12::new(Double, Double) -> Self raise ParamError
+pub fn Burr12::isf(Self, Double) -> Double
+pub fn Burr12::logcdf(Self, Double) -> Double
+pub fn Burr12::logpdf(Self, Double) -> Double
+pub fn Burr12::logsf(Self, Double) -> Double
+pub fn Burr12::new(c~ : Double, d~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Burr12::pdf(Self, Double) -> Double
+pub fn Burr12::quantile(Self, Double) -> Double
+pub fn Burr12::sample(Self, &@num.RandomSource) -> Double
+pub fn Burr12::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Burr12::sf(Self, Double) -> Double
+pub fn Burr12::sf_at_least(Self, Double) -> Double
+pub fn Burr12::support_lower(Self) -> Double
+pub fn Burr12::support_upper(Self) -> Double
 pub impl Cdf for Burr12
 pub impl Density for Burr12
 pub impl Quantile for Burr12
 pub impl Sample for Burr12
+pub impl Support for Burr12
 pub impl Univariate for Burr12
 
 pub struct Cantor {
 }
+pub fn Cantor::cdf(Self, Double) -> Double
+pub fn Cantor::cf(Self, Double) -> (Double, Double)
+pub fn Cantor::isf(Self, Double) -> Double
+pub fn Cantor::logcdf(Self, Double) -> Double
+pub fn Cantor::logsf(Self, Double) -> Double
+pub fn Cantor::mean(Self) -> Double?
 pub fn Cantor::new() -> Self
+pub fn Cantor::quantile(Self, Double) -> Double
+pub fn Cantor::sample(Self, &@num.RandomSource) -> Double
+pub fn Cantor::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Cantor::sf(Self, Double) -> Double
+pub fn Cantor::sf_at_least(Self, Double) -> Double
+pub fn Cantor::support_lower(Self) -> Double
+pub fn Cantor::support_upper(Self) -> Double
+pub fn Cantor::variance(Self) -> Double?
 pub impl Cdf for Cantor
 pub impl Characteristic for Cantor
 pub impl Moments for Cantor
 pub impl Quantile for Cantor
 pub impl Sample for Cantor
+pub impl Support for Cantor
 pub impl Univariate for Cantor
 
+#derive(Eq, @debug.Debug)
 pub struct Cauchy {
+  loc : Double
+  scale : Double
 }
+pub fn Cauchy::cdf(Self, Double) -> Double
 pub fn Cauchy::family() -> Family[Self]
-pub fn Cauchy::new() -> Self
+pub fn Cauchy::isf(Self, Double) -> Double
+pub fn Cauchy::logcdf(Self, Double) -> Double
+pub fn Cauchy::logpdf(Self, Double) -> Double
+pub fn Cauchy::logsf(Self, Double) -> Double
+pub fn Cauchy::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Cauchy::pdf(Self, Double) -> Double
+pub fn Cauchy::quantile(Self, Double) -> Double
+pub fn Cauchy::sample(Self, &@num.RandomSource) -> Double
+pub fn Cauchy::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Cauchy::sf(Self, Double) -> Double
+pub fn Cauchy::sf_at_least(Self, Double) -> Double
+pub fn Cauchy::support_lower(Self) -> Double
+pub fn Cauchy::support_upper(Self) -> Double
 pub impl Cdf for Cauchy
 pub impl Density for Cauchy
 pub impl Quantile for Cauchy
 pub impl Sample for Cauchy
+pub impl Support for Cauchy
 pub impl Univariate for Cauchy
 
 pub struct Censored[D] {
-  // private fields
+  base : D
+  lo : Double
+  hi : Double
 }
-pub fn[D] Censored::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
+pub fn[D : Cdf] Censored::cdf(Self[D], Double) -> Double
+pub fn[D : Quantile] Censored::isf(Self[D], Double) -> Double
+pub fn[D : Cdf] Censored::logcdf(Self[D], Double) -> Double
+pub fn[D : Cdf] Censored::logsf(Self[D], Double) -> Double
+pub fn[D] Censored::new(D, lo? : Double, hi? : Double) -> Self[D] raise ParamError
+pub fn[D : Quantile] Censored::quantile(Self[D], Double) -> Double
+pub fn[D : Sample] Censored::sample(Self[D], &@num.RandomSource) -> Double
+pub fn[D : Sample] Censored::sample_into(Self[D], &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn[D : Cdf] Censored::sf(Self[D], Double) -> Double
+pub fn[D : Cdf] Censored::sf_at_least(Self[D], Double) -> Double
 pub impl[D : Cdf] Cdf for Censored[D]
+pub impl[D : Quantile] Quantile for Censored[D]
+pub impl[D : Sample] Sample for Censored[D]
+pub impl[D : Univariate] Univariate for Censored[D]
 
+#derive(Eq, @debug.Debug)
 pub struct Chi {
-  // private fields
+  df : Double
+  loc : Double
+  scale : Double
 }
+pub fn Chi::cdf(Self, Double) -> Double
 pub fn Chi::family() -> Family[Self]
-pub fn Chi::new(Double) -> Self raise ParamError
+pub fn Chi::isf(Self, Double) -> Double
+pub fn Chi::logcdf(Self, Double) -> Double
+pub fn Chi::logpdf(Self, Double) -> Double
+pub fn Chi::logsf(Self, Double) -> Double
+pub fn Chi::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Chi::pdf(Self, Double) -> Double
+pub fn Chi::quantile(Self, Double) -> Double
+pub fn Chi::sample(Self, &@num.RandomSource) -> Double
+pub fn Chi::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Chi::sf(Self, Double) -> Double
+pub fn Chi::sf_at_least(Self, Double) -> Double
+pub fn Chi::support_lower(Self) -> Double
+pub fn Chi::support_upper(Self) -> Double
 pub impl Cdf for Chi
 pub impl Density for Chi
 pub impl Quantile for Chi
 pub impl Sample for Chi
+pub impl Support for Chi
 pub impl Univariate for Chi
 
+#derive(Eq, @debug.Debug)
 pub struct ChiSquared {
-  // private fields
+  df : Double
+  loc : Double
+  scale : Double
 }
+pub fn ChiSquared::cdf(Self, Double) -> Double
 pub fn ChiSquared::family() -> Family[Self]
-pub fn ChiSquared::new(Double) -> Self raise ParamError
+pub fn ChiSquared::isf(Self, Double) -> Double
+pub fn ChiSquared::logcdf(Self, Double) -> Double
+pub fn ChiSquared::logpdf(Self, Double) -> Double
+pub fn ChiSquared::logsf(Self, Double) -> Double
+pub fn ChiSquared::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn ChiSquared::pdf(Self, Double) -> Double
+pub fn ChiSquared::quantile(Self, Double) -> Double
+pub fn ChiSquared::sample(Self, &@num.RandomSource) -> Double
+pub fn ChiSquared::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn ChiSquared::sf(Self, Double) -> Double
+pub fn ChiSquared::sf_at_least(Self, Double) -> Double
+pub fn ChiSquared::support_lower(Self) -> Double
+pub fn ChiSquared::support_upper(Self) -> Double
 pub impl Cdf for ChiSquared
 pub impl Density for ChiSquared
 pub impl Quantile for ChiSquared
 pub impl Sample for ChiSquared
+pub impl Support for ChiSquared
 pub impl Univariate for ChiSquared
 
-pub struct Conjugate[P, D] {
+pub(all) struct Conjugate[P, D] {
   name : String
   update : (P, ArrayView[Double]) -> P raise ParamError
   likelihood : (ArrayView[Double]) -> D raise ParamError
@@ -283,32 +693,85 @@ pub fn Constraint::contains(Self, Double) -> Bool
 pub fn Constraint::from_unconstrained(Self, Double) -> Double
 pub fn Constraint::to_unconstrained(Self, Double) -> Double
 
+#derive(Eq, @debug.Debug)
 pub struct Cosine {
+  loc : Double
+  scale : Double
 }
+pub fn Cosine::cdf(Self, Double) -> Double
 pub fn Cosine::family() -> Family[Self]
-pub fn Cosine::new() -> Self
+pub fn Cosine::isf(Self, Double) -> Double
+pub fn Cosine::logcdf(Self, Double) -> Double
+pub fn Cosine::logpdf(Self, Double) -> Double
+pub fn Cosine::logsf(Self, Double) -> Double
+pub fn Cosine::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Cosine::pdf(Self, Double) -> Double
+pub fn Cosine::quantile(Self, Double) -> Double
+pub fn Cosine::sample(Self, &@num.RandomSource) -> Double
+pub fn Cosine::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Cosine::sf(Self, Double) -> Double
+pub fn Cosine::sf_at_least(Self, Double) -> Double
+pub fn Cosine::support_lower(Self) -> Double
+pub fn Cosine::support_upper(Self) -> Double
 pub impl Cdf for Cosine
 pub impl Density for Cosine
 pub impl Quantile for Cosine
 pub impl Sample for Cosine
+pub impl Support for Cosine
 pub impl Univariate for Cosine
 
+#derive(Eq, @debug.Debug)
 pub struct CrystalBall {
-  // private fields
+  beta : Double
+  m : Double
+  loc : Double
+  scale : Double
 }
+pub fn CrystalBall::cdf(Self, Double) -> Double
 pub fn CrystalBall::family() -> Family[Self]
-pub fn CrystalBall::new(Double, Double) -> Self raise ParamError
+pub fn CrystalBall::isf(Self, Double) -> Double
+pub fn CrystalBall::logcdf(Self, Double) -> Double
+pub fn CrystalBall::logpdf(Self, Double) -> Double
+pub fn CrystalBall::logsf(Self, Double) -> Double
+pub fn CrystalBall::new(beta~ : Double, m~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn CrystalBall::pdf(Self, Double) -> Double
+pub fn CrystalBall::quantile(Self, Double) -> Double
+pub fn CrystalBall::sample(Self, &@num.RandomSource) -> Double
+pub fn CrystalBall::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn CrystalBall::sf(Self, Double) -> Double
+pub fn CrystalBall::sf_at_least(Self, Double) -> Double
+pub fn CrystalBall::support_lower(Self) -> Double
+pub fn CrystalBall::support_upper(Self) -> Double
 pub impl Cdf for CrystalBall
 pub impl Density for CrystalBall
 pub impl Quantile for CrystalBall
 pub impl Sample for CrystalBall
+pub impl Support for CrystalBall
 pub impl Univariate for CrystalBall
 
+#derive(Eq, @debug.Debug)
 pub struct DiscreteLaplace {
-  // private fields
+  a : Double
 }
+pub fn DiscreteLaplace::cdf(Self, Double) -> Double
+pub fn DiscreteLaplace::cdf_int(Self, Int64) -> Double
 pub fn DiscreteLaplace::family() -> Family[Self]
+pub fn DiscreteLaplace::isf(Self, Double) -> Double
+pub fn DiscreteLaplace::logcdf(Self, Double) -> Double
+pub fn DiscreteLaplace::logpmf(Self, Int64) -> Double
+pub fn DiscreteLaplace::logsf(Self, Double) -> Double
 pub fn DiscreteLaplace::new(Double) -> Self raise ParamError
+pub fn DiscreteLaplace::pmf(Self, Int64) -> Double
+pub fn DiscreteLaplace::quantile(Self, Double) -> Double
+pub fn DiscreteLaplace::quantile_int(Self, Double) -> Int64
+pub fn DiscreteLaplace::sample(Self, &@num.RandomSource) -> Double
+pub fn DiscreteLaplace::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn DiscreteLaplace::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn DiscreteLaplace::sf(Self, Double) -> Double
+pub fn DiscreteLaplace::sf_at_least(Self, Double) -> Double
+pub fn DiscreteLaplace::sf_int(Self, Int64) -> Double
+pub fn DiscreteLaplace::support_lower(Self) -> Double
+pub fn DiscreteLaplace::support_upper(Self) -> Double
 pub impl Cdf for DiscreteLaplace
 pub impl IntCdf for DiscreteLaplace
 pub impl IntQuantile for DiscreteLaplace
@@ -316,13 +779,33 @@ pub impl Mass for DiscreteLaplace
 pub impl Quantile for DiscreteLaplace
 pub impl Sample for DiscreteLaplace
 pub impl SampleInt for DiscreteLaplace
+pub impl Support for DiscreteLaplace
 pub impl Univariate for DiscreteLaplace
 
+#derive(Eq, @debug.Debug)
 pub struct DiscreteUniform {
-  // private fields
+  low : Int64
+  high : Int64
 }
-pub fn DiscreteUniform::family(low~ : Int32, high~ : Int32) -> Family[Self]
-pub fn DiscreteUniform::new(Int32, Int32) -> Self raise ParamError
+pub fn DiscreteUniform::cdf(Self, Double) -> Double
+pub fn DiscreteUniform::cdf_int(Self, Int64) -> Double
+pub fn DiscreteUniform::family(low~ : Int64, high~ : Int64) -> Family[Self]
+pub fn DiscreteUniform::isf(Self, Double) -> Double
+pub fn DiscreteUniform::logcdf(Self, Double) -> Double
+pub fn DiscreteUniform::logpmf(Self, Int64) -> Double
+pub fn DiscreteUniform::logsf(Self, Double) -> Double
+pub fn DiscreteUniform::new(low~ : Int64, high~ : Int64) -> Self raise ParamError
+pub fn DiscreteUniform::pmf(Self, Int64) -> Double
+pub fn DiscreteUniform::quantile(Self, Double) -> Double
+pub fn DiscreteUniform::quantile_int(Self, Double) -> Int64
+pub fn DiscreteUniform::sample(Self, &@num.RandomSource) -> Double
+pub fn DiscreteUniform::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn DiscreteUniform::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn DiscreteUniform::sf(Self, Double) -> Double
+pub fn DiscreteUniform::sf_at_least(Self, Double) -> Double
+pub fn DiscreteUniform::sf_int(Self, Int64) -> Double
+pub fn DiscreteUniform::support_lower(Self) -> Double
+pub fn DiscreteUniform::support_upper(Self) -> Double
 pub impl Cdf for DiscreteUniform
 pub impl IntCdf for DiscreteUniform
 pub impl IntQuantile for DiscreteUniform
@@ -330,63 +813,154 @@ pub impl Mass for DiscreteUniform
 pub impl Quantile for DiscreteUniform
 pub impl Sample for DiscreteUniform
 pub impl SampleInt for DiscreteUniform
+pub impl Support for DiscreteUniform
 pub impl Univariate for DiscreteUniform
 
+#derive(Eq, @debug.Debug)
 pub struct DoubleGamma {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn DoubleGamma::cdf(Self, Double) -> Double
 pub fn DoubleGamma::family() -> Family[Self]
-pub fn DoubleGamma::new(Double) -> Self raise ParamError
+pub fn DoubleGamma::isf(Self, Double) -> Double
+pub fn DoubleGamma::logcdf(Self, Double) -> Double
+pub fn DoubleGamma::logpdf(Self, Double) -> Double
+pub fn DoubleGamma::logsf(Self, Double) -> Double
+pub fn DoubleGamma::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn DoubleGamma::pdf(Self, Double) -> Double
+pub fn DoubleGamma::quantile(Self, Double) -> Double
+pub fn DoubleGamma::sample(Self, &@num.RandomSource) -> Double
+pub fn DoubleGamma::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn DoubleGamma::sf(Self, Double) -> Double
+pub fn DoubleGamma::sf_at_least(Self, Double) -> Double
+pub fn DoubleGamma::support_lower(Self) -> Double
+pub fn DoubleGamma::support_upper(Self) -> Double
 pub impl Cdf for DoubleGamma
 pub impl Density for DoubleGamma
 pub impl Quantile for DoubleGamma
 pub impl Sample for DoubleGamma
+pub impl Support for DoubleGamma
 pub impl Univariate for DoubleGamma
 
+#derive(Eq, @debug.Debug)
 pub struct DoubleParetoLognormal {
-  // private fields
+  u : Double
+  s : Double
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn DoubleParetoLognormal::cdf(Self, Double) -> Double
 pub fn DoubleParetoLognormal::family() -> Family[Self]
-pub fn DoubleParetoLognormal::new(Double, Double, Double, Double) -> Self raise ParamError
+pub fn DoubleParetoLognormal::isf(Self, Double) -> Double
+pub fn DoubleParetoLognormal::logcdf(Self, Double) -> Double
+pub fn DoubleParetoLognormal::logpdf(Self, Double) -> Double
+pub fn DoubleParetoLognormal::logsf(Self, Double) -> Double
+pub fn DoubleParetoLognormal::new(u~ : Double, s~ : Double, a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn DoubleParetoLognormal::pdf(Self, Double) -> Double
+pub fn DoubleParetoLognormal::quantile(Self, Double) -> Double
+pub fn DoubleParetoLognormal::sample(Self, &@num.RandomSource) -> Double
+pub fn DoubleParetoLognormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn DoubleParetoLognormal::sf(Self, Double) -> Double
+pub fn DoubleParetoLognormal::sf_at_least(Self, Double) -> Double
+pub fn DoubleParetoLognormal::support_lower(Self) -> Double
+pub fn DoubleParetoLognormal::support_upper(Self) -> Double
 pub impl Cdf for DoubleParetoLognormal
 pub impl Density for DoubleParetoLognormal
 pub impl Quantile for DoubleParetoLognormal
 pub impl Sample for DoubleParetoLognormal
+pub impl Support for DoubleParetoLognormal
 pub impl Univariate for DoubleParetoLognormal
 
+#derive(Eq, @debug.Debug)
 pub struct DoubleWeibull {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn DoubleWeibull::cdf(Self, Double) -> Double
 pub fn DoubleWeibull::family() -> Family[Self]
-pub fn DoubleWeibull::new(Double) -> Self raise ParamError
+pub fn DoubleWeibull::isf(Self, Double) -> Double
+pub fn DoubleWeibull::logcdf(Self, Double) -> Double
+pub fn DoubleWeibull::logpdf(Self, Double) -> Double
+pub fn DoubleWeibull::logsf(Self, Double) -> Double
+pub fn DoubleWeibull::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn DoubleWeibull::pdf(Self, Double) -> Double
+pub fn DoubleWeibull::quantile(Self, Double) -> Double
+pub fn DoubleWeibull::sample(Self, &@num.RandomSource) -> Double
+pub fn DoubleWeibull::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn DoubleWeibull::sf(Self, Double) -> Double
+pub fn DoubleWeibull::sf_at_least(Self, Double) -> Double
+pub fn DoubleWeibull::support_lower(Self) -> Double
+pub fn DoubleWeibull::support_upper(Self) -> Double
 pub impl Cdf for DoubleWeibull
 pub impl Density for DoubleWeibull
 pub impl Quantile for DoubleWeibull
 pub impl Sample for DoubleWeibull
+pub impl Support for DoubleWeibull
 pub impl Univariate for DoubleWeibull
 
+#derive(@debug.Debug)
 pub struct Empirical {
   // private fields
 }
+pub fn Empirical::cdf(Self, Double) -> Double
+pub fn Empirical::isf(Self, Double) -> Double
+pub fn Empirical::length(Self) -> Int32
+pub fn Empirical::logcdf(Self, Double) -> Double
+pub fn Empirical::logsf(Self, Double) -> Double
+pub fn Empirical::mass(Self, Double) -> Double
+pub fn Empirical::mean(Self) -> Double?
 pub fn Empirical::new(ArrayView[Double], quantile_method~ : @data.QuantileMethod) -> Self raise ParamError
+pub fn Empirical::quantile(Self, Double) -> Double
+pub fn Empirical::sample(Self, &@num.RandomSource) -> Double
+pub fn Empirical::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Empirical::sf(Self, Double) -> Double
+pub fn Empirical::sf_at_least(Self, Double) -> Double
+pub fn Empirical::support_lower(Self) -> Double
+pub fn Empirical::support_upper(Self) -> Double
+pub fn Empirical::to_atoms(Self) -> Atoms
+pub fn Empirical::values(Self) -> ArrayView[Double]
+pub fn Empirical::variance(Self) -> Double?
 pub impl Cdf for Empirical
 pub impl Moments for Empirical
 pub impl Quantile for Empirical
 pub impl Sample for Empirical
+pub impl Support for Empirical
 pub impl Univariate for Empirical
 
+#derive(Eq, @debug.Debug)
 pub struct Erlang {
-  // private fields
+  a : Int64
+  loc : Double
+  scale : Double
 }
-pub fn Erlang::family(a~ : Int32) -> Family[Self]
-pub fn Erlang::new(Int32) -> Self raise ParamError
+pub fn Erlang::cdf(Self, Double) -> Double
+pub fn Erlang::family(a~ : Int64) -> Family[Self]
+pub fn Erlang::isf(Self, Double) -> Double
+pub fn Erlang::logcdf(Self, Double) -> Double
+pub fn Erlang::logpdf(Self, Double) -> Double
+pub fn Erlang::logsf(Self, Double) -> Double
+pub fn Erlang::new(Int64, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Erlang::pdf(Self, Double) -> Double
+pub fn Erlang::quantile(Self, Double) -> Double
+pub fn Erlang::sample(Self, &@num.RandomSource) -> Double
+pub fn Erlang::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Erlang::sf(Self, Double) -> Double
+pub fn Erlang::sf_at_least(Self, Double) -> Double
+pub fn Erlang::support_lower(Self) -> Double
+pub fn Erlang::support_upper(Self) -> Double
 pub impl Cdf for Erlang
 pub impl Density for Erlang
 pub impl Quantile for Erlang
 pub impl Sample for Erlang
+pub impl Support for Erlang
 pub impl Univariate for Erlang
 
-pub struct ExpFamily[D] {
+pub(all) struct ExpFamily[D] {
   family : Family[D]
   natural_dim : Int32
   natural : (D) -> FixedArray[Double]
@@ -396,97 +970,245 @@ pub struct ExpFamily[D] {
   from_mean_sufficient : (ArrayView[Double]) -> D raise FitError
 }
 
+#derive(Eq, @debug.Debug)
 pub struct Exponential {
+  loc : Double
+  scale : Double
 }
+pub fn Exponential::cdf(Self, Double) -> Double
 pub fn Exponential::family() -> Family[Self]
-pub fn Exponential::new() -> Self
+pub fn Exponential::isf(Self, Double) -> Double
+pub fn Exponential::logcdf(Self, Double) -> Double
+pub fn Exponential::logpdf(Self, Double) -> Double
+pub fn Exponential::logsf(Self, Double) -> Double
+pub fn Exponential::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Exponential::pdf(Self, Double) -> Double
+pub fn Exponential::quantile(Self, Double) -> Double
+pub fn Exponential::sample(Self, &@num.RandomSource) -> Double
+pub fn Exponential::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Exponential::sf(Self, Double) -> Double
+pub fn Exponential::sf_at_least(Self, Double) -> Double
+pub fn Exponential::support_lower(Self) -> Double
+pub fn Exponential::support_upper(Self) -> Double
 pub impl Cdf for Exponential
 pub impl Density for Exponential
 pub impl Quantile for Exponential
 pub impl Sample for Exponential
+pub impl Support for Exponential
 pub impl Univariate for Exponential
 
+#derive(Eq, @debug.Debug)
 pub struct ExponentialPower {
-  // private fields
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn ExponentialPower::cdf(Self, Double) -> Double
 pub fn ExponentialPower::family() -> Family[Self]
-pub fn ExponentialPower::new(Double) -> Self raise ParamError
+pub fn ExponentialPower::isf(Self, Double) -> Double
+pub fn ExponentialPower::logcdf(Self, Double) -> Double
+pub fn ExponentialPower::logpdf(Self, Double) -> Double
+pub fn ExponentialPower::logsf(Self, Double) -> Double
+pub fn ExponentialPower::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn ExponentialPower::pdf(Self, Double) -> Double
+pub fn ExponentialPower::quantile(Self, Double) -> Double
+pub fn ExponentialPower::sample(Self, &@num.RandomSource) -> Double
+pub fn ExponentialPower::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn ExponentialPower::sf(Self, Double) -> Double
+pub fn ExponentialPower::sf_at_least(Self, Double) -> Double
+pub fn ExponentialPower::support_lower(Self) -> Double
+pub fn ExponentialPower::support_upper(Self) -> Double
 pub impl Cdf for ExponentialPower
 pub impl Density for ExponentialPower
 pub impl Quantile for ExponentialPower
 pub impl Sample for ExponentialPower
+pub impl Support for ExponentialPower
 pub impl Univariate for ExponentialPower
 
+#derive(Eq, @debug.Debug)
 pub struct ExponentiallyModifiedNormal {
-  // private fields
+  k : Double
+  loc : Double
+  scale : Double
 }
+pub fn ExponentiallyModifiedNormal::cdf(Self, Double) -> Double
 pub fn ExponentiallyModifiedNormal::family() -> Family[Self]
-pub fn ExponentiallyModifiedNormal::new(Double) -> Self raise ParamError
+pub fn ExponentiallyModifiedNormal::isf(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::logcdf(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::logpdf(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::logsf(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn ExponentiallyModifiedNormal::pdf(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::quantile(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn ExponentiallyModifiedNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn ExponentiallyModifiedNormal::sf(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::sf_at_least(Self, Double) -> Double
+pub fn ExponentiallyModifiedNormal::support_lower(Self) -> Double
+pub fn ExponentiallyModifiedNormal::support_upper(Self) -> Double
 pub impl Cdf for ExponentiallyModifiedNormal
 pub impl Density for ExponentiallyModifiedNormal
 pub impl Quantile for ExponentiallyModifiedNormal
 pub impl Sample for ExponentiallyModifiedNormal
+pub impl Support for ExponentiallyModifiedNormal
 pub impl Univariate for ExponentiallyModifiedNormal
 
+#derive(Eq, @debug.Debug)
 pub struct ExponentiatedWeibull {
-  // private fields
+  a : Double
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn ExponentiatedWeibull::cdf(Self, Double) -> Double
 pub fn ExponentiatedWeibull::family() -> Family[Self]
-pub fn ExponentiatedWeibull::new(Double, Double) -> Self raise ParamError
+pub fn ExponentiatedWeibull::isf(Self, Double) -> Double
+pub fn ExponentiatedWeibull::logcdf(Self, Double) -> Double
+pub fn ExponentiatedWeibull::logpdf(Self, Double) -> Double
+pub fn ExponentiatedWeibull::logsf(Self, Double) -> Double
+pub fn ExponentiatedWeibull::new(a~ : Double, c~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn ExponentiatedWeibull::pdf(Self, Double) -> Double
+pub fn ExponentiatedWeibull::quantile(Self, Double) -> Double
+pub fn ExponentiatedWeibull::sample(Self, &@num.RandomSource) -> Double
+pub fn ExponentiatedWeibull::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn ExponentiatedWeibull::sf(Self, Double) -> Double
+pub fn ExponentiatedWeibull::sf_at_least(Self, Double) -> Double
+pub fn ExponentiatedWeibull::support_lower(Self) -> Double
+pub fn ExponentiatedWeibull::support_upper(Self) -> Double
 pub impl Cdf for ExponentiatedWeibull
 pub impl Density for ExponentiatedWeibull
 pub impl Quantile for ExponentiatedWeibull
 pub impl Sample for ExponentiatedWeibull
+pub impl Support for ExponentiatedWeibull
 pub impl Univariate for ExponentiatedWeibull
 
-pub struct Family[D] {
+pub(all) struct Family[D] {
   name : String
   specs : Array[ParamSpec]
   make : (ArrayView[Double]) -> D raise ParamError
   params : (D) -> FixedArray[Double]
 }
 pub fn[D] Family::dim(Self[D]) -> Int32
+pub fn[D] Family::fix(Self[D], String, Double) -> Self[D] raise ParamError
 pub fn[D] Family::from_unconstrained(Self[D], ArrayView[Double]) -> D raise ParamError
 
+#derive(Eq, @debug.Debug)
 pub struct FatigueLife {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn FatigueLife::cdf(Self, Double) -> Double
 pub fn FatigueLife::family() -> Family[Self]
-pub fn FatigueLife::new(Double) -> Self raise ParamError
+pub fn FatigueLife::isf(Self, Double) -> Double
+pub fn FatigueLife::logcdf(Self, Double) -> Double
+pub fn FatigueLife::logpdf(Self, Double) -> Double
+pub fn FatigueLife::logsf(Self, Double) -> Double
+pub fn FatigueLife::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn FatigueLife::pdf(Self, Double) -> Double
+pub fn FatigueLife::quantile(Self, Double) -> Double
+pub fn FatigueLife::sample(Self, &@num.RandomSource) -> Double
+pub fn FatigueLife::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn FatigueLife::sf(Self, Double) -> Double
+pub fn FatigueLife::sf_at_least(Self, Double) -> Double
+pub fn FatigueLife::support_lower(Self) -> Double
+pub fn FatigueLife::support_upper(Self) -> Double
 pub impl Cdf for FatigueLife
 pub impl Density for FatigueLife
 pub impl Quantile for FatigueLife
 pub impl Sample for FatigueLife
+pub impl Support for FatigueLife
 pub impl Univariate for FatigueLife
 
+#derive(@debug.Debug)
 pub struct FiniteDiscrete {
   // private fields
 }
-pub fn FiniteDiscrete::new(Int32, ArrayView[Double]) -> Self raise ParamError
+pub fn FiniteDiscrete::cdf(Self, Double) -> Double
+pub fn FiniteDiscrete::cdf_int(Self, Int64) -> Double
+pub fn FiniteDiscrete::isf(Self, Double) -> Double
+pub fn FiniteDiscrete::logcdf(Self, Double) -> Double
+pub fn FiniteDiscrete::logpmf(Self, Int64) -> Double
+pub fn FiniteDiscrete::logsf(Self, Double) -> Double
+pub fn FiniteDiscrete::new(Int64, ArrayView[Double]) -> Self raise ParamError
+pub fn FiniteDiscrete::offset(Self) -> Int64
+pub fn FiniteDiscrete::pmf(Self, Int64) -> Double
+pub fn FiniteDiscrete::probs(Self) -> ArrayView[Double]
+pub fn FiniteDiscrete::quantile(Self, Double) -> Double
+pub fn FiniteDiscrete::quantile_int(Self, Double) -> Int64
+pub fn FiniteDiscrete::sample(Self, &@num.RandomSource) -> Double
+pub fn FiniteDiscrete::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn FiniteDiscrete::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn FiniteDiscrete::sf(Self, Double) -> Double
+pub fn FiniteDiscrete::sf_at_least(Self, Double) -> Double
+pub fn FiniteDiscrete::sf_int(Self, Int64) -> Double
+pub fn FiniteDiscrete::support_lower(Self) -> Double
+pub fn FiniteDiscrete::support_upper(Self) -> Double
 pub impl Cdf for FiniteDiscrete
 pub impl IntCdf for FiniteDiscrete
 pub impl IntQuantile for FiniteDiscrete
 pub impl Mass for FiniteDiscrete
 pub impl Quantile for FiniteDiscrete
 pub impl Sample for FiniteDiscrete
+pub impl SampleInt for FiniteDiscrete
+pub impl Support for FiniteDiscrete
 pub impl Univariate for FiniteDiscrete
 
+#derive(Eq, @debug.Debug)
 pub struct FisherF {
-  // private fields
+  dfn : Double
+  dfd : Double
+  loc : Double
+  scale : Double
 }
+pub fn FisherF::cdf(Self, Double) -> Double
 pub fn FisherF::family() -> Family[Self]
-pub fn FisherF::new(Double, Double) -> Self raise ParamError
+pub fn FisherF::isf(Self, Double) -> Double
+pub fn FisherF::logcdf(Self, Double) -> Double
+pub fn FisherF::logpdf(Self, Double) -> Double
+pub fn FisherF::logsf(Self, Double) -> Double
+pub fn FisherF::new(dfn~ : Double, dfd~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn FisherF::pdf(Self, Double) -> Double
+pub fn FisherF::quantile(Self, Double) -> Double
+pub fn FisherF::sample(Self, &@num.RandomSource) -> Double
+pub fn FisherF::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn FisherF::sf(Self, Double) -> Double
+pub fn FisherF::sf_at_least(Self, Double) -> Double
+pub fn FisherF::support_lower(Self) -> Double
+pub fn FisherF::support_upper(Self) -> Double
 pub impl Cdf for FisherF
 pub impl Density for FisherF
 pub impl Quantile for FisherF
 pub impl Sample for FisherF
+pub impl Support for FisherF
 pub impl Univariate for FisherF
 
+#derive(Eq, @debug.Debug)
 pub struct FisherNoncentralHypergeometric {
-  // private fields
+  population : Int64
+  successes : Int64
+  draws : Int64
+  odds : Double
 }
-pub fn FisherNoncentralHypergeometric::family(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Family[Self]
-pub fn FisherNoncentralHypergeometric::new(Int32, Int32, Int32, Double) -> Self raise ParamError
+pub fn FisherNoncentralHypergeometric::cdf(Self, Double) -> Double
+pub fn FisherNoncentralHypergeometric::cdf_int(Self, Int64) -> Double
+pub fn FisherNoncentralHypergeometric::family(population~ : Int64, successes~ : Int64, draws~ : Int64) -> Family[Self]
+pub fn FisherNoncentralHypergeometric::isf(Self, Double) -> Double
+pub fn FisherNoncentralHypergeometric::logcdf(Self, Double) -> Double
+pub fn FisherNoncentralHypergeometric::logpmf(Self, Int64) -> Double
+pub fn FisherNoncentralHypergeometric::logsf(Self, Double) -> Double
+pub fn FisherNoncentralHypergeometric::new(population~ : Int64, successes~ : Int64, draws~ : Int64, odds~ : Double) -> Self raise ParamError
+pub fn FisherNoncentralHypergeometric::pmf(Self, Int64) -> Double
+pub fn FisherNoncentralHypergeometric::quantile(Self, Double) -> Double
+pub fn FisherNoncentralHypergeometric::quantile_int(Self, Double) -> Int64
+pub fn FisherNoncentralHypergeometric::sample(Self, &@num.RandomSource) -> Double
+pub fn FisherNoncentralHypergeometric::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn FisherNoncentralHypergeometric::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn FisherNoncentralHypergeometric::sf(Self, Double) -> Double
+pub fn FisherNoncentralHypergeometric::sf_at_least(Self, Double) -> Double
+pub fn FisherNoncentralHypergeometric::sf_int(Self, Int64) -> Double
+pub fn FisherNoncentralHypergeometric::support_lower(Self) -> Double
+pub fn FisherNoncentralHypergeometric::support_upper(Self) -> Double
 pub impl Cdf for FisherNoncentralHypergeometric
 pub impl IntCdf for FisherNoncentralHypergeometric
 pub impl IntQuantile for FisherNoncentralHypergeometric
@@ -494,170 +1216,438 @@ pub impl Mass for FisherNoncentralHypergeometric
 pub impl Quantile for FisherNoncentralHypergeometric
 pub impl Sample for FisherNoncentralHypergeometric
 pub impl SampleInt for FisherNoncentralHypergeometric
+pub impl Support for FisherNoncentralHypergeometric
 pub impl Univariate for FisherNoncentralHypergeometric
 
+#derive(Eq, @debug.Debug)
 pub struct Fisk {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn Fisk::cdf(Self, Double) -> Double
 pub fn Fisk::family() -> Family[Self]
-pub fn Fisk::new(Double) -> Self raise ParamError
+pub fn Fisk::isf(Self, Double) -> Double
+pub fn Fisk::logcdf(Self, Double) -> Double
+pub fn Fisk::logpdf(Self, Double) -> Double
+pub fn Fisk::logsf(Self, Double) -> Double
+pub fn Fisk::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Fisk::pdf(Self, Double) -> Double
+pub fn Fisk::quantile(Self, Double) -> Double
+pub fn Fisk::sample(Self, &@num.RandomSource) -> Double
+pub fn Fisk::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Fisk::sf(Self, Double) -> Double
+pub fn Fisk::sf_at_least(Self, Double) -> Double
+pub fn Fisk::support_lower(Self) -> Double
+pub fn Fisk::support_upper(Self) -> Double
 pub impl Cdf for Fisk
 pub impl Density for Fisk
 pub impl Quantile for Fisk
 pub impl Sample for Fisk
+pub impl Support for Fisk
 pub impl Univariate for Fisk
 
+#derive(Eq, @debug.Debug)
 pub struct FoldedCauchy {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn FoldedCauchy::cdf(Self, Double) -> Double
 pub fn FoldedCauchy::family() -> Family[Self]
-pub fn FoldedCauchy::new(Double) -> Self raise ParamError
+pub fn FoldedCauchy::isf(Self, Double) -> Double
+pub fn FoldedCauchy::logcdf(Self, Double) -> Double
+pub fn FoldedCauchy::logpdf(Self, Double) -> Double
+pub fn FoldedCauchy::logsf(Self, Double) -> Double
+pub fn FoldedCauchy::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn FoldedCauchy::pdf(Self, Double) -> Double
+pub fn FoldedCauchy::quantile(Self, Double) -> Double
+pub fn FoldedCauchy::sample(Self, &@num.RandomSource) -> Double
+pub fn FoldedCauchy::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn FoldedCauchy::sf(Self, Double) -> Double
+pub fn FoldedCauchy::sf_at_least(Self, Double) -> Double
+pub fn FoldedCauchy::support_lower(Self) -> Double
+pub fn FoldedCauchy::support_upper(Self) -> Double
 pub impl Cdf for FoldedCauchy
 pub impl Density for FoldedCauchy
 pub impl Quantile for FoldedCauchy
 pub impl Sample for FoldedCauchy
+pub impl Support for FoldedCauchy
 pub impl Univariate for FoldedCauchy
 
+#derive(Eq, @debug.Debug)
 pub struct FoldedNormal {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn FoldedNormal::cdf(Self, Double) -> Double
 pub fn FoldedNormal::family() -> Family[Self]
-pub fn FoldedNormal::new(Double) -> Self raise ParamError
+pub fn FoldedNormal::isf(Self, Double) -> Double
+pub fn FoldedNormal::logcdf(Self, Double) -> Double
+pub fn FoldedNormal::logpdf(Self, Double) -> Double
+pub fn FoldedNormal::logsf(Self, Double) -> Double
+pub fn FoldedNormal::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn FoldedNormal::pdf(Self, Double) -> Double
+pub fn FoldedNormal::quantile(Self, Double) -> Double
+pub fn FoldedNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn FoldedNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn FoldedNormal::sf(Self, Double) -> Double
+pub fn FoldedNormal::sf_at_least(Self, Double) -> Double
+pub fn FoldedNormal::support_lower(Self) -> Double
+pub fn FoldedNormal::support_upper(Self) -> Double
 pub impl Cdf for FoldedNormal
 pub impl Density for FoldedNormal
 pub impl Quantile for FoldedNormal
 pub impl Sample for FoldedNormal
+pub impl Support for FoldedNormal
 pub impl Univariate for FoldedNormal
 
+#derive(Eq, @debug.Debug)
 pub struct Gamma {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn Gamma::cdf(Self, Double) -> Double
+pub fn Gamma::cgf(Self, Double) -> Double?
 pub fn Gamma::family() -> Family[Self]
 pub fn Gamma::family_rate() -> Family[Self]
-pub fn Gamma::new(Double, scale? : Double) -> Self raise ParamError
-pub fn Gamma::with_rate(Double, Double) -> Self raise ParamError
+pub fn Gamma::isf(Self, Double) -> Double
+pub fn Gamma::logcdf(Self, Double) -> Double
+pub fn Gamma::logpdf(Self, Double) -> Double
+pub fn Gamma::logsf(Self, Double) -> Double
+pub fn Gamma::mean(Self) -> Double?
+pub fn Gamma::mgf(Self, Double) -> Double?
+pub fn Gamma::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Gamma::pdf(Self, Double) -> Double
+pub fn Gamma::quantile(Self, Double) -> Double
+pub fn Gamma::sample(Self, &@num.RandomSource) -> Double
+pub fn Gamma::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Gamma::sf(Self, Double) -> Double
+pub fn Gamma::sf_at_least(Self, Double) -> Double
+pub fn Gamma::support_lower(Self) -> Double
+pub fn Gamma::support_upper(Self) -> Double
+pub fn Gamma::variance(Self) -> Double?
+pub fn Gamma::with_rate(Double, rate~ : Double) -> Self raise ParamError
 pub impl Cdf for Gamma
 pub impl Density for Gamma
 pub impl Mgf for Gamma
+pub impl Moments for Gamma
 pub impl Quantile for Gamma
 pub impl Sample for Gamma
+pub impl Support for Gamma
 pub impl Univariate for Gamma
 
+#derive(Eq, @debug.Debug)
 pub struct GaussHypergeometric {
-  // private fields
+  a : Double
+  b : Double
+  c : Double
+  z : Double
+  loc : Double
+  scale : Double
 }
+pub fn GaussHypergeometric::cdf(Self, Double) -> Double
 pub fn GaussHypergeometric::family() -> Family[Self]
-pub fn GaussHypergeometric::new(Double, Double, Double, Double) -> Self raise ParamError
+pub fn GaussHypergeometric::isf(Self, Double) -> Double
+pub fn GaussHypergeometric::logcdf(Self, Double) -> Double
+pub fn GaussHypergeometric::logpdf(Self, Double) -> Double
+pub fn GaussHypergeometric::logsf(Self, Double) -> Double
+pub fn GaussHypergeometric::new(a~ : Double, b~ : Double, c~ : Double, z~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GaussHypergeometric::pdf(Self, Double) -> Double
+pub fn GaussHypergeometric::quantile(Self, Double) -> Double
+pub fn GaussHypergeometric::sample(Self, &@num.RandomSource) -> Double
+pub fn GaussHypergeometric::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GaussHypergeometric::sf(Self, Double) -> Double
+pub fn GaussHypergeometric::sf_at_least(Self, Double) -> Double
+pub fn GaussHypergeometric::support_lower(Self) -> Double
+pub fn GaussHypergeometric::support_upper(Self) -> Double
 pub impl Cdf for GaussHypergeometric
 pub impl Density for GaussHypergeometric
 pub impl Quantile for GaussHypergeometric
 pub impl Sample for GaussHypergeometric
+pub impl Support for GaussHypergeometric
 pub impl Univariate for GaussHypergeometric
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedExponential {
-  // private fields
+  a : Double
+  b : Double
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedExponential::cdf(Self, Double) -> Double
 pub fn GeneralizedExponential::family() -> Family[Self]
-pub fn GeneralizedExponential::new(Double, Double, Double) -> Self raise ParamError
+pub fn GeneralizedExponential::isf(Self, Double) -> Double
+pub fn GeneralizedExponential::logcdf(Self, Double) -> Double
+pub fn GeneralizedExponential::logpdf(Self, Double) -> Double
+pub fn GeneralizedExponential::logsf(Self, Double) -> Double
+pub fn GeneralizedExponential::new(a~ : Double, b~ : Double, c~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedExponential::pdf(Self, Double) -> Double
+pub fn GeneralizedExponential::quantile(Self, Double) -> Double
+pub fn GeneralizedExponential::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedExponential::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedExponential::sf(Self, Double) -> Double
+pub fn GeneralizedExponential::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedExponential::support_lower(Self) -> Double
+pub fn GeneralizedExponential::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedExponential
 pub impl Density for GeneralizedExponential
 pub impl Quantile for GeneralizedExponential
 pub impl Sample for GeneralizedExponential
+pub impl Support for GeneralizedExponential
 pub impl Univariate for GeneralizedExponential
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedExtremeValue {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedExtremeValue::cdf(Self, Double) -> Double
 pub fn GeneralizedExtremeValue::family() -> Family[Self]
-pub fn GeneralizedExtremeValue::new(Double) -> Self raise ParamError
+pub fn GeneralizedExtremeValue::isf(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::logcdf(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::logpdf(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::logsf(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedExtremeValue::pdf(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::quantile(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedExtremeValue::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedExtremeValue::sf(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedExtremeValue::support_lower(Self) -> Double
+pub fn GeneralizedExtremeValue::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedExtremeValue
 pub impl Density for GeneralizedExtremeValue
 pub impl Quantile for GeneralizedExtremeValue
 pub impl Sample for GeneralizedExtremeValue
+pub impl Support for GeneralizedExtremeValue
 pub impl Univariate for GeneralizedExtremeValue
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedGamma {
-  // private fields
+  a : Double
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedGamma::cdf(Self, Double) -> Double
 pub fn GeneralizedGamma::family() -> Family[Self]
-pub fn GeneralizedGamma::new(Double, Double) -> Self raise ParamError
+pub fn GeneralizedGamma::isf(Self, Double) -> Double
+pub fn GeneralizedGamma::logcdf(Self, Double) -> Double
+pub fn GeneralizedGamma::logpdf(Self, Double) -> Double
+pub fn GeneralizedGamma::logsf(Self, Double) -> Double
+pub fn GeneralizedGamma::new(a~ : Double, c~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedGamma::pdf(Self, Double) -> Double
+pub fn GeneralizedGamma::quantile(Self, Double) -> Double
+pub fn GeneralizedGamma::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedGamma::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedGamma::sf(Self, Double) -> Double
+pub fn GeneralizedGamma::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedGamma::support_lower(Self) -> Double
+pub fn GeneralizedGamma::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedGamma
 pub impl Density for GeneralizedGamma
 pub impl Quantile for GeneralizedGamma
 pub impl Sample for GeneralizedGamma
+pub impl Support for GeneralizedGamma
 pub impl Univariate for GeneralizedGamma
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedHalfLogistic {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedHalfLogistic::cdf(Self, Double) -> Double
 pub fn GeneralizedHalfLogistic::family() -> Family[Self]
-pub fn GeneralizedHalfLogistic::new(Double) -> Self raise ParamError
+pub fn GeneralizedHalfLogistic::isf(Self, Double) -> Double
+pub fn GeneralizedHalfLogistic::logcdf(Self, Double) -> Double
+pub fn GeneralizedHalfLogistic::logpdf(Self, Double) -> Double
+pub fn GeneralizedHalfLogistic::logsf(Self, Double) -> Double
+pub fn GeneralizedHalfLogistic::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedHalfLogistic::pdf(Self, Double) -> Double
+pub fn GeneralizedHalfLogistic::quantile(Self, Double) -> Double
+pub fn GeneralizedHalfLogistic::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedHalfLogistic::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedHalfLogistic::sf(Self, Double) -> Double
+pub fn GeneralizedHalfLogistic::sf_at_least(Self, Double) -> Double
 pub impl Cdf for GeneralizedHalfLogistic
 pub impl Density for GeneralizedHalfLogistic
 pub impl Quantile for GeneralizedHalfLogistic
 pub impl Sample for GeneralizedHalfLogistic
 pub impl Univariate for GeneralizedHalfLogistic
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedHyperbolic {
-  // private fields
+  p : Double
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedHyperbolic::cdf(Self, Double) -> Double
 pub fn GeneralizedHyperbolic::family() -> Family[Self]
-pub fn GeneralizedHyperbolic::new(Double, Double, Double) -> Self raise ParamError
+pub fn GeneralizedHyperbolic::isf(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::logcdf(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::logpdf(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::logsf(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::new(p~ : Double, a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedHyperbolic::pdf(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::quantile(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedHyperbolic::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedHyperbolic::sf(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedHyperbolic::support_lower(Self) -> Double
+pub fn GeneralizedHyperbolic::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedHyperbolic
 pub impl Density for GeneralizedHyperbolic
 pub impl Quantile for GeneralizedHyperbolic
 pub impl Sample for GeneralizedHyperbolic
+pub impl Support for GeneralizedHyperbolic
 pub impl Univariate for GeneralizedHyperbolic
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedInverseGaussian {
-  // private fields
+  p : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedInverseGaussian::cdf(Self, Double) -> Double
 pub fn GeneralizedInverseGaussian::family() -> Family[Self]
-pub fn GeneralizedInverseGaussian::new(Double, Double) -> Self raise ParamError
+pub fn GeneralizedInverseGaussian::isf(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::logcdf(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::logpdf(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::logsf(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::new(p~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedInverseGaussian::pdf(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::quantile(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedInverseGaussian::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedInverseGaussian::sf(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedInverseGaussian::support_lower(Self) -> Double
+pub fn GeneralizedInverseGaussian::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedInverseGaussian
 pub impl Density for GeneralizedInverseGaussian
 pub impl Quantile for GeneralizedInverseGaussian
 pub impl Sample for GeneralizedInverseGaussian
+pub impl Support for GeneralizedInverseGaussian
 pub impl Univariate for GeneralizedInverseGaussian
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedLogistic {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedLogistic::cdf(Self, Double) -> Double
 pub fn GeneralizedLogistic::family() -> Family[Self]
-pub fn GeneralizedLogistic::new(Double) -> Self raise ParamError
+pub fn GeneralizedLogistic::isf(Self, Double) -> Double
+pub fn GeneralizedLogistic::logcdf(Self, Double) -> Double
+pub fn GeneralizedLogistic::logpdf(Self, Double) -> Double
+pub fn GeneralizedLogistic::logsf(Self, Double) -> Double
+pub fn GeneralizedLogistic::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedLogistic::pdf(Self, Double) -> Double
+pub fn GeneralizedLogistic::quantile(Self, Double) -> Double
+pub fn GeneralizedLogistic::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedLogistic::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedLogistic::sf(Self, Double) -> Double
+pub fn GeneralizedLogistic::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedLogistic::support_lower(Self) -> Double
+pub fn GeneralizedLogistic::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedLogistic
 pub impl Density for GeneralizedLogistic
 pub impl Quantile for GeneralizedLogistic
 pub impl Sample for GeneralizedLogistic
+pub impl Support for GeneralizedLogistic
 pub impl Univariate for GeneralizedLogistic
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedNormal {
-  // private fields
+  beta : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedNormal::cdf(Self, Double) -> Double
 pub fn GeneralizedNormal::family() -> Family[Self]
-pub fn GeneralizedNormal::new(Double) -> Self raise ParamError
+pub fn GeneralizedNormal::isf(Self, Double) -> Double
+pub fn GeneralizedNormal::logcdf(Self, Double) -> Double
+pub fn GeneralizedNormal::logpdf(Self, Double) -> Double
+pub fn GeneralizedNormal::logsf(Self, Double) -> Double
+pub fn GeneralizedNormal::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedNormal::pdf(Self, Double) -> Double
+pub fn GeneralizedNormal::quantile(Self, Double) -> Double
+pub fn GeneralizedNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedNormal::sf(Self, Double) -> Double
+pub fn GeneralizedNormal::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedNormal::support_lower(Self) -> Double
+pub fn GeneralizedNormal::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedNormal
 pub impl Density for GeneralizedNormal
 pub impl Quantile for GeneralizedNormal
 pub impl Sample for GeneralizedNormal
+pub impl Support for GeneralizedNormal
 pub impl Univariate for GeneralizedNormal
 
+#derive(Eq, @debug.Debug)
 pub struct GeneralizedPareto {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn GeneralizedPareto::cdf(Self, Double) -> Double
 pub fn GeneralizedPareto::family() -> Family[Self]
-pub fn GeneralizedPareto::new(Double) -> Self raise ParamError
+pub fn GeneralizedPareto::isf(Self, Double) -> Double
+pub fn GeneralizedPareto::logcdf(Self, Double) -> Double
+pub fn GeneralizedPareto::logpdf(Self, Double) -> Double
+pub fn GeneralizedPareto::logsf(Self, Double) -> Double
+pub fn GeneralizedPareto::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GeneralizedPareto::pdf(Self, Double) -> Double
+pub fn GeneralizedPareto::quantile(Self, Double) -> Double
+pub fn GeneralizedPareto::sample(Self, &@num.RandomSource) -> Double
+pub fn GeneralizedPareto::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GeneralizedPareto::sf(Self, Double) -> Double
+pub fn GeneralizedPareto::sf_at_least(Self, Double) -> Double
+pub fn GeneralizedPareto::support_lower(Self) -> Double
+pub fn GeneralizedPareto::support_upper(Self) -> Double
 pub impl Cdf for GeneralizedPareto
 pub impl Density for GeneralizedPareto
 pub impl Quantile for GeneralizedPareto
 pub impl Sample for GeneralizedPareto
+pub impl Support for GeneralizedPareto
 pub impl Univariate for GeneralizedPareto
 
+#derive(Eq, @debug.Debug)
 pub struct Geometric {
-  // private fields
+  p : Double
 }
+pub fn Geometric::cdf(Self, Double) -> Double
+pub fn Geometric::cdf_int(Self, Int64) -> Double
 pub fn Geometric::family() -> Family[Self]
+pub fn Geometric::isf(Self, Double) -> Double
+pub fn Geometric::logcdf(Self, Double) -> Double
+pub fn Geometric::logpmf(Self, Int64) -> Double
+pub fn Geometric::logsf(Self, Double) -> Double
 pub fn Geometric::new(Double) -> Self raise ParamError
+pub fn Geometric::pmf(Self, Int64) -> Double
+pub fn Geometric::quantile(Self, Double) -> Double
+pub fn Geometric::quantile_int(Self, Double) -> Int64
+pub fn Geometric::sample(Self, &@num.RandomSource) -> Double
+pub fn Geometric::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Geometric::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Geometric::sf(Self, Double) -> Double
+pub fn Geometric::sf_at_least(Self, Double) -> Double
+pub fn Geometric::sf_int(Self, Int64) -> Double
+pub fn Geometric::support_lower(Self) -> Double
+pub fn Geometric::support_upper(Self) -> Double
 pub impl Cdf for Geometric
 pub impl IntCdf for Geometric
 pub impl IntQuantile for Geometric
@@ -665,323 +1655,839 @@ pub impl Mass for Geometric
 pub impl Quantile for Geometric
 pub impl Sample for Geometric
 pub impl SampleInt for Geometric
+pub impl Support for Geometric
 pub impl Univariate for Geometric
 
+#derive(Eq, @debug.Debug)
 pub struct Gibrat {
+  loc : Double
+  scale : Double
 }
+pub fn Gibrat::cdf(Self, Double) -> Double
 pub fn Gibrat::family() -> Family[Self]
-pub fn Gibrat::new() -> Self
+pub fn Gibrat::isf(Self, Double) -> Double
+pub fn Gibrat::logcdf(Self, Double) -> Double
+pub fn Gibrat::logpdf(Self, Double) -> Double
+pub fn Gibrat::logsf(Self, Double) -> Double
+pub fn Gibrat::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Gibrat::pdf(Self, Double) -> Double
+pub fn Gibrat::quantile(Self, Double) -> Double
+pub fn Gibrat::sample(Self, &@num.RandomSource) -> Double
+pub fn Gibrat::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Gibrat::sf(Self, Double) -> Double
+pub fn Gibrat::sf_at_least(Self, Double) -> Double
+pub fn Gibrat::support_lower(Self) -> Double
+pub fn Gibrat::support_upper(Self) -> Double
 pub impl Cdf for Gibrat
 pub impl Density for Gibrat
 pub impl Quantile for Gibrat
 pub impl Sample for Gibrat
+pub impl Support for Gibrat
 pub impl Univariate for Gibrat
 
+#derive(Eq, @debug.Debug)
 pub struct Gompertz {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn Gompertz::cdf(Self, Double) -> Double
 pub fn Gompertz::family() -> Family[Self]
-pub fn Gompertz::new(Double) -> Self raise ParamError
+pub fn Gompertz::isf(Self, Double) -> Double
+pub fn Gompertz::logcdf(Self, Double) -> Double
+pub fn Gompertz::logpdf(Self, Double) -> Double
+pub fn Gompertz::logsf(Self, Double) -> Double
+pub fn Gompertz::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Gompertz::pdf(Self, Double) -> Double
+pub fn Gompertz::quantile(Self, Double) -> Double
+pub fn Gompertz::sample(Self, &@num.RandomSource) -> Double
+pub fn Gompertz::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Gompertz::sf(Self, Double) -> Double
+pub fn Gompertz::sf_at_least(Self, Double) -> Double
+pub fn Gompertz::support_lower(Self) -> Double
+pub fn Gompertz::support_upper(Self) -> Double
 pub impl Cdf for Gompertz
 pub impl Density for Gompertz
 pub impl Quantile for Gompertz
 pub impl Sample for Gompertz
+pub impl Support for Gompertz
 pub impl Univariate for Gompertz
 
+#derive(Eq, @debug.Debug)
 pub struct GumbelLeft {
+  loc : Double
+  scale : Double
 }
+pub fn GumbelLeft::cdf(Self, Double) -> Double
 pub fn GumbelLeft::family() -> Family[Self]
-pub fn GumbelLeft::new() -> Self
+pub fn GumbelLeft::isf(Self, Double) -> Double
+pub fn GumbelLeft::logcdf(Self, Double) -> Double
+pub fn GumbelLeft::logpdf(Self, Double) -> Double
+pub fn GumbelLeft::logsf(Self, Double) -> Double
+pub fn GumbelLeft::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GumbelLeft::pdf(Self, Double) -> Double
+pub fn GumbelLeft::quantile(Self, Double) -> Double
+pub fn GumbelLeft::sample(Self, &@num.RandomSource) -> Double
+pub fn GumbelLeft::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GumbelLeft::sf(Self, Double) -> Double
+pub fn GumbelLeft::sf_at_least(Self, Double) -> Double
+pub fn GumbelLeft::support_lower(Self) -> Double
+pub fn GumbelLeft::support_upper(Self) -> Double
 pub impl Cdf for GumbelLeft
 pub impl Density for GumbelLeft
 pub impl Quantile for GumbelLeft
 pub impl Sample for GumbelLeft
+pub impl Support for GumbelLeft
 pub impl Univariate for GumbelLeft
 
+#derive(Eq, @debug.Debug)
 pub struct GumbelRight {
+  loc : Double
+  scale : Double
 }
+pub fn GumbelRight::cdf(Self, Double) -> Double
 pub fn GumbelRight::family() -> Family[Self]
-pub fn GumbelRight::new() -> Self
+pub fn GumbelRight::isf(Self, Double) -> Double
+pub fn GumbelRight::logcdf(Self, Double) -> Double
+pub fn GumbelRight::logpdf(Self, Double) -> Double
+pub fn GumbelRight::logsf(Self, Double) -> Double
+pub fn GumbelRight::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn GumbelRight::pdf(Self, Double) -> Double
+pub fn GumbelRight::quantile(Self, Double) -> Double
+pub fn GumbelRight::sample(Self, &@num.RandomSource) -> Double
+pub fn GumbelRight::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn GumbelRight::sf(Self, Double) -> Double
+pub fn GumbelRight::sf_at_least(Self, Double) -> Double
+pub fn GumbelRight::support_lower(Self) -> Double
+pub fn GumbelRight::support_upper(Self) -> Double
 pub impl Cdf for GumbelRight
 pub impl Density for GumbelRight
 pub impl Quantile for GumbelRight
 pub impl Sample for GumbelRight
+pub impl Support for GumbelRight
 pub impl Univariate for GumbelRight
 
+#derive(Eq, @debug.Debug)
 pub struct HalfCauchy {
+  loc : Double
+  scale : Double
 }
+pub fn HalfCauchy::cdf(Self, Double) -> Double
 pub fn HalfCauchy::family() -> Family[Self]
-pub fn HalfCauchy::new() -> Self
+pub fn HalfCauchy::isf(Self, Double) -> Double
+pub fn HalfCauchy::logcdf(Self, Double) -> Double
+pub fn HalfCauchy::logpdf(Self, Double) -> Double
+pub fn HalfCauchy::logsf(Self, Double) -> Double
+pub fn HalfCauchy::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn HalfCauchy::pdf(Self, Double) -> Double
+pub fn HalfCauchy::quantile(Self, Double) -> Double
+pub fn HalfCauchy::sample(Self, &@num.RandomSource) -> Double
+pub fn HalfCauchy::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn HalfCauchy::sf(Self, Double) -> Double
+pub fn HalfCauchy::sf_at_least(Self, Double) -> Double
+pub fn HalfCauchy::support_lower(Self) -> Double
+pub fn HalfCauchy::support_upper(Self) -> Double
 pub impl Cdf for HalfCauchy
 pub impl Density for HalfCauchy
 pub impl Quantile for HalfCauchy
 pub impl Sample for HalfCauchy
+pub impl Support for HalfCauchy
 pub impl Univariate for HalfCauchy
 
+#derive(Eq, @debug.Debug)
 pub struct HalfGeneralizedNormal {
-  // private fields
+  beta : Double
+  loc : Double
+  scale : Double
 }
+pub fn HalfGeneralizedNormal::cdf(Self, Double) -> Double
 pub fn HalfGeneralizedNormal::family() -> Family[Self]
-pub fn HalfGeneralizedNormal::new(Double) -> Self raise ParamError
+pub fn HalfGeneralizedNormal::isf(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::logcdf(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::logpdf(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::logsf(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn HalfGeneralizedNormal::pdf(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::quantile(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn HalfGeneralizedNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn HalfGeneralizedNormal::sf(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::sf_at_least(Self, Double) -> Double
+pub fn HalfGeneralizedNormal::support_lower(Self) -> Double
+pub fn HalfGeneralizedNormal::support_upper(Self) -> Double
 pub impl Cdf for HalfGeneralizedNormal
 pub impl Density for HalfGeneralizedNormal
 pub impl Quantile for HalfGeneralizedNormal
 pub impl Sample for HalfGeneralizedNormal
+pub impl Support for HalfGeneralizedNormal
 pub impl Univariate for HalfGeneralizedNormal
 
+#derive(Eq, @debug.Debug)
 pub struct HalfLogistic {
+  loc : Double
+  scale : Double
 }
+pub fn HalfLogistic::cdf(Self, Double) -> Double
 pub fn HalfLogistic::family() -> Family[Self]
-pub fn HalfLogistic::new() -> Self
+pub fn HalfLogistic::isf(Self, Double) -> Double
+pub fn HalfLogistic::logcdf(Self, Double) -> Double
+pub fn HalfLogistic::logpdf(Self, Double) -> Double
+pub fn HalfLogistic::logsf(Self, Double) -> Double
+pub fn HalfLogistic::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn HalfLogistic::pdf(Self, Double) -> Double
+pub fn HalfLogistic::quantile(Self, Double) -> Double
+pub fn HalfLogistic::sample(Self, &@num.RandomSource) -> Double
+pub fn HalfLogistic::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn HalfLogistic::sf(Self, Double) -> Double
+pub fn HalfLogistic::sf_at_least(Self, Double) -> Double
+pub fn HalfLogistic::support_lower(Self) -> Double
+pub fn HalfLogistic::support_upper(Self) -> Double
 pub impl Cdf for HalfLogistic
 pub impl Density for HalfLogistic
 pub impl Quantile for HalfLogistic
 pub impl Sample for HalfLogistic
+pub impl Support for HalfLogistic
 pub impl Univariate for HalfLogistic
 
+#derive(Eq, @debug.Debug)
 pub struct HalfNormal {
+  loc : Double
+  scale : Double
 }
+pub fn HalfNormal::cdf(Self, Double) -> Double
 pub fn HalfNormal::family() -> Family[Self]
-pub fn HalfNormal::new() -> Self
+pub fn HalfNormal::isf(Self, Double) -> Double
+pub fn HalfNormal::logcdf(Self, Double) -> Double
+pub fn HalfNormal::logpdf(Self, Double) -> Double
+pub fn HalfNormal::logsf(Self, Double) -> Double
+pub fn HalfNormal::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn HalfNormal::pdf(Self, Double) -> Double
+pub fn HalfNormal::quantile(Self, Double) -> Double
+pub fn HalfNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn HalfNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn HalfNormal::sf(Self, Double) -> Double
+pub fn HalfNormal::sf_at_least(Self, Double) -> Double
+pub fn HalfNormal::support_lower(Self) -> Double
+pub fn HalfNormal::support_upper(Self) -> Double
 pub impl Cdf for HalfNormal
 pub impl Density for HalfNormal
 pub impl Quantile for HalfNormal
 pub impl Sample for HalfNormal
+pub impl Support for HalfNormal
 pub impl Univariate for HalfNormal
 
+#derive(Eq, @debug.Debug)
 pub struct HyperbolicSecant {
+  loc : Double
+  scale : Double
 }
+pub fn HyperbolicSecant::cdf(Self, Double) -> Double
 pub fn HyperbolicSecant::family() -> Family[Self]
-pub fn HyperbolicSecant::new() -> Self
+pub fn HyperbolicSecant::isf(Self, Double) -> Double
+pub fn HyperbolicSecant::logcdf(Self, Double) -> Double
+pub fn HyperbolicSecant::logpdf(Self, Double) -> Double
+pub fn HyperbolicSecant::logsf(Self, Double) -> Double
+pub fn HyperbolicSecant::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn HyperbolicSecant::pdf(Self, Double) -> Double
+pub fn HyperbolicSecant::quantile(Self, Double) -> Double
+pub fn HyperbolicSecant::sample(Self, &@num.RandomSource) -> Double
+pub fn HyperbolicSecant::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn HyperbolicSecant::sf(Self, Double) -> Double
+pub fn HyperbolicSecant::sf_at_least(Self, Double) -> Double
+pub fn HyperbolicSecant::support_lower(Self) -> Double
+pub fn HyperbolicSecant::support_upper(Self) -> Double
 pub impl Cdf for HyperbolicSecant
 pub impl Density for HyperbolicSecant
 pub impl Quantile for HyperbolicSecant
 pub impl Sample for HyperbolicSecant
+pub impl Support for HyperbolicSecant
 pub impl Univariate for HyperbolicSecant
 
+#derive(Eq, @debug.Debug)
 pub struct Hypergeometric {
-  // private fields
+  population : Int64
+  successes : Int64
+  draws : Int64
 }
-pub fn Hypergeometric::family(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Family[Self]
-pub fn Hypergeometric::new(Int32, Int32, Int32) -> Self raise ParamError
+pub fn Hypergeometric::cdf(Self, Double) -> Double
+pub fn Hypergeometric::cdf_int(Self, Int64) -> Double
+pub fn Hypergeometric::family(population~ : Int64, successes~ : Int64, draws~ : Int64) -> Family[Self]
+pub fn Hypergeometric::isf(Self, Double) -> Double
+pub fn Hypergeometric::logcdf(Self, Double) -> Double
+pub fn Hypergeometric::logpmf(Self, Int64) -> Double
+pub fn Hypergeometric::logsf(Self, Double) -> Double
+pub fn Hypergeometric::mean(Self) -> Double?
+pub fn Hypergeometric::mode(Self) -> Double
+pub fn Hypergeometric::new(population~ : Int64, successes~ : Int64, draws~ : Int64) -> Self raise ParamError
+pub fn Hypergeometric::pmf(Self, Int64) -> Double
+pub fn Hypergeometric::quantile(Self, Double) -> Double
+pub fn Hypergeometric::quantile_int(Self, Double) -> Int64
+pub fn Hypergeometric::sample(Self, &@num.RandomSource) -> Double
+pub fn Hypergeometric::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Hypergeometric::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Hypergeometric::sf(Self, Double) -> Double
+pub fn Hypergeometric::sf_at_least(Self, Double) -> Double
+pub fn Hypergeometric::sf_int(Self, Int64) -> Double
+pub fn Hypergeometric::support_lower(Self) -> Double
+pub fn Hypergeometric::support_upper(Self) -> Double
+pub fn Hypergeometric::variance(Self) -> Double?
 pub impl Cdf for Hypergeometric
 pub impl IntCdf for Hypergeometric
 pub impl IntQuantile for Hypergeometric
 pub impl Mass for Hypergeometric
+pub impl Mode for Hypergeometric
+pub impl Moments for Hypergeometric
 pub impl Quantile for Hypergeometric
 pub impl Sample for Hypergeometric
 pub impl SampleInt for Hypergeometric
+pub impl Support for Hypergeometric
 pub impl Univariate for Hypergeometric
 
+#derive(Eq, @debug.Debug)
 pub struct InverseGamma {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn InverseGamma::cdf(Self, Double) -> Double
 pub fn InverseGamma::family() -> Family[Self]
-pub fn InverseGamma::new(Double) -> Self raise ParamError
+pub fn InverseGamma::isf(Self, Double) -> Double
+pub fn InverseGamma::logcdf(Self, Double) -> Double
+pub fn InverseGamma::logpdf(Self, Double) -> Double
+pub fn InverseGamma::logsf(Self, Double) -> Double
+pub fn InverseGamma::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn InverseGamma::pdf(Self, Double) -> Double
+pub fn InverseGamma::quantile(Self, Double) -> Double
+pub fn InverseGamma::sample(Self, &@num.RandomSource) -> Double
+pub fn InverseGamma::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn InverseGamma::sf(Self, Double) -> Double
+pub fn InverseGamma::sf_at_least(Self, Double) -> Double
+pub fn InverseGamma::support_lower(Self) -> Double
+pub fn InverseGamma::support_upper(Self) -> Double
 pub impl Cdf for InverseGamma
 pub impl Density for InverseGamma
 pub impl Quantile for InverseGamma
 pub impl Sample for InverseGamma
+pub impl Support for InverseGamma
 pub impl Univariate for InverseGamma
 
+#derive(Eq, @debug.Debug)
 pub struct InverseGaussian {
-  // private fields
+  mu : Double
+  loc : Double
+  scale : Double
 }
+pub fn InverseGaussian::cdf(Self, Double) -> Double
 pub fn InverseGaussian::family() -> Family[Self]
-pub fn InverseGaussian::new(Double) -> Self raise ParamError
+pub fn InverseGaussian::isf(Self, Double) -> Double
+pub fn InverseGaussian::logcdf(Self, Double) -> Double
+pub fn InverseGaussian::logpdf(Self, Double) -> Double
+pub fn InverseGaussian::logsf(Self, Double) -> Double
+pub fn InverseGaussian::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn InverseGaussian::pdf(Self, Double) -> Double
+pub fn InverseGaussian::quantile(Self, Double) -> Double
+pub fn InverseGaussian::sample(Self, &@num.RandomSource) -> Double
+pub fn InverseGaussian::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn InverseGaussian::sf(Self, Double) -> Double
+pub fn InverseGaussian::sf_at_least(Self, Double) -> Double
+pub fn InverseGaussian::support_lower(Self) -> Double
+pub fn InverseGaussian::support_upper(Self) -> Double
 pub impl Cdf for InverseGaussian
 pub impl Density for InverseGaussian
 pub impl Quantile for InverseGaussian
 pub impl Sample for InverseGaussian
+pub impl Support for InverseGaussian
 pub impl Univariate for InverseGaussian
 
+#derive(Eq, @debug.Debug)
 pub struct InverseWeibull {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn InverseWeibull::cdf(Self, Double) -> Double
 pub fn InverseWeibull::family() -> Family[Self]
-pub fn InverseWeibull::new(Double) -> Self raise ParamError
+pub fn InverseWeibull::isf(Self, Double) -> Double
+pub fn InverseWeibull::logcdf(Self, Double) -> Double
+pub fn InverseWeibull::logpdf(Self, Double) -> Double
+pub fn InverseWeibull::logsf(Self, Double) -> Double
+pub fn InverseWeibull::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn InverseWeibull::pdf(Self, Double) -> Double
+pub fn InverseWeibull::quantile(Self, Double) -> Double
+pub fn InverseWeibull::sample(Self, &@num.RandomSource) -> Double
+pub fn InverseWeibull::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn InverseWeibull::sf(Self, Double) -> Double
+pub fn InverseWeibull::sf_at_least(Self, Double) -> Double
+pub fn InverseWeibull::support_lower(Self) -> Double
+pub fn InverseWeibull::support_upper(Self) -> Double
 pub impl Cdf for InverseWeibull
 pub impl Density for InverseWeibull
 pub impl Quantile for InverseWeibull
 pub impl Sample for InverseWeibull
+pub impl Support for InverseWeibull
 pub impl Univariate for InverseWeibull
 
+#derive(Eq, @debug.Debug)
 pub struct IrwinHall {
-  // private fields
+  n : Int64
+  loc : Double
+  scale : Double
 }
-pub fn IrwinHall::family(n~ : Int32) -> Family[Self]
-pub fn IrwinHall::new(Int32) -> Self raise ParamError
+pub fn IrwinHall::cdf(Self, Double) -> Double
+pub fn IrwinHall::family(n~ : Int64) -> Family[Self]
+pub fn IrwinHall::isf(Self, Double) -> Double
+pub fn IrwinHall::logcdf(Self, Double) -> Double
+pub fn IrwinHall::logpdf(Self, Double) -> Double
+pub fn IrwinHall::logsf(Self, Double) -> Double
+pub fn IrwinHall::new(Int64, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn IrwinHall::pdf(Self, Double) -> Double
+pub fn IrwinHall::quantile(Self, Double) -> Double
+pub fn IrwinHall::sample(Self, &@num.RandomSource) -> Double
+pub fn IrwinHall::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn IrwinHall::sf(Self, Double) -> Double
+pub fn IrwinHall::sf_at_least(Self, Double) -> Double
 pub impl Cdf for IrwinHall
 pub impl Density for IrwinHall
 pub impl Quantile for IrwinHall
 pub impl Sample for IrwinHall
 pub impl Univariate for IrwinHall
 
+#derive(Eq, @debug.Debug)
 pub struct JohnsonSB {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn JohnsonSB::cdf(Self, Double) -> Double
 pub fn JohnsonSB::family() -> Family[Self]
-pub fn JohnsonSB::new(Double, Double) -> Self raise ParamError
+pub fn JohnsonSB::isf(Self, Double) -> Double
+pub fn JohnsonSB::logcdf(Self, Double) -> Double
+pub fn JohnsonSB::logpdf(Self, Double) -> Double
+pub fn JohnsonSB::logsf(Self, Double) -> Double
+pub fn JohnsonSB::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn JohnsonSB::pdf(Self, Double) -> Double
+pub fn JohnsonSB::quantile(Self, Double) -> Double
+pub fn JohnsonSB::sample(Self, &@num.RandomSource) -> Double
+pub fn JohnsonSB::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn JohnsonSB::sf(Self, Double) -> Double
+pub fn JohnsonSB::sf_at_least(Self, Double) -> Double
+pub fn JohnsonSB::support_lower(Self) -> Double
+pub fn JohnsonSB::support_upper(Self) -> Double
 pub impl Cdf for JohnsonSB
 pub impl Density for JohnsonSB
 pub impl Quantile for JohnsonSB
 pub impl Sample for JohnsonSB
+pub impl Support for JohnsonSB
 pub impl Univariate for JohnsonSB
 
+#derive(Eq, @debug.Debug)
 pub struct JohnsonSU {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn JohnsonSU::cdf(Self, Double) -> Double
 pub fn JohnsonSU::family() -> Family[Self]
-pub fn JohnsonSU::new(Double, Double) -> Self raise ParamError
+pub fn JohnsonSU::isf(Self, Double) -> Double
+pub fn JohnsonSU::logcdf(Self, Double) -> Double
+pub fn JohnsonSU::logpdf(Self, Double) -> Double
+pub fn JohnsonSU::logsf(Self, Double) -> Double
+pub fn JohnsonSU::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn JohnsonSU::pdf(Self, Double) -> Double
+pub fn JohnsonSU::quantile(Self, Double) -> Double
+pub fn JohnsonSU::sample(Self, &@num.RandomSource) -> Double
+pub fn JohnsonSU::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn JohnsonSU::sf(Self, Double) -> Double
+pub fn JohnsonSU::sf_at_least(Self, Double) -> Double
+pub fn JohnsonSU::support_lower(Self) -> Double
+pub fn JohnsonSU::support_upper(Self) -> Double
 pub impl Cdf for JohnsonSU
 pub impl Density for JohnsonSU
 pub impl Quantile for JohnsonSU
 pub impl Sample for JohnsonSU
+pub impl Support for JohnsonSU
 pub impl Univariate for JohnsonSU
 
+#derive(Eq, @debug.Debug)
 pub struct JonesFaddySkewT {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn JonesFaddySkewT::cdf(Self, Double) -> Double
 pub fn JonesFaddySkewT::family() -> Family[Self]
-pub fn JonesFaddySkewT::new(Double, Double) -> Self raise ParamError
+pub fn JonesFaddySkewT::isf(Self, Double) -> Double
+pub fn JonesFaddySkewT::logcdf(Self, Double) -> Double
+pub fn JonesFaddySkewT::logpdf(Self, Double) -> Double
+pub fn JonesFaddySkewT::logsf(Self, Double) -> Double
+pub fn JonesFaddySkewT::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn JonesFaddySkewT::pdf(Self, Double) -> Double
+pub fn JonesFaddySkewT::quantile(Self, Double) -> Double
+pub fn JonesFaddySkewT::sample(Self, &@num.RandomSource) -> Double
+pub fn JonesFaddySkewT::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn JonesFaddySkewT::sf(Self, Double) -> Double
+pub fn JonesFaddySkewT::sf_at_least(Self, Double) -> Double
+pub fn JonesFaddySkewT::support_lower(Self) -> Double
+pub fn JonesFaddySkewT::support_upper(Self) -> Double
 pub impl Cdf for JonesFaddySkewT
 pub impl Density for JonesFaddySkewT
 pub impl Quantile for JonesFaddySkewT
 pub impl Sample for JonesFaddySkewT
+pub impl Support for JonesFaddySkewT
 pub impl Univariate for JonesFaddySkewT
 
+#derive(Eq, @debug.Debug)
 pub struct Kappa3 {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn Kappa3::cdf(Self, Double) -> Double
 pub fn Kappa3::family() -> Family[Self]
-pub fn Kappa3::new(Double) -> Self raise ParamError
+pub fn Kappa3::isf(Self, Double) -> Double
+pub fn Kappa3::logcdf(Self, Double) -> Double
+pub fn Kappa3::logpdf(Self, Double) -> Double
+pub fn Kappa3::logsf(Self, Double) -> Double
+pub fn Kappa3::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Kappa3::pdf(Self, Double) -> Double
+pub fn Kappa3::quantile(Self, Double) -> Double
+pub fn Kappa3::sample(Self, &@num.RandomSource) -> Double
+pub fn Kappa3::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Kappa3::sf(Self, Double) -> Double
+pub fn Kappa3::sf_at_least(Self, Double) -> Double
+pub fn Kappa3::support_lower(Self) -> Double
+pub fn Kappa3::support_upper(Self) -> Double
 pub impl Cdf for Kappa3
 pub impl Density for Kappa3
 pub impl Quantile for Kappa3
 pub impl Sample for Kappa3
+pub impl Support for Kappa3
 pub impl Univariate for Kappa3
 
+#derive(Eq, @debug.Debug)
 pub struct Kappa4 {
-  // private fields
+  h : Double
+  k : Double
+  loc : Double
+  scale : Double
 }
+pub fn Kappa4::cdf(Self, Double) -> Double
 pub fn Kappa4::family() -> Family[Self]
-pub fn Kappa4::new(Double, Double) -> Self raise ParamError
+pub fn Kappa4::isf(Self, Double) -> Double
+pub fn Kappa4::logcdf(Self, Double) -> Double
+pub fn Kappa4::logpdf(Self, Double) -> Double
+pub fn Kappa4::logsf(Self, Double) -> Double
+pub fn Kappa4::new(h~ : Double, k~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Kappa4::pdf(Self, Double) -> Double
+pub fn Kappa4::quantile(Self, Double) -> Double
+pub fn Kappa4::sample(Self, &@num.RandomSource) -> Double
+pub fn Kappa4::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Kappa4::sf(Self, Double) -> Double
+pub fn Kappa4::sf_at_least(Self, Double) -> Double
 pub impl Cdf for Kappa4
 pub impl Density for Kappa4
 pub impl Quantile for Kappa4
 pub impl Sample for Kappa4
 pub impl Univariate for Kappa4
 
+#derive(Eq, @debug.Debug)
 pub struct Kolmogorov {
+  loc : Double
+  scale : Double
 }
+pub fn Kolmogorov::cdf(Self, Double) -> Double
 pub fn Kolmogorov::family() -> Family[Self]
-pub fn Kolmogorov::new() -> Self
+pub fn Kolmogorov::isf(Self, Double) -> Double
+pub fn Kolmogorov::logcdf(Self, Double) -> Double
+pub fn Kolmogorov::logpdf(Self, Double) -> Double
+pub fn Kolmogorov::logsf(Self, Double) -> Double
+pub fn Kolmogorov::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Kolmogorov::pdf(Self, Double) -> Double
+pub fn Kolmogorov::quantile(Self, Double) -> Double
+pub fn Kolmogorov::sample(Self, &@num.RandomSource) -> Double
+pub fn Kolmogorov::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Kolmogorov::sf(Self, Double) -> Double
+pub fn Kolmogorov::sf_at_least(Self, Double) -> Double
+pub fn Kolmogorov::support_lower(Self) -> Double
+pub fn Kolmogorov::support_upper(Self) -> Double
 pub impl Cdf for Kolmogorov
 pub impl Density for Kolmogorov
 pub impl Quantile for Kolmogorov
 pub impl Sample for Kolmogorov
+pub impl Support for Kolmogorov
 pub impl Univariate for Kolmogorov
 
+#derive(Eq, @debug.Debug)
 pub struct KolmogorovSmirnovOne {
-  // private fields
+  n : Int64
+  loc : Double
+  scale : Double
 }
-pub fn KolmogorovSmirnovOne::family(n~ : Int32) -> Family[Self]
-pub fn KolmogorovSmirnovOne::new(Int32) -> Self raise ParamError
+pub fn KolmogorovSmirnovOne::cdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::family(n~ : Int64) -> Family[Self]
+pub fn KolmogorovSmirnovOne::isf(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::logcdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::logpdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::logsf(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::new(Int64, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn KolmogorovSmirnovOne::pdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::quantile(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::sample(Self, &@num.RandomSource) -> Double
+pub fn KolmogorovSmirnovOne::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn KolmogorovSmirnovOne::sf(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::sf_at_least(Self, Double) -> Double
+pub fn KolmogorovSmirnovOne::support_lower(Self) -> Double
+pub fn KolmogorovSmirnovOne::support_upper(Self) -> Double
 pub impl Cdf for KolmogorovSmirnovOne
 pub impl Density for KolmogorovSmirnovOne
 pub impl Quantile for KolmogorovSmirnovOne
 pub impl Sample for KolmogorovSmirnovOne
+pub impl Support for KolmogorovSmirnovOne
 pub impl Univariate for KolmogorovSmirnovOne
 
+#derive(Eq, @debug.Debug)
 pub struct KolmogorovSmirnovTwo {
-  // private fields
+  n : Int64
+  loc : Double
+  scale : Double
 }
-pub fn KolmogorovSmirnovTwo::family(n~ : Int32) -> Family[Self]
-pub fn KolmogorovSmirnovTwo::new(Int32) -> Self raise ParamError
+pub fn KolmogorovSmirnovTwo::cdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::family(n~ : Int64) -> Family[Self]
+pub fn KolmogorovSmirnovTwo::isf(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::logcdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::logpdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::logsf(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::new(Int64, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn KolmogorovSmirnovTwo::pdf(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::quantile(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::sample(Self, &@num.RandomSource) -> Double
+pub fn KolmogorovSmirnovTwo::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn KolmogorovSmirnovTwo::sf(Self, Double) -> Double
+pub fn KolmogorovSmirnovTwo::sf_at_least(Self, Double) -> Double
 pub impl Cdf for KolmogorovSmirnovTwo
 pub impl Density for KolmogorovSmirnovTwo
 pub impl Quantile for KolmogorovSmirnovTwo
 pub impl Sample for KolmogorovSmirnovTwo
 pub impl Univariate for KolmogorovSmirnovTwo
 
+#derive(Eq, @debug.Debug)
 pub struct Landau {
+  loc : Double
+  scale : Double
 }
+pub fn Landau::cdf(Self, Double) -> Double
 pub fn Landau::family() -> Family[Self]
-pub fn Landau::new() -> Self
+pub fn Landau::isf(Self, Double) -> Double
+pub fn Landau::logcdf(Self, Double) -> Double
+pub fn Landau::logpdf(Self, Double) -> Double
+pub fn Landau::logsf(Self, Double) -> Double
+pub fn Landau::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Landau::pdf(Self, Double) -> Double
+pub fn Landau::quantile(Self, Double) -> Double
+pub fn Landau::sample(Self, &@num.RandomSource) -> Double
+pub fn Landau::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Landau::sf(Self, Double) -> Double
+pub fn Landau::sf_at_least(Self, Double) -> Double
+pub fn Landau::support_lower(Self) -> Double
+pub fn Landau::support_upper(Self) -> Double
 pub impl Cdf for Landau
 pub impl Density for Landau
 pub impl Quantile for Landau
 pub impl Sample for Landau
+pub impl Support for Landau
 pub impl Univariate for Landau
 
+#derive(Eq, @debug.Debug)
 pub struct Laplace {
+  loc : Double
+  scale : Double
 }
+pub fn Laplace::cdf(Self, Double) -> Double
 pub fn Laplace::family() -> Family[Self]
-pub fn Laplace::new() -> Self
+pub fn Laplace::isf(Self, Double) -> Double
+pub fn Laplace::logcdf(Self, Double) -> Double
+pub fn Laplace::logpdf(Self, Double) -> Double
+pub fn Laplace::logsf(Self, Double) -> Double
+pub fn Laplace::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Laplace::pdf(Self, Double) -> Double
+pub fn Laplace::quantile(Self, Double) -> Double
+pub fn Laplace::sample(Self, &@num.RandomSource) -> Double
+pub fn Laplace::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Laplace::sf(Self, Double) -> Double
+pub fn Laplace::sf_at_least(Self, Double) -> Double
+pub fn Laplace::support_lower(Self) -> Double
+pub fn Laplace::support_upper(Self) -> Double
 pub impl Cdf for Laplace
 pub impl Density for Laplace
 pub impl Quantile for Laplace
 pub impl Sample for Laplace
+pub impl Support for Laplace
 pub impl Univariate for Laplace
 
+#derive(Eq, @debug.Debug)
 pub struct Levy {
+  loc : Double
+  scale : Double
 }
+pub fn Levy::cdf(Self, Double) -> Double
 pub fn Levy::family() -> Family[Self]
-pub fn Levy::new() -> Self
+pub fn Levy::isf(Self, Double) -> Double
+pub fn Levy::logcdf(Self, Double) -> Double
+pub fn Levy::logpdf(Self, Double) -> Double
+pub fn Levy::logsf(Self, Double) -> Double
+pub fn Levy::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Levy::pdf(Self, Double) -> Double
+pub fn Levy::quantile(Self, Double) -> Double
+pub fn Levy::sample(Self, &@num.RandomSource) -> Double
+pub fn Levy::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Levy::sf(Self, Double) -> Double
+pub fn Levy::sf_at_least(Self, Double) -> Double
+pub fn Levy::support_lower(Self) -> Double
+pub fn Levy::support_upper(Self) -> Double
 pub impl Cdf for Levy
 pub impl Density for Levy
 pub impl Quantile for Levy
 pub impl Sample for Levy
+pub impl Support for Levy
 pub impl Univariate for Levy
 
+#derive(Eq, @debug.Debug)
 pub struct LevyLeft {
+  loc : Double
+  scale : Double
 }
+pub fn LevyLeft::cdf(Self, Double) -> Double
 pub fn LevyLeft::family() -> Family[Self]
-pub fn LevyLeft::new() -> Self
+pub fn LevyLeft::isf(Self, Double) -> Double
+pub fn LevyLeft::logcdf(Self, Double) -> Double
+pub fn LevyLeft::logpdf(Self, Double) -> Double
+pub fn LevyLeft::logsf(Self, Double) -> Double
+pub fn LevyLeft::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn LevyLeft::pdf(Self, Double) -> Double
+pub fn LevyLeft::quantile(Self, Double) -> Double
+pub fn LevyLeft::sample(Self, &@num.RandomSource) -> Double
+pub fn LevyLeft::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn LevyLeft::sf(Self, Double) -> Double
+pub fn LevyLeft::sf_at_least(Self, Double) -> Double
+pub fn LevyLeft::support_lower(Self) -> Double
+pub fn LevyLeft::support_upper(Self) -> Double
 pub impl Cdf for LevyLeft
 pub impl Density for LevyLeft
 pub impl Quantile for LevyLeft
 pub impl Sample for LevyLeft
+pub impl Support for LevyLeft
 pub impl Univariate for LevyLeft
 
+#derive(Eq, @debug.Debug)
 pub struct LogGamma {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn LogGamma::cdf(Self, Double) -> Double
 pub fn LogGamma::family() -> Family[Self]
-pub fn LogGamma::new(Double) -> Self raise ParamError
+pub fn LogGamma::isf(Self, Double) -> Double
+pub fn LogGamma::logcdf(Self, Double) -> Double
+pub fn LogGamma::logpdf(Self, Double) -> Double
+pub fn LogGamma::logsf(Self, Double) -> Double
+pub fn LogGamma::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn LogGamma::pdf(Self, Double) -> Double
+pub fn LogGamma::quantile(Self, Double) -> Double
+pub fn LogGamma::sample(Self, &@num.RandomSource) -> Double
+pub fn LogGamma::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn LogGamma::sf(Self, Double) -> Double
+pub fn LogGamma::sf_at_least(Self, Double) -> Double
+pub fn LogGamma::support_lower(Self) -> Double
+pub fn LogGamma::support_upper(Self) -> Double
 pub impl Cdf for LogGamma
 pub impl Density for LogGamma
 pub impl Quantile for LogGamma
 pub impl Sample for LogGamma
+pub impl Support for LogGamma
 pub impl Univariate for LogGamma
 
+#derive(Eq, @debug.Debug)
 pub struct LogLaplace {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn LogLaplace::cdf(Self, Double) -> Double
 pub fn LogLaplace::family() -> Family[Self]
-pub fn LogLaplace::new(Double) -> Self raise ParamError
+pub fn LogLaplace::isf(Self, Double) -> Double
+pub fn LogLaplace::logcdf(Self, Double) -> Double
+pub fn LogLaplace::logpdf(Self, Double) -> Double
+pub fn LogLaplace::logsf(Self, Double) -> Double
+pub fn LogLaplace::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn LogLaplace::pdf(Self, Double) -> Double
+pub fn LogLaplace::quantile(Self, Double) -> Double
+pub fn LogLaplace::sample(Self, &@num.RandomSource) -> Double
+pub fn LogLaplace::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn LogLaplace::sf(Self, Double) -> Double
+pub fn LogLaplace::sf_at_least(Self, Double) -> Double
+pub fn LogLaplace::support_lower(Self) -> Double
+pub fn LogLaplace::support_upper(Self) -> Double
 pub impl Cdf for LogLaplace
 pub impl Density for LogLaplace
 pub impl Quantile for LogLaplace
 pub impl Sample for LogLaplace
+pub impl Support for LogLaplace
 pub impl Univariate for LogLaplace
 
+#derive(Eq, @debug.Debug)
 pub struct LogNormal {
-  // private fields
+  s : Double
+  loc : Double
+  scale : Double
 }
+pub fn LogNormal::cdf(Self, Double) -> Double
 pub fn LogNormal::family() -> Family[Self]
-pub fn LogNormal::new(Double) -> Self raise ParamError
+pub fn LogNormal::isf(Self, Double) -> Double
+pub fn LogNormal::logcdf(Self, Double) -> Double
+pub fn LogNormal::logpdf(Self, Double) -> Double
+pub fn LogNormal::logsf(Self, Double) -> Double
+pub fn LogNormal::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn LogNormal::pdf(Self, Double) -> Double
+pub fn LogNormal::quantile(Self, Double) -> Double
+pub fn LogNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn LogNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn LogNormal::sf(Self, Double) -> Double
+pub fn LogNormal::sf_at_least(Self, Double) -> Double
+pub fn LogNormal::support_lower(Self) -> Double
+pub fn LogNormal::support_upper(Self) -> Double
 pub impl Cdf for LogNormal
 pub impl Density for LogNormal
 pub impl Quantile for LogNormal
 pub impl Sample for LogNormal
+pub impl Support for LogNormal
 pub impl Univariate for LogNormal
 
+#derive(Eq, @debug.Debug)
 pub struct LogSeries {
-  // private fields
+  p : Double
 }
+pub fn LogSeries::cdf(Self, Double) -> Double
+pub fn LogSeries::cdf_int(Self, Int64) -> Double
 pub fn LogSeries::family() -> Family[Self]
+pub fn LogSeries::isf(Self, Double) -> Double
+pub fn LogSeries::logcdf(Self, Double) -> Double
+pub fn LogSeries::logpmf(Self, Int64) -> Double
+pub fn LogSeries::logsf(Self, Double) -> Double
 pub fn LogSeries::new(Double) -> Self raise ParamError
+pub fn LogSeries::pmf(Self, Int64) -> Double
+pub fn LogSeries::quantile(Self, Double) -> Double
+pub fn LogSeries::quantile_int(Self, Double) -> Int64
+pub fn LogSeries::sample(Self, &@num.RandomSource) -> Double
+pub fn LogSeries::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn LogSeries::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn LogSeries::sf(Self, Double) -> Double
+pub fn LogSeries::sf_at_least(Self, Double) -> Double
+pub fn LogSeries::sf_int(Self, Int64) -> Double
+pub fn LogSeries::support_lower(Self) -> Double
+pub fn LogSeries::support_upper(Self) -> Double
 pub impl Cdf for LogSeries
 pub impl IntCdf for LogSeries
 pub impl IntQuantile for LogSeries
@@ -989,96 +2495,247 @@ pub impl Mass for LogSeries
 pub impl Quantile for LogSeries
 pub impl Sample for LogSeries
 pub impl SampleInt for LogSeries
+pub impl Support for LogSeries
 pub impl Univariate for LogSeries
 
+#derive(Eq, @debug.Debug)
 pub struct LogUniform {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn LogUniform::cdf(Self, Double) -> Double
 pub fn LogUniform::family() -> Family[Self]
-pub fn LogUniform::new(Double, Double) -> Self raise ParamError
+pub fn LogUniform::isf(Self, Double) -> Double
+pub fn LogUniform::logcdf(Self, Double) -> Double
+pub fn LogUniform::logpdf(Self, Double) -> Double
+pub fn LogUniform::logsf(Self, Double) -> Double
+pub fn LogUniform::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn LogUniform::pdf(Self, Double) -> Double
+pub fn LogUniform::quantile(Self, Double) -> Double
+pub fn LogUniform::sample(Self, &@num.RandomSource) -> Double
+pub fn LogUniform::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn LogUniform::sf(Self, Double) -> Double
+pub fn LogUniform::sf_at_least(Self, Double) -> Double
+pub fn LogUniform::support_lower(Self) -> Double
+pub fn LogUniform::support_upper(Self) -> Double
 pub impl Cdf for LogUniform
 pub impl Density for LogUniform
 pub impl Quantile for LogUniform
 pub impl Sample for LogUniform
+pub impl Support for LogUniform
 pub impl Univariate for LogUniform
 
+#derive(Eq, @debug.Debug)
 pub struct Logistic {
+  loc : Double
+  scale : Double
 }
+pub fn Logistic::cdf(Self, Double) -> Double
 pub fn Logistic::family() -> Family[Self]
-pub fn Logistic::new() -> Self
+pub fn Logistic::isf(Self, Double) -> Double
+pub fn Logistic::logcdf(Self, Double) -> Double
+pub fn Logistic::logpdf(Self, Double) -> Double
+pub fn Logistic::logsf(Self, Double) -> Double
+pub fn Logistic::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Logistic::pdf(Self, Double) -> Double
+pub fn Logistic::quantile(Self, Double) -> Double
+pub fn Logistic::sample(Self, &@num.RandomSource) -> Double
+pub fn Logistic::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Logistic::sf(Self, Double) -> Double
+pub fn Logistic::sf_at_least(Self, Double) -> Double
+pub fn Logistic::support_lower(Self) -> Double
+pub fn Logistic::support_upper(Self) -> Double
 pub impl Cdf for Logistic
 pub impl Density for Logistic
 pub impl Quantile for Logistic
 pub impl Sample for Logistic
+pub impl Support for Logistic
 pub impl Univariate for Logistic
 
+#derive(Eq, @debug.Debug)
 pub struct Lomax {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn Lomax::cdf(Self, Double) -> Double
 pub fn Lomax::family() -> Family[Self]
-pub fn Lomax::new(Double) -> Self raise ParamError
+pub fn Lomax::isf(Self, Double) -> Double
+pub fn Lomax::logcdf(Self, Double) -> Double
+pub fn Lomax::logpdf(Self, Double) -> Double
+pub fn Lomax::logsf(Self, Double) -> Double
+pub fn Lomax::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Lomax::pdf(Self, Double) -> Double
+pub fn Lomax::quantile(Self, Double) -> Double
+pub fn Lomax::sample(Self, &@num.RandomSource) -> Double
+pub fn Lomax::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Lomax::sf(Self, Double) -> Double
+pub fn Lomax::sf_at_least(Self, Double) -> Double
+pub fn Lomax::support_lower(Self) -> Double
+pub fn Lomax::support_upper(Self) -> Double
 pub impl Cdf for Lomax
 pub impl Density for Lomax
 pub impl Quantile for Lomax
 pub impl Sample for Lomax
+pub impl Support for Lomax
 pub impl Univariate for Lomax
 
+#derive(Eq, @debug.Debug)
 pub struct Maxwell {
+  loc : Double
+  scale : Double
 }
+pub fn Maxwell::cdf(Self, Double) -> Double
 pub fn Maxwell::family() -> Family[Self]
-pub fn Maxwell::new() -> Self
+pub fn Maxwell::isf(Self, Double) -> Double
+pub fn Maxwell::logcdf(Self, Double) -> Double
+pub fn Maxwell::logpdf(Self, Double) -> Double
+pub fn Maxwell::logsf(Self, Double) -> Double
+pub fn Maxwell::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Maxwell::pdf(Self, Double) -> Double
+pub fn Maxwell::quantile(Self, Double) -> Double
+pub fn Maxwell::sample(Self, &@num.RandomSource) -> Double
+pub fn Maxwell::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Maxwell::sf(Self, Double) -> Double
+pub fn Maxwell::sf_at_least(Self, Double) -> Double
+pub fn Maxwell::support_lower(Self) -> Double
+pub fn Maxwell::support_upper(Self) -> Double
 pub impl Cdf for Maxwell
 pub impl Density for Maxwell
 pub impl Quantile for Maxwell
 pub impl Sample for Maxwell
+pub impl Support for Maxwell
 pub impl Univariate for Maxwell
 
+#derive(Eq, @debug.Debug)
 pub struct Mielke {
-  // private fields
+  k : Double
+  s : Double
+  loc : Double
+  scale : Double
 }
+pub fn Mielke::cdf(Self, Double) -> Double
 pub fn Mielke::family() -> Family[Self]
-pub fn Mielke::new(Double, Double) -> Self raise ParamError
+pub fn Mielke::isf(Self, Double) -> Double
+pub fn Mielke::logcdf(Self, Double) -> Double
+pub fn Mielke::logpdf(Self, Double) -> Double
+pub fn Mielke::logsf(Self, Double) -> Double
+pub fn Mielke::new(k~ : Double, s~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Mielke::pdf(Self, Double) -> Double
+pub fn Mielke::quantile(Self, Double) -> Double
+pub fn Mielke::sample(Self, &@num.RandomSource) -> Double
+pub fn Mielke::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Mielke::sf(Self, Double) -> Double
+pub fn Mielke::sf_at_least(Self, Double) -> Double
+pub fn Mielke::support_lower(Self) -> Double
+pub fn Mielke::support_upper(Self) -> Double
 pub impl Cdf for Mielke
 pub impl Density for Mielke
 pub impl Quantile for Mielke
 pub impl Sample for Mielke
+pub impl Support for Mielke
 pub impl Univariate for Mielke
 
 pub struct Mixture {
   // private fields
 }
+pub fn Mixture::cdf(Self, Double) -> Double
+pub fn Mixture::isf(Self, Double) -> Double
+pub fn Mixture::logcdf(Self, Double) -> Double
+pub fn Mixture::logsf(Self, Double) -> Double
 pub fn Mixture::new(ArrayView[Double], Array[&Univariate]) -> Self raise ParamError
+pub fn Mixture::quantile(Self, Double) -> Double
+pub fn Mixture::sample(Self, &@num.RandomSource) -> Double
+pub fn Mixture::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Mixture::sf(Self, Double) -> Double
+pub fn Mixture::sf_at_least(Self, Double) -> Double
+pub fn Mixture::weights(Self) -> ArrayView[Double]
 pub impl Cdf for Mixture
 pub impl Quantile for Mixture
 pub impl Sample for Mixture
 pub impl Univariate for Mixture
 
+#derive(Eq, @debug.Debug)
 pub struct Moyal {
+  loc : Double
+  scale : Double
 }
+pub fn Moyal::cdf(Self, Double) -> Double
 pub fn Moyal::family() -> Family[Self]
-pub fn Moyal::new() -> Self
+pub fn Moyal::isf(Self, Double) -> Double
+pub fn Moyal::logcdf(Self, Double) -> Double
+pub fn Moyal::logpdf(Self, Double) -> Double
+pub fn Moyal::logsf(Self, Double) -> Double
+pub fn Moyal::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Moyal::pdf(Self, Double) -> Double
+pub fn Moyal::quantile(Self, Double) -> Double
+pub fn Moyal::sample(Self, &@num.RandomSource) -> Double
+pub fn Moyal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Moyal::sf(Self, Double) -> Double
+pub fn Moyal::sf_at_least(Self, Double) -> Double
+pub fn Moyal::support_lower(Self) -> Double
+pub fn Moyal::support_upper(Self) -> Double
 pub impl Cdf for Moyal
 pub impl Density for Moyal
 pub impl Quantile for Moyal
 pub impl Sample for Moyal
+pub impl Support for Moyal
 pub impl Univariate for Moyal
 
+#derive(Eq, @debug.Debug)
 pub struct Nakagami {
-  // private fields
+  nu : Double
+  loc : Double
+  scale : Double
 }
+pub fn Nakagami::cdf(Self, Double) -> Double
 pub fn Nakagami::family() -> Family[Self]
-pub fn Nakagami::new(Double) -> Self raise ParamError
+pub fn Nakagami::isf(Self, Double) -> Double
+pub fn Nakagami::logcdf(Self, Double) -> Double
+pub fn Nakagami::logpdf(Self, Double) -> Double
+pub fn Nakagami::logsf(Self, Double) -> Double
+pub fn Nakagami::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Nakagami::pdf(Self, Double) -> Double
+pub fn Nakagami::quantile(Self, Double) -> Double
+pub fn Nakagami::sample(Self, &@num.RandomSource) -> Double
+pub fn Nakagami::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Nakagami::sf(Self, Double) -> Double
+pub fn Nakagami::sf_at_least(Self, Double) -> Double
+pub fn Nakagami::support_lower(Self) -> Double
+pub fn Nakagami::support_upper(Self) -> Double
 pub impl Cdf for Nakagami
 pub impl Density for Nakagami
 pub impl Quantile for Nakagami
 pub impl Sample for Nakagami
+pub impl Support for Nakagami
 pub impl Univariate for Nakagami
 
+#derive(Eq, @debug.Debug)
 pub struct NegativeBinomial {
-  // private fields
+  n : Int64
+  p : Double
 }
-pub fn NegativeBinomial::family(n~ : Int32) -> Family[Self]
-pub fn NegativeBinomial::new(Int32, Double) -> Self raise ParamError
+pub fn NegativeBinomial::cdf(Self, Double) -> Double
+pub fn NegativeBinomial::cdf_int(Self, Int64) -> Double
+pub fn NegativeBinomial::family(n~ : Int64) -> Family[Self]
+pub fn NegativeBinomial::isf(Self, Double) -> Double
+pub fn NegativeBinomial::logcdf(Self, Double) -> Double
+pub fn NegativeBinomial::logpmf(Self, Int64) -> Double
+pub fn NegativeBinomial::logsf(Self, Double) -> Double
+pub fn NegativeBinomial::new(n~ : Int64, p~ : Double) -> Self raise ParamError
+pub fn NegativeBinomial::pmf(Self, Int64) -> Double
+pub fn NegativeBinomial::quantile(Self, Double) -> Double
+pub fn NegativeBinomial::quantile_int(Self, Double) -> Int64
+pub fn NegativeBinomial::sample(Self, &@num.RandomSource) -> Double
+pub fn NegativeBinomial::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn NegativeBinomial::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn NegativeBinomial::sf(Self, Double) -> Double
+pub fn NegativeBinomial::sf_at_least(Self, Double) -> Double
+pub fn NegativeBinomial::sf_int(Self, Int64) -> Double
+pub fn NegativeBinomial::support_lower(Self) -> Double
+pub fn NegativeBinomial::support_upper(Self) -> Double
 pub impl Cdf for NegativeBinomial
 pub impl IntCdf for NegativeBinomial
 pub impl IntQuantile for NegativeBinomial
@@ -1086,13 +2743,34 @@ pub impl Mass for NegativeBinomial
 pub impl Quantile for NegativeBinomial
 pub impl Sample for NegativeBinomial
 pub impl SampleInt for NegativeBinomial
+pub impl Support for NegativeBinomial
 pub impl Univariate for NegativeBinomial
 
+#derive(Eq, @debug.Debug)
 pub struct NegativeHypergeometric {
-  // private fields
+  population : Int64
+  successes : Int64
+  failures : Int64
 }
-pub fn NegativeHypergeometric::family(population~ : Int32, successes~ : Int32, failures~ : Int32) -> Family[Self]
-pub fn NegativeHypergeometric::new(Int32, Int32, Int32) -> Self raise ParamError
+pub fn NegativeHypergeometric::cdf(Self, Double) -> Double
+pub fn NegativeHypergeometric::cdf_int(Self, Int64) -> Double
+pub fn NegativeHypergeometric::family(population~ : Int64, successes~ : Int64, failures~ : Int64) -> Family[Self]
+pub fn NegativeHypergeometric::isf(Self, Double) -> Double
+pub fn NegativeHypergeometric::logcdf(Self, Double) -> Double
+pub fn NegativeHypergeometric::logpmf(Self, Int64) -> Double
+pub fn NegativeHypergeometric::logsf(Self, Double) -> Double
+pub fn NegativeHypergeometric::new(population~ : Int64, successes~ : Int64, failures~ : Int64) -> Self raise ParamError
+pub fn NegativeHypergeometric::pmf(Self, Int64) -> Double
+pub fn NegativeHypergeometric::quantile(Self, Double) -> Double
+pub fn NegativeHypergeometric::quantile_int(Self, Double) -> Int64
+pub fn NegativeHypergeometric::sample(Self, &@num.RandomSource) -> Double
+pub fn NegativeHypergeometric::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn NegativeHypergeometric::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn NegativeHypergeometric::sf(Self, Double) -> Double
+pub fn NegativeHypergeometric::sf_at_least(Self, Double) -> Double
+pub fn NegativeHypergeometric::sf_int(Self, Int64) -> Double
+pub fn NegativeHypergeometric::support_lower(Self) -> Double
+pub fn NegativeHypergeometric::support_upper(Self) -> Double
 pub impl Cdf for NegativeHypergeometric
 pub impl IntCdf for NegativeHypergeometric
 pub impl IntQuantile for NegativeHypergeometric
@@ -1100,101 +2778,252 @@ pub impl Mass for NegativeHypergeometric
 pub impl Quantile for NegativeHypergeometric
 pub impl Sample for NegativeHypergeometric
 pub impl SampleInt for NegativeHypergeometric
+pub impl Support for NegativeHypergeometric
 pub impl Univariate for NegativeHypergeometric
 
+#derive(Eq, @debug.Debug)
 pub struct NoncentralChiSquared {
-  // private fields
+  df : Double
+  nc : Double
+  loc : Double
+  scale : Double
 }
+pub fn NoncentralChiSquared::cdf(Self, Double) -> Double
 pub fn NoncentralChiSquared::family() -> Family[Self]
-pub fn NoncentralChiSquared::new(Double, Double) -> Self raise ParamError
+pub fn NoncentralChiSquared::isf(Self, Double) -> Double
+pub fn NoncentralChiSquared::logcdf(Self, Double) -> Double
+pub fn NoncentralChiSquared::logpdf(Self, Double) -> Double
+pub fn NoncentralChiSquared::logsf(Self, Double) -> Double
+pub fn NoncentralChiSquared::new(df~ : Double, nc~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn NoncentralChiSquared::pdf(Self, Double) -> Double
+pub fn NoncentralChiSquared::quantile(Self, Double) -> Double
+pub fn NoncentralChiSquared::sample(Self, &@num.RandomSource) -> Double
+pub fn NoncentralChiSquared::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn NoncentralChiSquared::sf(Self, Double) -> Double
+pub fn NoncentralChiSquared::sf_at_least(Self, Double) -> Double
+pub fn NoncentralChiSquared::support_lower(Self) -> Double
+pub fn NoncentralChiSquared::support_upper(Self) -> Double
 pub impl Cdf for NoncentralChiSquared
 pub impl Density for NoncentralChiSquared
 pub impl Quantile for NoncentralChiSquared
 pub impl Sample for NoncentralChiSquared
+pub impl Support for NoncentralChiSquared
 pub impl Univariate for NoncentralChiSquared
 
+#derive(Eq, @debug.Debug)
 pub struct NoncentralF {
-  // private fields
+  dfn : Double
+  dfd : Double
+  nc : Double
+  loc : Double
+  scale : Double
 }
+pub fn NoncentralF::cdf(Self, Double) -> Double
 pub fn NoncentralF::family() -> Family[Self]
-pub fn NoncentralF::new(Double, Double, Double) -> Self raise ParamError
+pub fn NoncentralF::isf(Self, Double) -> Double
+pub fn NoncentralF::logcdf(Self, Double) -> Double
+pub fn NoncentralF::logpdf(Self, Double) -> Double
+pub fn NoncentralF::logsf(Self, Double) -> Double
+pub fn NoncentralF::new(dfn~ : Double, dfd~ : Double, nc~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn NoncentralF::pdf(Self, Double) -> Double
+pub fn NoncentralF::quantile(Self, Double) -> Double
+pub fn NoncentralF::sample(Self, &@num.RandomSource) -> Double
+pub fn NoncentralF::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn NoncentralF::sf(Self, Double) -> Double
+pub fn NoncentralF::sf_at_least(Self, Double) -> Double
+pub fn NoncentralF::support_lower(Self) -> Double
+pub fn NoncentralF::support_upper(Self) -> Double
 pub impl Cdf for NoncentralF
 pub impl Density for NoncentralF
 pub impl Quantile for NoncentralF
 pub impl Sample for NoncentralF
+pub impl Support for NoncentralF
 pub impl Univariate for NoncentralF
 
+#derive(Eq, @debug.Debug)
 pub struct NoncentralT {
-  // private fields
+  df : Double
+  nc : Double
+  loc : Double
+  scale : Double
 }
+pub fn NoncentralT::cdf(Self, Double) -> Double
 pub fn NoncentralT::family() -> Family[Self]
-pub fn NoncentralT::new(Double, Double) -> Self raise ParamError
+pub fn NoncentralT::isf(Self, Double) -> Double
+pub fn NoncentralT::logcdf(Self, Double) -> Double
+pub fn NoncentralT::logpdf(Self, Double) -> Double
+pub fn NoncentralT::logsf(Self, Double) -> Double
+pub fn NoncentralT::new(df~ : Double, nc~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn NoncentralT::pdf(Self, Double) -> Double
+pub fn NoncentralT::quantile(Self, Double) -> Double
+pub fn NoncentralT::sample(Self, &@num.RandomSource) -> Double
+pub fn NoncentralT::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn NoncentralT::sf(Self, Double) -> Double
+pub fn NoncentralT::sf_at_least(Self, Double) -> Double
+pub fn NoncentralT::support_lower(Self) -> Double
+pub fn NoncentralT::support_upper(Self) -> Double
 pub impl Cdf for NoncentralT
 pub impl Density for NoncentralT
 pub impl Quantile for NoncentralT
 pub impl Sample for NoncentralT
+pub impl Support for NoncentralT
 pub impl Univariate for NoncentralT
 
+#derive(Eq, @debug.Debug)
 pub struct Normal {
-  // private fields
+  loc : Double
+  scale : Double
 }
+pub fn Normal::cdf(Self, Double) -> Double
+pub fn Normal::cf(Self, Double) -> (Double, Double)
+pub fn Normal::cgf(Self, Double) -> Double?
 pub fn Normal::exp_family() -> ExpFamily[Self]
 pub fn Normal::family() -> Family[Self]
+pub fn Normal::fit(ArrayView[Double]) -> Self raise FitError
+pub fn Normal::isf(Self, Double) -> Double
 pub fn Normal::known_variance_prior(Double) -> Conjugate[Self, Self]
+pub fn Normal::logcdf(Self, Double) -> Double
+pub fn Normal::logpdf(Self, Double) -> Double
+pub fn Normal::logsf(Self, Double) -> Double
+pub fn Normal::mean(Self) -> Double?
+pub fn Normal::mgf(Self, Double) -> Double?
+pub fn Normal::mode(Self) -> Double
 pub fn Normal::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Normal::pdf(Self, Double) -> Double
+pub fn Normal::quantile(Self, Double) -> Double
+pub fn Normal::sample(Self, &@num.RandomSource) -> Double
+pub fn Normal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Normal::sf(Self, Double) -> Double
+pub fn Normal::sf_at_least(Self, Double) -> Double
+pub fn Normal::support_lower(Self) -> Double
+pub fn Normal::support_upper(Self) -> Double
+pub fn Normal::variance(Self) -> Double?
 pub impl Cdf for Normal
 pub impl Characteristic for Normal
 pub impl Density for Normal
 pub impl Fit for Normal
 pub impl Mgf for Normal
+pub impl Mode for Normal
 pub impl Moments for Normal
 pub impl Quantile for Normal
 pub impl Sample for Normal
+pub impl Support for Normal
 pub impl Univariate for Normal
 
+#derive(Eq, @debug.Debug)
 pub struct NormalInverseGaussian {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn NormalInverseGaussian::cdf(Self, Double) -> Double
 pub fn NormalInverseGaussian::family() -> Family[Self]
-pub fn NormalInverseGaussian::new(Double, Double) -> Self raise ParamError
+pub fn NormalInverseGaussian::isf(Self, Double) -> Double
+pub fn NormalInverseGaussian::logcdf(Self, Double) -> Double
+pub fn NormalInverseGaussian::logpdf(Self, Double) -> Double
+pub fn NormalInverseGaussian::logsf(Self, Double) -> Double
+pub fn NormalInverseGaussian::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn NormalInverseGaussian::pdf(Self, Double) -> Double
+pub fn NormalInverseGaussian::quantile(Self, Double) -> Double
+pub fn NormalInverseGaussian::sample(Self, &@num.RandomSource) -> Double
+pub fn NormalInverseGaussian::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn NormalInverseGaussian::sf(Self, Double) -> Double
+pub fn NormalInverseGaussian::sf_at_least(Self, Double) -> Double
+pub fn NormalInverseGaussian::support_lower(Self) -> Double
+pub fn NormalInverseGaussian::support_upper(Self) -> Double
 pub impl Cdf for NormalInverseGaussian
 pub impl Density for NormalInverseGaussian
 pub impl Quantile for NormalInverseGaussian
 pub impl Sample for NormalInverseGaussian
+pub impl Support for NormalInverseGaussian
 pub impl Univariate for NormalInverseGaussian
 
-pub struct ParamSpec {
+#derive(Eq, @debug.Debug)
+pub(all) struct ParamSpec {
   name : String
   constraint : Constraint
 }
 
+#derive(Eq, @debug.Debug)
 pub struct Pareto {
-  // private fields
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn Pareto::cdf(Self, Double) -> Double
 pub fn Pareto::family() -> Family[Self]
-pub fn Pareto::new(Double) -> Self raise ParamError
+pub fn Pareto::isf(Self, Double) -> Double
+pub fn Pareto::logcdf(Self, Double) -> Double
+pub fn Pareto::logpdf(Self, Double) -> Double
+pub fn Pareto::logsf(Self, Double) -> Double
+pub fn Pareto::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Pareto::pdf(Self, Double) -> Double
+pub fn Pareto::quantile(Self, Double) -> Double
+pub fn Pareto::sample(Self, &@num.RandomSource) -> Double
+pub fn Pareto::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Pareto::sf(Self, Double) -> Double
+pub fn Pareto::sf_at_least(Self, Double) -> Double
+pub fn Pareto::support_lower(Self) -> Double
+pub fn Pareto::support_upper(Self) -> Double
 pub impl Cdf for Pareto
 pub impl Density for Pareto
 pub impl Quantile for Pareto
 pub impl Sample for Pareto
+pub impl Support for Pareto
 pub impl Univariate for Pareto
 
+#derive(Eq, @debug.Debug)
 pub struct PearsonIII {
-  // private fields
+  skew : Double
+  loc : Double
+  scale : Double
 }
+pub fn PearsonIII::cdf(Self, Double) -> Double
 pub fn PearsonIII::family() -> Family[Self]
-pub fn PearsonIII::new(Double) -> Self raise ParamError
+pub fn PearsonIII::isf(Self, Double) -> Double
+pub fn PearsonIII::logcdf(Self, Double) -> Double
+pub fn PearsonIII::logpdf(Self, Double) -> Double
+pub fn PearsonIII::logsf(Self, Double) -> Double
+pub fn PearsonIII::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn PearsonIII::pdf(Self, Double) -> Double
+pub fn PearsonIII::quantile(Self, Double) -> Double
+pub fn PearsonIII::sample(Self, &@num.RandomSource) -> Double
+pub fn PearsonIII::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn PearsonIII::sf(Self, Double) -> Double
+pub fn PearsonIII::sf_at_least(Self, Double) -> Double
+pub fn PearsonIII::support_lower(Self) -> Double
+pub fn PearsonIII::support_upper(Self) -> Double
 pub impl Cdf for PearsonIII
 pub impl Density for PearsonIII
 pub impl Quantile for PearsonIII
 pub impl Sample for PearsonIII
+pub impl Support for PearsonIII
 pub impl Univariate for PearsonIII
 
+#derive(Eq, @debug.Debug)
 pub struct Planck {
-  // private fields
+  lambda : Double
 }
+pub fn Planck::cdf(Self, Double) -> Double
+pub fn Planck::cdf_int(Self, Int64) -> Double
 pub fn Planck::family() -> Family[Self]
+pub fn Planck::isf(Self, Double) -> Double
+pub fn Planck::logcdf(Self, Double) -> Double
+pub fn Planck::logpmf(Self, Int64) -> Double
+pub fn Planck::logsf(Self, Double) -> Double
 pub fn Planck::new(Double) -> Self raise ParamError
+pub fn Planck::pmf(Self, Int64) -> Double
+pub fn Planck::quantile(Self, Double) -> Double
+pub fn Planck::quantile_int(Self, Double) -> Int64
+pub fn Planck::sample(Self, &@num.RandomSource) -> Double
+pub fn Planck::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Planck::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Planck::sf(Self, Double) -> Double
+pub fn Planck::sf_at_least(Self, Double) -> Double
+pub fn Planck::sf_int(Self, Int64) -> Double
+pub fn Planck::support_lower(Self) -> Double
+pub fn Planck::support_upper(Self) -> Double
 pub impl Cdf for Planck
 pub impl IntCdf for Planck
 pub impl IntQuantile for Planck
@@ -1202,134 +3031,349 @@ pub impl Mass for Planck
 pub impl Quantile for Planck
 pub impl Sample for Planck
 pub impl SampleInt for Planck
+pub impl Support for Planck
 pub impl Univariate for Planck
 
+#derive(Eq, @debug.Debug)
 pub struct PointMass {
-  // private fields
+  at : Double
 }
+pub fn PointMass::cdf(Self, Double) -> Double
+pub fn PointMass::isf(Self, Double) -> Double
+pub fn PointMass::logcdf(Self, Double) -> Double
+pub fn PointMass::logsf(Self, Double) -> Double
+pub fn PointMass::mean(Self) -> Double?
+pub fn PointMass::mode(Self) -> Double
 pub fn PointMass::new(Double) -> Self raise ParamError
+pub fn PointMass::quantile(Self, Double) -> Double
+pub fn PointMass::sample(Self, &@num.RandomSource) -> Double
+pub fn PointMass::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn PointMass::sf(Self, Double) -> Double
+pub fn PointMass::sf_at_least(Self, Double) -> Double
+pub fn PointMass::support_lower(Self) -> Double
+pub fn PointMass::support_upper(Self) -> Double
+pub fn PointMass::variance(Self) -> Double?
 pub impl Cdf for PointMass
+pub impl Mode for PointMass
 pub impl Moments for PointMass
 pub impl Quantile for PointMass
 pub impl Sample for PointMass
+pub impl Support for PointMass
 pub impl Univariate for PointMass
 
+#derive(Eq, @debug.Debug)
 pub struct Poisson {
-  // private fields
+  mu : Double
 }
+pub fn Poisson::cdf(Self, Double) -> Double
+pub fn Poisson::cdf_int(Self, Int64) -> Double
 pub fn Poisson::family() -> Family[Self]
+pub fn Poisson::isf(Self, Double) -> Double
+pub fn Poisson::logcdf(Self, Double) -> Double
+pub fn Poisson::logpmf(Self, Int64) -> Double
+pub fn Poisson::logsf(Self, Double) -> Double
+pub fn Poisson::mean(Self) -> Double?
+pub fn Poisson::mode(Self) -> Double
 pub fn Poisson::new(Double) -> Self raise ParamError
+pub fn Poisson::pmf(Self, Int64) -> Double
+pub fn Poisson::quantile(Self, Double) -> Double
+pub fn Poisson::quantile_int(Self, Double) -> Int64
+pub fn Poisson::sample(Self, &@num.RandomSource) -> Double
+pub fn Poisson::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Poisson::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Poisson::sf(Self, Double) -> Double
+pub fn Poisson::sf_at_least(Self, Double) -> Double
+pub fn Poisson::sf_int(Self, Int64) -> Double
+pub fn Poisson::support_lower(Self) -> Double
+pub fn Poisson::support_upper(Self) -> Double
+pub fn Poisson::variance(Self) -> Double?
 pub impl Cdf for Poisson
 pub impl IntCdf for Poisson
 pub impl IntQuantile for Poisson
 pub impl Mass for Poisson
+pub impl Mode for Poisson
+pub impl Moments for Poisson
 pub impl Quantile for Poisson
 pub impl Sample for Poisson
 pub impl SampleInt for Poisson
+pub impl Support for Poisson
 pub impl Univariate for Poisson
 
+#derive(Eq, @debug.Debug)
 pub struct PowerLaw {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn PowerLaw::cdf(Self, Double) -> Double
 pub fn PowerLaw::family() -> Family[Self]
-pub fn PowerLaw::new(Double) -> Self raise ParamError
+pub fn PowerLaw::isf(Self, Double) -> Double
+pub fn PowerLaw::logcdf(Self, Double) -> Double
+pub fn PowerLaw::logpdf(Self, Double) -> Double
+pub fn PowerLaw::logsf(Self, Double) -> Double
+pub fn PowerLaw::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn PowerLaw::pdf(Self, Double) -> Double
+pub fn PowerLaw::quantile(Self, Double) -> Double
+pub fn PowerLaw::sample(Self, &@num.RandomSource) -> Double
+pub fn PowerLaw::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn PowerLaw::sf(Self, Double) -> Double
+pub fn PowerLaw::sf_at_least(Self, Double) -> Double
+pub fn PowerLaw::support_lower(Self) -> Double
+pub fn PowerLaw::support_upper(Self) -> Double
 pub impl Cdf for PowerLaw
 pub impl Density for PowerLaw
 pub impl Quantile for PowerLaw
 pub impl Sample for PowerLaw
+pub impl Support for PowerLaw
 pub impl Univariate for PowerLaw
 
+#derive(Eq, @debug.Debug)
 pub struct PowerLogNormal {
-  // private fields
+  c : Double
+  s : Double
+  loc : Double
+  scale : Double
 }
+pub fn PowerLogNormal::cdf(Self, Double) -> Double
 pub fn PowerLogNormal::family() -> Family[Self]
-pub fn PowerLogNormal::new(Double, Double) -> Self raise ParamError
+pub fn PowerLogNormal::isf(Self, Double) -> Double
+pub fn PowerLogNormal::logcdf(Self, Double) -> Double
+pub fn PowerLogNormal::logpdf(Self, Double) -> Double
+pub fn PowerLogNormal::logsf(Self, Double) -> Double
+pub fn PowerLogNormal::new(c~ : Double, s~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn PowerLogNormal::pdf(Self, Double) -> Double
+pub fn PowerLogNormal::quantile(Self, Double) -> Double
+pub fn PowerLogNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn PowerLogNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn PowerLogNormal::sf(Self, Double) -> Double
+pub fn PowerLogNormal::sf_at_least(Self, Double) -> Double
+pub fn PowerLogNormal::support_lower(Self) -> Double
+pub fn PowerLogNormal::support_upper(Self) -> Double
 pub impl Cdf for PowerLogNormal
 pub impl Density for PowerLogNormal
 pub impl Quantile for PowerLogNormal
 pub impl Sample for PowerLogNormal
+pub impl Support for PowerLogNormal
 pub impl Univariate for PowerLogNormal
 
+#derive(Eq, @debug.Debug)
 pub struct PowerNormal {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn PowerNormal::cdf(Self, Double) -> Double
 pub fn PowerNormal::family() -> Family[Self]
-pub fn PowerNormal::new(Double) -> Self raise ParamError
+pub fn PowerNormal::isf(Self, Double) -> Double
+pub fn PowerNormal::logcdf(Self, Double) -> Double
+pub fn PowerNormal::logpdf(Self, Double) -> Double
+pub fn PowerNormal::logsf(Self, Double) -> Double
+pub fn PowerNormal::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn PowerNormal::pdf(Self, Double) -> Double
+pub fn PowerNormal::quantile(Self, Double) -> Double
+pub fn PowerNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn PowerNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn PowerNormal::sf(Self, Double) -> Double
+pub fn PowerNormal::sf_at_least(Self, Double) -> Double
+pub fn PowerNormal::support_lower(Self) -> Double
+pub fn PowerNormal::support_upper(Self) -> Double
 pub impl Cdf for PowerNormal
 pub impl Density for PowerNormal
 pub impl Quantile for PowerNormal
 pub impl Sample for PowerNormal
+pub impl Support for PowerNormal
 pub impl Univariate for PowerNormal
 
+#derive(Eq, @debug.Debug)
 pub struct RDist {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn RDist::cdf(Self, Double) -> Double
 pub fn RDist::family() -> Family[Self]
-pub fn RDist::new(Double) -> Self raise ParamError
+pub fn RDist::isf(Self, Double) -> Double
+pub fn RDist::logcdf(Self, Double) -> Double
+pub fn RDist::logpdf(Self, Double) -> Double
+pub fn RDist::logsf(Self, Double) -> Double
+pub fn RDist::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn RDist::pdf(Self, Double) -> Double
+pub fn RDist::quantile(Self, Double) -> Double
+pub fn RDist::sample(Self, &@num.RandomSource) -> Double
+pub fn RDist::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn RDist::sf(Self, Double) -> Double
+pub fn RDist::sf_at_least(Self, Double) -> Double
+pub fn RDist::support_lower(Self) -> Double
+pub fn RDist::support_upper(Self) -> Double
 pub impl Cdf for RDist
 pub impl Density for RDist
 pub impl Quantile for RDist
 pub impl Sample for RDist
+pub impl Support for RDist
 pub impl Univariate for RDist
 
+#derive(Eq, @debug.Debug)
 pub struct Rayleigh {
+  loc : Double
+  scale : Double
 }
+pub fn Rayleigh::cdf(Self, Double) -> Double
 pub fn Rayleigh::family() -> Family[Self]
-pub fn Rayleigh::new() -> Self
+pub fn Rayleigh::isf(Self, Double) -> Double
+pub fn Rayleigh::logcdf(Self, Double) -> Double
+pub fn Rayleigh::logpdf(Self, Double) -> Double
+pub fn Rayleigh::logsf(Self, Double) -> Double
+pub fn Rayleigh::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Rayleigh::pdf(Self, Double) -> Double
+pub fn Rayleigh::quantile(Self, Double) -> Double
+pub fn Rayleigh::sample(Self, &@num.RandomSource) -> Double
+pub fn Rayleigh::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Rayleigh::sf(Self, Double) -> Double
+pub fn Rayleigh::sf_at_least(Self, Double) -> Double
+pub fn Rayleigh::support_lower(Self) -> Double
+pub fn Rayleigh::support_upper(Self) -> Double
 pub impl Cdf for Rayleigh
 pub impl Density for Rayleigh
 pub impl Quantile for Rayleigh
 pub impl Sample for Rayleigh
+pub impl Support for Rayleigh
 pub impl Univariate for Rayleigh
 
+#derive(Eq, @debug.Debug)
 pub struct ReciprocalInverseGaussian {
-  // private fields
+  mu : Double
+  loc : Double
+  scale : Double
 }
+pub fn ReciprocalInverseGaussian::cdf(Self, Double) -> Double
 pub fn ReciprocalInverseGaussian::family() -> Family[Self]
-pub fn ReciprocalInverseGaussian::new(Double) -> Self raise ParamError
+pub fn ReciprocalInverseGaussian::isf(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::logcdf(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::logpdf(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::logsf(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn ReciprocalInverseGaussian::pdf(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::quantile(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::sample(Self, &@num.RandomSource) -> Double
+pub fn ReciprocalInverseGaussian::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn ReciprocalInverseGaussian::sf(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::sf_at_least(Self, Double) -> Double
+pub fn ReciprocalInverseGaussian::support_lower(Self) -> Double
+pub fn ReciprocalInverseGaussian::support_upper(Self) -> Double
 pub impl Cdf for ReciprocalInverseGaussian
 pub impl Density for ReciprocalInverseGaussian
 pub impl Quantile for ReciprocalInverseGaussian
 pub impl Sample for ReciprocalInverseGaussian
+pub impl Support for ReciprocalInverseGaussian
 pub impl Univariate for ReciprocalInverseGaussian
 
+#derive(Eq, @debug.Debug)
 pub struct RelativisticBreitWigner {
-  // private fields
+  rho : Double
+  loc : Double
+  scale : Double
 }
+pub fn RelativisticBreitWigner::cdf(Self, Double) -> Double
 pub fn RelativisticBreitWigner::family() -> Family[Self]
-pub fn RelativisticBreitWigner::new(Double) -> Self raise ParamError
+pub fn RelativisticBreitWigner::isf(Self, Double) -> Double
+pub fn RelativisticBreitWigner::logcdf(Self, Double) -> Double
+pub fn RelativisticBreitWigner::logpdf(Self, Double) -> Double
+pub fn RelativisticBreitWigner::logsf(Self, Double) -> Double
+pub fn RelativisticBreitWigner::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn RelativisticBreitWigner::pdf(Self, Double) -> Double
+pub fn RelativisticBreitWigner::quantile(Self, Double) -> Double
+pub fn RelativisticBreitWigner::sample(Self, &@num.RandomSource) -> Double
+pub fn RelativisticBreitWigner::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn RelativisticBreitWigner::sf(Self, Double) -> Double
+pub fn RelativisticBreitWigner::sf_at_least(Self, Double) -> Double
+pub fn RelativisticBreitWigner::support_lower(Self) -> Double
+pub fn RelativisticBreitWigner::support_upper(Self) -> Double
 pub impl Cdf for RelativisticBreitWigner
 pub impl Density for RelativisticBreitWigner
 pub impl Quantile for RelativisticBreitWigner
 pub impl Sample for RelativisticBreitWigner
+pub impl Support for RelativisticBreitWigner
 pub impl Univariate for RelativisticBreitWigner
 
+#derive(Eq, @debug.Debug)
 pub struct Rice {
-  // private fields
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn Rice::cdf(Self, Double) -> Double
 pub fn Rice::family() -> Family[Self]
-pub fn Rice::new(Double) -> Self raise ParamError
+pub fn Rice::isf(Self, Double) -> Double
+pub fn Rice::logcdf(Self, Double) -> Double
+pub fn Rice::logpdf(Self, Double) -> Double
+pub fn Rice::logsf(Self, Double) -> Double
+pub fn Rice::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Rice::pdf(Self, Double) -> Double
+pub fn Rice::quantile(Self, Double) -> Double
+pub fn Rice::sample(Self, &@num.RandomSource) -> Double
+pub fn Rice::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Rice::sf(Self, Double) -> Double
+pub fn Rice::sf_at_least(Self, Double) -> Double
+pub fn Rice::support_lower(Self) -> Double
+pub fn Rice::support_upper(Self) -> Double
 pub impl Cdf for Rice
 pub impl Density for Rice
 pub impl Quantile for Rice
 pub impl Sample for Rice
+pub impl Support for Rice
 pub impl Univariate for Rice
 
+#derive(Eq, @debug.Debug)
 pub struct Semicircular {
+  loc : Double
+  scale : Double
 }
+pub fn Semicircular::cdf(Self, Double) -> Double
 pub fn Semicircular::family() -> Family[Self]
-pub fn Semicircular::new() -> Self
+pub fn Semicircular::isf(Self, Double) -> Double
+pub fn Semicircular::logcdf(Self, Double) -> Double
+pub fn Semicircular::logpdf(Self, Double) -> Double
+pub fn Semicircular::logsf(Self, Double) -> Double
+pub fn Semicircular::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Semicircular::pdf(Self, Double) -> Double
+pub fn Semicircular::quantile(Self, Double) -> Double
+pub fn Semicircular::sample(Self, &@num.RandomSource) -> Double
+pub fn Semicircular::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Semicircular::sf(Self, Double) -> Double
+pub fn Semicircular::sf_at_least(Self, Double) -> Double
+pub fn Semicircular::support_lower(Self) -> Double
+pub fn Semicircular::support_upper(Self) -> Double
 pub impl Cdf for Semicircular
 pub impl Density for Semicircular
 pub impl Quantile for Semicircular
 pub impl Sample for Semicircular
+pub impl Support for Semicircular
 pub impl Univariate for Semicircular
 
+#derive(Eq, @debug.Debug)
 pub struct Skellam {
-  // private fields
+  mu1 : Double
+  mu2 : Double
 }
+pub fn Skellam::cdf(Self, Double) -> Double
+pub fn Skellam::cdf_int(Self, Int64) -> Double
 pub fn Skellam::family() -> Family[Self]
-pub fn Skellam::new(Double, Double) -> Self raise ParamError
+pub fn Skellam::isf(Self, Double) -> Double
+pub fn Skellam::logcdf(Self, Double) -> Double
+pub fn Skellam::logpmf(Self, Int64) -> Double
+pub fn Skellam::logsf(Self, Double) -> Double
+pub fn Skellam::new(mu1~ : Double, mu2~ : Double) -> Self raise ParamError
+pub fn Skellam::pmf(Self, Int64) -> Double
+pub fn Skellam::quantile(Self, Double) -> Double
+pub fn Skellam::quantile_int(Self, Double) -> Int64
+pub fn Skellam::sample(Self, &@num.RandomSource) -> Double
+pub fn Skellam::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Skellam::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Skellam::sf(Self, Double) -> Double
+pub fn Skellam::sf_at_least(Self, Double) -> Double
+pub fn Skellam::sf_int(Self, Int64) -> Double
+pub fn Skellam::support_lower(Self) -> Double
+pub fn Skellam::support_upper(Self) -> Double
 pub impl Cdf for Skellam
 pub impl IntCdf for Skellam
 pub impl IntQuantile for Skellam
@@ -1337,195 +3381,511 @@ pub impl Mass for Skellam
 pub impl Quantile for Skellam
 pub impl Sample for Skellam
 pub impl SampleInt for Skellam
+pub impl Support for Skellam
 pub impl Univariate for Skellam
 
+#derive(Eq, @debug.Debug)
 pub struct SkewCauchy {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn SkewCauchy::cdf(Self, Double) -> Double
 pub fn SkewCauchy::family() -> Family[Self]
-pub fn SkewCauchy::new(Double) -> Self raise ParamError
+pub fn SkewCauchy::isf(Self, Double) -> Double
+pub fn SkewCauchy::logcdf(Self, Double) -> Double
+pub fn SkewCauchy::logpdf(Self, Double) -> Double
+pub fn SkewCauchy::logsf(Self, Double) -> Double
+pub fn SkewCauchy::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn SkewCauchy::pdf(Self, Double) -> Double
+pub fn SkewCauchy::quantile(Self, Double) -> Double
+pub fn SkewCauchy::sample(Self, &@num.RandomSource) -> Double
+pub fn SkewCauchy::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn SkewCauchy::sf(Self, Double) -> Double
+pub fn SkewCauchy::sf_at_least(Self, Double) -> Double
+pub fn SkewCauchy::support_lower(Self) -> Double
+pub fn SkewCauchy::support_upper(Self) -> Double
 pub impl Cdf for SkewCauchy
 pub impl Density for SkewCauchy
 pub impl Quantile for SkewCauchy
 pub impl Sample for SkewCauchy
+pub impl Support for SkewCauchy
 pub impl Univariate for SkewCauchy
 
+#derive(Eq, @debug.Debug)
 pub struct SkewNormal {
-  // private fields
+  a : Double
+  loc : Double
+  scale : Double
 }
+pub fn SkewNormal::cdf(Self, Double) -> Double
 pub fn SkewNormal::family() -> Family[Self]
-pub fn SkewNormal::new(Double) -> Self raise ParamError
+pub fn SkewNormal::isf(Self, Double) -> Double
+pub fn SkewNormal::logcdf(Self, Double) -> Double
+pub fn SkewNormal::logpdf(Self, Double) -> Double
+pub fn SkewNormal::logsf(Self, Double) -> Double
+pub fn SkewNormal::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn SkewNormal::pdf(Self, Double) -> Double
+pub fn SkewNormal::quantile(Self, Double) -> Double
+pub fn SkewNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn SkewNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn SkewNormal::sf(Self, Double) -> Double
+pub fn SkewNormal::sf_at_least(Self, Double) -> Double
+pub fn SkewNormal::support_lower(Self) -> Double
+pub fn SkewNormal::support_upper(Self) -> Double
 pub impl Cdf for SkewNormal
 pub impl Density for SkewNormal
 pub impl Quantile for SkewNormal
 pub impl Sample for SkewNormal
+pub impl Support for SkewNormal
 pub impl Univariate for SkewNormal
 
+#derive(Eq, @debug.Debug)
 pub struct Stable {
-  // private fields
+  alpha : Double
+  beta : Double
+  loc : Double
+  scale : Double
 }
+pub fn Stable::cdf(Self, Double) -> Double
 pub fn Stable::family() -> Family[Self]
-pub fn Stable::new(Double, Double) -> Self raise ParamError
+pub fn Stable::isf(Self, Double) -> Double
+pub fn Stable::logcdf(Self, Double) -> Double
+pub fn Stable::logpdf(Self, Double) -> Double
+pub fn Stable::logsf(Self, Double) -> Double
+pub fn Stable::new(alpha~ : Double, beta~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Stable::pdf(Self, Double) -> Double
+pub fn Stable::quantile(Self, Double) -> Double
+pub fn Stable::sample(Self, &@num.RandomSource) -> Double
+pub fn Stable::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Stable::sf(Self, Double) -> Double
+pub fn Stable::sf_at_least(Self, Double) -> Double
+pub fn Stable::support_lower(Self) -> Double
+pub fn Stable::support_upper(Self) -> Double
 pub impl Cdf for Stable
 pub impl Density for Stable
 pub impl Quantile for Stable
 pub impl Sample for Stable
+pub impl Support for Stable
 pub impl Univariate for Stable
 
+#derive(Eq, @debug.Debug)
 pub struct StudentT {
-  // private fields
+  df : Double
+  loc : Double
+  scale : Double
 }
+pub fn StudentT::cdf(Self, Double) -> Double
+pub fn StudentT::cf(Self, Double) -> (Double, Double)
 pub fn StudentT::family() -> Family[Self]
-pub fn StudentT::new(Double) -> Self raise ParamError
+pub fn StudentT::isf(Self, Double) -> Double
+pub fn StudentT::logcdf(Self, Double) -> Double
+pub fn StudentT::logpdf(Self, Double) -> Double
+pub fn StudentT::logsf(Self, Double) -> Double
+pub fn StudentT::mean(Self) -> Double?
+pub fn StudentT::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn StudentT::pdf(Self, Double) -> Double
+pub fn StudentT::quantile(Self, Double) -> Double
+pub fn StudentT::sample(Self, &@num.RandomSource) -> Double
+pub fn StudentT::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn StudentT::sf(Self, Double) -> Double
+pub fn StudentT::sf_at_least(Self, Double) -> Double
+pub fn StudentT::support_lower(Self) -> Double
+pub fn StudentT::support_upper(Self) -> Double
+pub fn StudentT::variance(Self) -> Double?
 pub impl Cdf for StudentT
 pub impl Characteristic for StudentT
 pub impl Density for StudentT
 pub impl Moments for StudentT
 pub impl Quantile for StudentT
 pub impl Sample for StudentT
+pub impl Support for StudentT
 pub impl Univariate for StudentT
 
+#derive(Eq, @debug.Debug)
 pub struct StudentizedRange {
-  // private fields
+  k : Double
+  df : Double
+  loc : Double
+  scale : Double
 }
+pub fn StudentizedRange::cdf(Self, Double) -> Double
 pub fn StudentizedRange::family() -> Family[Self]
-pub fn StudentizedRange::new(Double, Double) -> Self raise ParamError
+pub fn StudentizedRange::isf(Self, Double) -> Double
+pub fn StudentizedRange::logcdf(Self, Double) -> Double
+pub fn StudentizedRange::logpdf(Self, Double) -> Double
+pub fn StudentizedRange::logsf(Self, Double) -> Double
+pub fn StudentizedRange::new(k~ : Double, df~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn StudentizedRange::pdf(Self, Double) -> Double
+pub fn StudentizedRange::quantile(Self, Double) -> Double
+pub fn StudentizedRange::sample(Self, &@num.RandomSource) -> Double
+pub fn StudentizedRange::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn StudentizedRange::sf(Self, Double) -> Double
+pub fn StudentizedRange::sf_at_least(Self, Double) -> Double
+pub fn StudentizedRange::support_lower(Self) -> Double
+pub fn StudentizedRange::support_upper(Self) -> Double
 pub impl Cdf for StudentizedRange
 pub impl Density for StudentizedRange
 pub impl Quantile for StudentizedRange
 pub impl Sample for StudentizedRange
+pub impl Support for StudentizedRange
 pub impl Univariate for StudentizedRange
 
+#derive(Eq, @debug.Debug)
 pub struct Trapezoid {
-  // private fields
+  c : Double
+  d : Double
+  loc : Double
+  scale : Double
 }
+pub fn Trapezoid::cdf(Self, Double) -> Double
 pub fn Trapezoid::family() -> Family[Self]
-pub fn Trapezoid::new(Double, Double) -> Self raise ParamError
+pub fn Trapezoid::isf(Self, Double) -> Double
+pub fn Trapezoid::logcdf(Self, Double) -> Double
+pub fn Trapezoid::logpdf(Self, Double) -> Double
+pub fn Trapezoid::logsf(Self, Double) -> Double
+pub fn Trapezoid::new(c~ : Double, d~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Trapezoid::pdf(Self, Double) -> Double
+pub fn Trapezoid::quantile(Self, Double) -> Double
+pub fn Trapezoid::sample(Self, &@num.RandomSource) -> Double
+pub fn Trapezoid::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Trapezoid::sf(Self, Double) -> Double
+pub fn Trapezoid::sf_at_least(Self, Double) -> Double
+pub fn Trapezoid::support_lower(Self) -> Double
+pub fn Trapezoid::support_upper(Self) -> Double
 pub impl Cdf for Trapezoid
 pub impl Density for Trapezoid
 pub impl Quantile for Trapezoid
 pub impl Sample for Trapezoid
+pub impl Support for Trapezoid
 pub impl Univariate for Trapezoid
 
+#derive(Eq, @debug.Debug)
 pub struct Triangular {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn Triangular::cdf(Self, Double) -> Double
 pub fn Triangular::family() -> Family[Self]
-pub fn Triangular::new(Double) -> Self raise ParamError
+pub fn Triangular::isf(Self, Double) -> Double
+pub fn Triangular::logcdf(Self, Double) -> Double
+pub fn Triangular::logpdf(Self, Double) -> Double
+pub fn Triangular::logsf(Self, Double) -> Double
+pub fn Triangular::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Triangular::pdf(Self, Double) -> Double
+pub fn Triangular::quantile(Self, Double) -> Double
+pub fn Triangular::sample(Self, &@num.RandomSource) -> Double
+pub fn Triangular::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Triangular::sf(Self, Double) -> Double
+pub fn Triangular::sf_at_least(Self, Double) -> Double
+pub fn Triangular::support_lower(Self) -> Double
+pub fn Triangular::support_upper(Self) -> Double
 pub impl Cdf for Triangular
 pub impl Density for Triangular
 pub impl Quantile for Triangular
 pub impl Sample for Triangular
+pub impl Support for Triangular
 pub impl Univariate for Triangular
 
 pub struct Truncated[D] {
+  base : D
+  lo : Double
+  hi : Double
   // private fields
 }
-pub fn[D : Cdf] Truncated::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
+pub fn[D : Cdf] Truncated::cdf(Self[D], Double) -> Double
+pub fn[D : Quantile] Truncated::isf(Self[D], Double) -> Double
+pub fn[D : Cdf] Truncated::logcdf(Self[D], Double) -> Double
+pub fn[D : Density] Truncated::logpdf(Self[D], Double) -> Double
+pub fn[D : Cdf] Truncated::logsf(Self[D], Double) -> Double
+pub fn[D : Cdf] Truncated::new(D, lo? : Double, hi? : Double) -> Self[D] raise ParamError
+pub fn[D : Density] Truncated::pdf(Self[D], Double) -> Double
+pub fn[D : Quantile] Truncated::quantile(Self[D], Double) -> Double
+pub fn[D : Quantile] Truncated::sample(Self[D], &@num.RandomSource) -> Double
+pub fn[D : Quantile] Truncated::sample_into(Self[D], &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn[D : Cdf] Truncated::sf(Self[D], Double) -> Double
+pub fn[D : Cdf] Truncated::sf_at_least(Self[D], Double) -> Double
+pub fn[D : Support] Truncated::support_lower(Self[D]) -> Double
+pub fn[D : Support] Truncated::support_upper(Self[D]) -> Double
 pub impl[D : Cdf] Cdf for Truncated[D]
+pub impl[D : Density] Density for Truncated[D]
+pub impl[D : Quantile] Quantile for Truncated[D]
+pub impl[D : Quantile] Sample for Truncated[D]
+pub impl[D : Support] Support for Truncated[D]
+pub impl[D : Univariate] Univariate for Truncated[D]
 
+#derive(Eq, @debug.Debug)
 pub struct TruncatedExponential {
-  // private fields
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn TruncatedExponential::cdf(Self, Double) -> Double
 pub fn TruncatedExponential::family() -> Family[Self]
-pub fn TruncatedExponential::new(Double) -> Self raise ParamError
+pub fn TruncatedExponential::isf(Self, Double) -> Double
+pub fn TruncatedExponential::logcdf(Self, Double) -> Double
+pub fn TruncatedExponential::logpdf(Self, Double) -> Double
+pub fn TruncatedExponential::logsf(Self, Double) -> Double
+pub fn TruncatedExponential::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn TruncatedExponential::pdf(Self, Double) -> Double
+pub fn TruncatedExponential::quantile(Self, Double) -> Double
+pub fn TruncatedExponential::sample(Self, &@num.RandomSource) -> Double
+pub fn TruncatedExponential::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn TruncatedExponential::sf(Self, Double) -> Double
+pub fn TruncatedExponential::sf_at_least(Self, Double) -> Double
+pub fn TruncatedExponential::support_lower(Self) -> Double
+pub fn TruncatedExponential::support_upper(Self) -> Double
 pub impl Cdf for TruncatedExponential
 pub impl Density for TruncatedExponential
 pub impl Quantile for TruncatedExponential
 pub impl Sample for TruncatedExponential
+pub impl Support for TruncatedExponential
 pub impl Univariate for TruncatedExponential
 
+#derive(Eq, @debug.Debug)
 pub struct TruncatedNormal {
-  // private fields
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn TruncatedNormal::cdf(Self, Double) -> Double
 pub fn TruncatedNormal::family() -> Family[Self]
-pub fn TruncatedNormal::new(Double, Double) -> Self raise ParamError
+pub fn TruncatedNormal::isf(Self, Double) -> Double
+pub fn TruncatedNormal::logcdf(Self, Double) -> Double
+pub fn TruncatedNormal::logpdf(Self, Double) -> Double
+pub fn TruncatedNormal::logsf(Self, Double) -> Double
+pub fn TruncatedNormal::new(a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn TruncatedNormal::pdf(Self, Double) -> Double
+pub fn TruncatedNormal::quantile(Self, Double) -> Double
+pub fn TruncatedNormal::sample(Self, &@num.RandomSource) -> Double
+pub fn TruncatedNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn TruncatedNormal::sf(Self, Double) -> Double
+pub fn TruncatedNormal::sf_at_least(Self, Double) -> Double
 pub impl Cdf for TruncatedNormal
 pub impl Density for TruncatedNormal
 pub impl Quantile for TruncatedNormal
 pub impl Sample for TruncatedNormal
 pub impl Univariate for TruncatedNormal
 
+#derive(Eq, @debug.Debug)
 pub struct TruncatedPareto {
-  // private fields
+  b : Double
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn TruncatedPareto::cdf(Self, Double) -> Double
 pub fn TruncatedPareto::family() -> Family[Self]
-pub fn TruncatedPareto::new(Double, Double) -> Self raise ParamError
+pub fn TruncatedPareto::isf(Self, Double) -> Double
+pub fn TruncatedPareto::logcdf(Self, Double) -> Double
+pub fn TruncatedPareto::logpdf(Self, Double) -> Double
+pub fn TruncatedPareto::logsf(Self, Double) -> Double
+pub fn TruncatedPareto::new(b~ : Double, c~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn TruncatedPareto::pdf(Self, Double) -> Double
+pub fn TruncatedPareto::quantile(Self, Double) -> Double
+pub fn TruncatedPareto::sample(Self, &@num.RandomSource) -> Double
+pub fn TruncatedPareto::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn TruncatedPareto::sf(Self, Double) -> Double
+pub fn TruncatedPareto::sf_at_least(Self, Double) -> Double
+pub fn TruncatedPareto::support_lower(Self) -> Double
+pub fn TruncatedPareto::support_upper(Self) -> Double
 pub impl Cdf for TruncatedPareto
 pub impl Density for TruncatedPareto
 pub impl Quantile for TruncatedPareto
 pub impl Sample for TruncatedPareto
+pub impl Support for TruncatedPareto
 pub impl Univariate for TruncatedPareto
 
+#derive(Eq, @debug.Debug)
 pub struct TruncatedWeibull {
-  // private fields
+  c : Double
+  a : Double
+  b : Double
+  loc : Double
+  scale : Double
 }
+pub fn TruncatedWeibull::cdf(Self, Double) -> Double
 pub fn TruncatedWeibull::family() -> Family[Self]
-pub fn TruncatedWeibull::new(Double, Double, Double) -> Self raise ParamError
+pub fn TruncatedWeibull::isf(Self, Double) -> Double
+pub fn TruncatedWeibull::logcdf(Self, Double) -> Double
+pub fn TruncatedWeibull::logpdf(Self, Double) -> Double
+pub fn TruncatedWeibull::logsf(Self, Double) -> Double
+pub fn TruncatedWeibull::new(c~ : Double, a~ : Double, b~ : Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn TruncatedWeibull::pdf(Self, Double) -> Double
+pub fn TruncatedWeibull::quantile(Self, Double) -> Double
+pub fn TruncatedWeibull::sample(Self, &@num.RandomSource) -> Double
+pub fn TruncatedWeibull::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn TruncatedWeibull::sf(Self, Double) -> Double
+pub fn TruncatedWeibull::sf_at_least(Self, Double) -> Double
 pub impl Cdf for TruncatedWeibull
 pub impl Density for TruncatedWeibull
 pub impl Quantile for TruncatedWeibull
 pub impl Sample for TruncatedWeibull
 pub impl Univariate for TruncatedWeibull
 
+#derive(Eq, @debug.Debug)
 pub struct TukeyLambda {
-  // private fields
+  lam : Double
+  loc : Double
+  scale : Double
 }
+pub fn TukeyLambda::cdf(Self, Double) -> Double
 pub fn TukeyLambda::family() -> Family[Self]
-pub fn TukeyLambda::new(Double) -> Self raise ParamError
+pub fn TukeyLambda::isf(Self, Double) -> Double
+pub fn TukeyLambda::logcdf(Self, Double) -> Double
+pub fn TukeyLambda::logpdf(Self, Double) -> Double
+pub fn TukeyLambda::logsf(Self, Double) -> Double
+pub fn TukeyLambda::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn TukeyLambda::pdf(Self, Double) -> Double
+pub fn TukeyLambda::quantile(Self, Double) -> Double
+pub fn TukeyLambda::sample(Self, &@num.RandomSource) -> Double
+pub fn TukeyLambda::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn TukeyLambda::sf(Self, Double) -> Double
+pub fn TukeyLambda::sf_at_least(Self, Double) -> Double
 pub impl Cdf for TukeyLambda
 pub impl Density for TukeyLambda
 pub impl Quantile for TukeyLambda
 pub impl Sample for TukeyLambda
 pub impl Univariate for TukeyLambda
 
+#derive(Eq, @debug.Debug)
 pub struct Uniform {
+  loc : Double
+  scale : Double
 }
+pub fn Uniform::cdf(Self, Double) -> Double
 pub fn Uniform::family() -> Family[Self]
-pub fn Uniform::new() -> Self
+pub fn Uniform::isf(Self, Double) -> Double
+pub fn Uniform::logcdf(Self, Double) -> Double
+pub fn Uniform::logpdf(Self, Double) -> Double
+pub fn Uniform::logsf(Self, Double) -> Double
+pub fn Uniform::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Uniform::pdf(Self, Double) -> Double
+pub fn Uniform::quantile(Self, Double) -> Double
+pub fn Uniform::sample(Self, &@num.RandomSource) -> Double
+pub fn Uniform::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Uniform::sf(Self, Double) -> Double
+pub fn Uniform::sf_at_least(Self, Double) -> Double
+pub fn Uniform::support_lower(Self) -> Double
+pub fn Uniform::support_upper(Self) -> Double
 pub impl Cdf for Uniform
 pub impl Density for Uniform
 pub impl Quantile for Uniform
 pub impl Sample for Uniform
+pub impl Support for Uniform
 pub impl Univariate for Uniform
 
+#derive(Eq, @debug.Debug)
 pub struct VonMises {
-  // private fields
+  kappa : Double
+  loc : Double
+  scale : Double
 }
+pub fn VonMises::cdf(Self, Double) -> Double
 pub fn VonMises::family() -> Family[Self]
-pub fn VonMises::new(Double) -> Self raise ParamError
+pub fn VonMises::isf(Self, Double) -> Double
+pub fn VonMises::logcdf(Self, Double) -> Double
+pub fn VonMises::logpdf(Self, Double) -> Double
+pub fn VonMises::logsf(Self, Double) -> Double
+pub fn VonMises::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn VonMises::pdf(Self, Double) -> Double
+pub fn VonMises::quantile(Self, Double) -> Double
+pub fn VonMises::sample(Self, &@num.RandomSource) -> Double
+pub fn VonMises::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn VonMises::sf(Self, Double) -> Double
+pub fn VonMises::sf_at_least(Self, Double) -> Double
+pub fn VonMises::support_lower(Self) -> Double
+pub fn VonMises::support_upper(Self) -> Double
 pub impl Cdf for VonMises
 pub impl Density for VonMises
 pub impl Quantile for VonMises
 pub impl Sample for VonMises
+pub impl Support for VonMises
 pub impl Univariate for VonMises
 
+#derive(Eq, @debug.Debug)
 pub struct VonMisesLine {
-  // private fields
+  kappa : Double
+  loc : Double
+  scale : Double
 }
+pub fn VonMisesLine::cdf(Self, Double) -> Double
 pub fn VonMisesLine::family() -> Family[Self]
-pub fn VonMisesLine::new(Double) -> Self raise ParamError
+pub fn VonMisesLine::isf(Self, Double) -> Double
+pub fn VonMisesLine::logcdf(Self, Double) -> Double
+pub fn VonMisesLine::logpdf(Self, Double) -> Double
+pub fn VonMisesLine::logsf(Self, Double) -> Double
+pub fn VonMisesLine::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn VonMisesLine::pdf(Self, Double) -> Double
+pub fn VonMisesLine::quantile(Self, Double) -> Double
+pub fn VonMisesLine::sample(Self, &@num.RandomSource) -> Double
+pub fn VonMisesLine::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn VonMisesLine::sf(Self, Double) -> Double
+pub fn VonMisesLine::sf_at_least(Self, Double) -> Double
+pub fn VonMisesLine::support_lower(Self) -> Double
+pub fn VonMisesLine::support_upper(Self) -> Double
 pub impl Cdf for VonMisesLine
 pub impl Density for VonMisesLine
 pub impl Quantile for VonMisesLine
 pub impl Sample for VonMisesLine
+pub impl Support for VonMisesLine
 pub impl Univariate for VonMisesLine
 
+#derive(Eq, @debug.Debug)
 pub struct Wald {
+  loc : Double
+  scale : Double
 }
+pub fn Wald::cdf(Self, Double) -> Double
 pub fn Wald::family() -> Family[Self]
-pub fn Wald::new() -> Self
+pub fn Wald::isf(Self, Double) -> Double
+pub fn Wald::logcdf(Self, Double) -> Double
+pub fn Wald::logpdf(Self, Double) -> Double
+pub fn Wald::logsf(Self, Double) -> Double
+pub fn Wald::new(loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Wald::pdf(Self, Double) -> Double
+pub fn Wald::quantile(Self, Double) -> Double
+pub fn Wald::sample(Self, &@num.RandomSource) -> Double
+pub fn Wald::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Wald::sf(Self, Double) -> Double
+pub fn Wald::sf_at_least(Self, Double) -> Double
+pub fn Wald::support_lower(Self) -> Double
+pub fn Wald::support_upper(Self) -> Double
 pub impl Cdf for Wald
 pub impl Density for Wald
 pub impl Quantile for Wald
 pub impl Sample for Wald
+pub impl Support for Wald
 pub impl Univariate for Wald
 
+#derive(Eq, @debug.Debug)
 pub struct WalleniusNoncentralHypergeometric {
-  // private fields
+  population : Int64
+  successes : Int64
+  draws : Int64
+  odds : Double
 }
-pub fn WalleniusNoncentralHypergeometric::family(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Family[Self]
-pub fn WalleniusNoncentralHypergeometric::new(Int32, Int32, Int32, Double) -> Self raise ParamError
+pub fn WalleniusNoncentralHypergeometric::cdf(Self, Double) -> Double
+pub fn WalleniusNoncentralHypergeometric::cdf_int(Self, Int64) -> Double
+pub fn WalleniusNoncentralHypergeometric::family(population~ : Int64, successes~ : Int64, draws~ : Int64) -> Family[Self]
+pub fn WalleniusNoncentralHypergeometric::isf(Self, Double) -> Double
+pub fn WalleniusNoncentralHypergeometric::logcdf(Self, Double) -> Double
+pub fn WalleniusNoncentralHypergeometric::logpmf(Self, Int64) -> Double
+pub fn WalleniusNoncentralHypergeometric::logsf(Self, Double) -> Double
+pub fn WalleniusNoncentralHypergeometric::new(population~ : Int64, successes~ : Int64, draws~ : Int64, odds~ : Double) -> Self raise ParamError
+pub fn WalleniusNoncentralHypergeometric::pmf(Self, Int64) -> Double
+pub fn WalleniusNoncentralHypergeometric::quantile(Self, Double) -> Double
+pub fn WalleniusNoncentralHypergeometric::quantile_int(Self, Double) -> Int64
+pub fn WalleniusNoncentralHypergeometric::sample(Self, &@num.RandomSource) -> Double
+pub fn WalleniusNoncentralHypergeometric::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn WalleniusNoncentralHypergeometric::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn WalleniusNoncentralHypergeometric::sf(Self, Double) -> Double
+pub fn WalleniusNoncentralHypergeometric::sf_at_least(Self, Double) -> Double
+pub fn WalleniusNoncentralHypergeometric::sf_int(Self, Int64) -> Double
+pub fn WalleniusNoncentralHypergeometric::support_lower(Self) -> Double
+pub fn WalleniusNoncentralHypergeometric::support_upper(Self) -> Double
 pub impl Cdf for WalleniusNoncentralHypergeometric
 pub impl IntCdf for WalleniusNoncentralHypergeometric
 pub impl IntQuantile for WalleniusNoncentralHypergeometric
@@ -1533,46 +3893,116 @@ pub impl Mass for WalleniusNoncentralHypergeometric
 pub impl Quantile for WalleniusNoncentralHypergeometric
 pub impl Sample for WalleniusNoncentralHypergeometric
 pub impl SampleInt for WalleniusNoncentralHypergeometric
+pub impl Support for WalleniusNoncentralHypergeometric
 pub impl Univariate for WalleniusNoncentralHypergeometric
 
+#derive(Eq, @debug.Debug)
 pub struct Weibull {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn Weibull::cdf(Self, Double) -> Double
 pub fn Weibull::family() -> Family[Self]
-pub fn Weibull::new(Double) -> Self raise ParamError
+pub fn Weibull::isf(Self, Double) -> Double
+pub fn Weibull::logcdf(Self, Double) -> Double
+pub fn Weibull::logpdf(Self, Double) -> Double
+pub fn Weibull::logsf(Self, Double) -> Double
+pub fn Weibull::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn Weibull::pdf(Self, Double) -> Double
+pub fn Weibull::quantile(Self, Double) -> Double
+pub fn Weibull::sample(Self, &@num.RandomSource) -> Double
+pub fn Weibull::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Weibull::sf(Self, Double) -> Double
+pub fn Weibull::sf_at_least(Self, Double) -> Double
+pub fn Weibull::support_lower(Self) -> Double
+pub fn Weibull::support_upper(Self) -> Double
 pub impl Cdf for Weibull
 pub impl Density for Weibull
 pub impl Quantile for Weibull
 pub impl Sample for Weibull
+pub impl Support for Weibull
 pub impl Univariate for Weibull
 
+#derive(Eq, @debug.Debug)
 pub struct WeibullMax {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn WeibullMax::cdf(Self, Double) -> Double
 pub fn WeibullMax::family() -> Family[Self]
-pub fn WeibullMax::new(Double) -> Self raise ParamError
+pub fn WeibullMax::isf(Self, Double) -> Double
+pub fn WeibullMax::logcdf(Self, Double) -> Double
+pub fn WeibullMax::logpdf(Self, Double) -> Double
+pub fn WeibullMax::logsf(Self, Double) -> Double
+pub fn WeibullMax::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn WeibullMax::pdf(Self, Double) -> Double
+pub fn WeibullMax::quantile(Self, Double) -> Double
+pub fn WeibullMax::sample(Self, &@num.RandomSource) -> Double
+pub fn WeibullMax::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn WeibullMax::sf(Self, Double) -> Double
+pub fn WeibullMax::sf_at_least(Self, Double) -> Double
+pub fn WeibullMax::support_lower(Self) -> Double
+pub fn WeibullMax::support_upper(Self) -> Double
 pub impl Cdf for WeibullMax
 pub impl Density for WeibullMax
 pub impl Quantile for WeibullMax
 pub impl Sample for WeibullMax
+pub impl Support for WeibullMax
 pub impl Univariate for WeibullMax
 
+#derive(Eq, @debug.Debug)
 pub struct WrappedCauchy {
-  // private fields
+  c : Double
+  loc : Double
+  scale : Double
 }
+pub fn WrappedCauchy::cdf(Self, Double) -> Double
 pub fn WrappedCauchy::family() -> Family[Self]
-pub fn WrappedCauchy::new(Double) -> Self raise ParamError
+pub fn WrappedCauchy::isf(Self, Double) -> Double
+pub fn WrappedCauchy::logcdf(Self, Double) -> Double
+pub fn WrappedCauchy::logpdf(Self, Double) -> Double
+pub fn WrappedCauchy::logsf(Self, Double) -> Double
+pub fn WrappedCauchy::new(Double, loc? : Double, scale? : Double) -> Self raise ParamError
+pub fn WrappedCauchy::pdf(Self, Double) -> Double
+pub fn WrappedCauchy::quantile(Self, Double) -> Double
+pub fn WrappedCauchy::sample(Self, &@num.RandomSource) -> Double
+pub fn WrappedCauchy::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn WrappedCauchy::sf(Self, Double) -> Double
+pub fn WrappedCauchy::sf_at_least(Self, Double) -> Double
+pub fn WrappedCauchy::support_lower(Self) -> Double
+pub fn WrappedCauchy::support_upper(Self) -> Double
 pub impl Cdf for WrappedCauchy
 pub impl Density for WrappedCauchy
 pub impl Quantile for WrappedCauchy
 pub impl Sample for WrappedCauchy
+pub impl Support for WrappedCauchy
 pub impl Univariate for WrappedCauchy
 
+#derive(Eq, @debug.Debug)
 pub struct YuleSimon {
-  // private fields
+  alpha : Double
 }
+pub fn YuleSimon::cdf(Self, Double) -> Double
+pub fn YuleSimon::cdf_int(Self, Int64) -> Double
 pub fn YuleSimon::family() -> Family[Self]
+pub fn YuleSimon::isf(Self, Double) -> Double
+pub fn YuleSimon::logcdf(Self, Double) -> Double
+pub fn YuleSimon::logpmf(Self, Int64) -> Double
+pub fn YuleSimon::logsf(Self, Double) -> Double
 pub fn YuleSimon::new(Double) -> Self raise ParamError
+pub fn YuleSimon::pmf(Self, Int64) -> Double
+pub fn YuleSimon::quantile(Self, Double) -> Double
+pub fn YuleSimon::quantile_int(Self, Double) -> Int64
+pub fn YuleSimon::sample(Self, &@num.RandomSource) -> Double
+pub fn YuleSimon::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn YuleSimon::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn YuleSimon::sf(Self, Double) -> Double
+pub fn YuleSimon::sf_at_least(Self, Double) -> Double
+pub fn YuleSimon::sf_int(Self, Int64) -> Double
+pub fn YuleSimon::support_lower(Self) -> Double
+pub fn YuleSimon::support_upper(Self) -> Double
 pub impl Cdf for YuleSimon
 pub impl IntCdf for YuleSimon
 pub impl IntQuantile for YuleSimon
@@ -1580,13 +4010,32 @@ pub impl Mass for YuleSimon
 pub impl Quantile for YuleSimon
 pub impl Sample for YuleSimon
 pub impl SampleInt for YuleSimon
+pub impl Support for YuleSimon
 pub impl Univariate for YuleSimon
 
+#derive(Eq, @debug.Debug)
 pub struct Zipf {
-  // private fields
+  a : Double
 }
+pub fn Zipf::cdf(Self, Double) -> Double
+pub fn Zipf::cdf_int(Self, Int64) -> Double
 pub fn Zipf::family() -> Family[Self]
+pub fn Zipf::isf(Self, Double) -> Double
+pub fn Zipf::logcdf(Self, Double) -> Double
+pub fn Zipf::logpmf(Self, Int64) -> Double
+pub fn Zipf::logsf(Self, Double) -> Double
 pub fn Zipf::new(Double) -> Self raise ParamError
+pub fn Zipf::pmf(Self, Int64) -> Double
+pub fn Zipf::quantile(Self, Double) -> Double
+pub fn Zipf::quantile_int(Self, Double) -> Int64
+pub fn Zipf::sample(Self, &@num.RandomSource) -> Double
+pub fn Zipf::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Zipf::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Zipf::sf(Self, Double) -> Double
+pub fn Zipf::sf_at_least(Self, Double) -> Double
+pub fn Zipf::sf_int(Self, Int64) -> Double
+pub fn Zipf::support_lower(Self) -> Double
+pub fn Zipf::support_upper(Self) -> Double
 pub impl Cdf for Zipf
 pub impl IntCdf for Zipf
 pub impl IntQuantile for Zipf
@@ -1594,13 +4043,33 @@ pub impl Mass for Zipf
 pub impl Quantile for Zipf
 pub impl Sample for Zipf
 pub impl SampleInt for Zipf
+pub impl Support for Zipf
 pub impl Univariate for Zipf
 
+#derive(Eq, @debug.Debug)
 pub struct Zipfian {
-  // private fields
+  a : Double
+  n : Int64
 }
-pub fn Zipfian::family(n~ : Int32) -> Family[Self]
-pub fn Zipfian::new(Double, Int32) -> Self raise ParamError
+pub fn Zipfian::cdf(Self, Double) -> Double
+pub fn Zipfian::cdf_int(Self, Int64) -> Double
+pub fn Zipfian::family(n~ : Int64) -> Family[Self]
+pub fn Zipfian::isf(Self, Double) -> Double
+pub fn Zipfian::logcdf(Self, Double) -> Double
+pub fn Zipfian::logpmf(Self, Int64) -> Double
+pub fn Zipfian::logsf(Self, Double) -> Double
+pub fn Zipfian::new(a~ : Double, n~ : Int64) -> Self raise ParamError
+pub fn Zipfian::pmf(Self, Int64) -> Double
+pub fn Zipfian::quantile(Self, Double) -> Double
+pub fn Zipfian::quantile_int(Self, Double) -> Int64
+pub fn Zipfian::sample(Self, &@num.RandomSource) -> Double
+pub fn Zipfian::sample_int(Self, &@num.RandomSource) -> Int64
+pub fn Zipfian::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+pub fn Zipfian::sf(Self, Double) -> Double
+pub fn Zipfian::sf_at_least(Self, Double) -> Double
+pub fn Zipfian::sf_int(Self, Int64) -> Double
+pub fn Zipfian::support_lower(Self) -> Double
+pub fn Zipfian::support_upper(Self) -> Double
 pub impl Cdf for Zipfian
 pub impl IntCdf for Zipfian
 pub impl IntQuantile for Zipfian
@@ -1608,6 +4077,7 @@ pub impl Mass for Zipfian
 pub impl Quantile for Zipfian
 pub impl Sample for Zipfian
 pub impl SampleInt for Zipfian
+pub impl Support for Zipfian
 pub impl Univariate for Zipfian
 
 // Type aliases
@@ -1615,7 +4085,7 @@ pub impl Univariate for Zipfian
 // Traits
 pub(open) trait Cdf {
   fn cdf(Self, Double) -> Double
-  fn sf(Self, Double) -> Double = _
+  fn sf(Self, Double) -> Double
   fn logcdf(Self, Double) -> Double = _
   fn logsf(Self, Double) -> Double = _
   fn sf_at_least(Self, Double) -> Double = _
@@ -1639,22 +4109,26 @@ pub(open) trait Fit {
 }
 
 pub(open) trait IntCdf {
-  fn cdf_int(Self, Int32) -> Double
-  fn sf_int(Self, Int32) -> Double = _
+  fn cdf_int(Self, Int64) -> Double
+  fn sf_int(Self, Int64) -> Double
 }
 
 pub(open) trait IntQuantile {
-  fn quantile_int(Self, Double) -> Int32
+  fn quantile_int(Self, Double) -> Int64
 }
 
 pub(open) trait Mass {
-  fn pmf(Self, Int32) -> Double
-  fn logpmf(Self, Int32) -> Double = _
+  fn pmf(Self, Int64) -> Double
+  fn logpmf(Self, Int64) -> Double = _
 }
 
 pub(open) trait Mgf {
   fn mgf(Self, Double) -> Double?
   fn cgf(Self, Double) -> Double? = _
+}
+
+pub(open) trait Mode {
+  fn mode(Self) -> Double
 }
 
 pub(open) trait Moments {
@@ -1664,24 +4138,30 @@ pub(open) trait Moments {
 
 pub(open) trait Quantile {
   fn quantile(Self, Double) -> Double
-  fn isf(Self, Double) -> Double = _
+  fn isf(Self, Double) -> Double
 }
 
 pub(open) trait Sample {
   fn sample(Self, &@num.RandomSource) -> Double
+  fn sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit = _
 }
 
 pub(open) trait SampleInt {
-  fn sample_int(Self, &@num.RandomSource) -> Int32
+  fn sample_int(Self, &@num.RandomSource) -> Int64
 }
 
 pub(open) trait Score {
-  fn score_into(Self, Double, FixedArray[Double]) -> Unit
+  fn score(Self, Double) -> FixedArray[Double]
 }
 
 pub(open) trait Shape {
   fn skewness(Self) -> Double?
   fn excess_kurtosis(Self) -> Double?
+}
+
+pub(open) trait Support {
+  fn support_lower(Self) -> Double
+  fn support_upper(Self) -> Double
 }
 
 pub(open) trait Univariate : Cdf + Quantile + Sample {

@@ -1,68 +1,83 @@
 ///|
-/// Capabilities written by hand on top of the generated catalogue types:
-/// the special-function paths of the reference distributions, moment and
-/// characteristic functions, fitting, and alternative constructors. Field
-/// names follow SciPy (generated in catalog.mbt).
+/// Standard forms written by hand for the catalogue's reference
+/// distributions, through the special functions: each `std_` method is the
+/// family at loc 0 and scale 1, and the generated code in catalog.mbt
+/// applies location and scale to it and exposes the result as the trait
+/// implementations. Field names follow SciPy (generated in catalog.mbt).
 
 // ---------------------------------------------------------------------------
-// Normal: loc and scale built in.
+// Normal
 // ---------------------------------------------------------------------------
 
 ///|
-pub impl Density for Normal with fn pdf(self, x) {
-  @math.exp(Density::logpdf(self, x))
+fn Normal::std_pdf(self : Normal, x : Double) -> Double {
+  @math.exp(self.std_logpdf(x))
 }
 
 ///|
 /// Closed form, so the far tails stay finite on the log scale.
-pub impl Density for Normal with fn logpdf(self, x) {
-  let z = (x - self.loc) / self.scale
-  -0.5 * z * z - @math.ln(self.scale) - 0.5 * @math.ln(2.0 * @math.PI)
+fn Normal::std_logpdf(_self : Normal, x : Double) -> Double {
+  -0.5 * x * x - 0.5 * @math.ln(2.0 * @math.PI)
 }
 
 ///|
-pub impl Cdf for Normal with fn cdf(self, x) {
-  @special.ndtr((x - self.loc) / self.scale)
+fn Normal::std_cdf(_self : Normal, x : Double) -> Double {
+  @special.ndtr(x)
 }
 
 ///|
 /// Symmetry gives the upper tail without cancellation.
-pub impl Cdf for Normal with fn sf(self, x) {
-  @special.ndtr((self.loc - x) / self.scale)
+fn Normal::std_sf(_self : Normal, x : Double) -> Double {
+  @special.ndtr(-x)
 }
 
 ///|
-pub impl Quantile for Normal with fn quantile(self, p) {
-  self.loc + self.scale * @special.ndtri(p)
+/// ln Φ from its own expansion, finite where Φ underflows.
+fn Normal::std_logcdf(_self : Normal, x : Double) -> Double {
+  @special.log_ndtr(x)
+}
+
+///|
+fn Normal::std_logsf(_self : Normal, x : Double) -> Double {
+  @special.log_ndtr(-x)
+}
+
+///|
+fn Normal::std_quantile(_self : Normal, p : Double) -> Double {
+  @special.ndtri(p)
 }
 
 ///|
 /// By symmetry, never through 1 - q.
-pub impl Quantile for Normal with fn isf(self, q) {
-  self.loc - self.scale * @special.ndtri(q)
+fn Normal::std_isf(_self : Normal, q : Double) -> Double {
+  -@special.ndtri(q)
 }
 
 ///|
-pub impl Moments for Normal with fn mean(self) {
-  Some(self.loc)
+fn Normal::std_mean(_self : Normal) -> Double? {
+  Some(0.0)
 }
 
 ///|
-pub impl Moments for Normal with fn variance(self) {
-  Some(self.scale * self.scale)
+fn Normal::std_variance(_self : Normal) -> Double? {
+  Some(1.0)
 }
 
 ///|
-/// φ(t) = exp(i loc t - scale² t²/2).
-pub impl Characteristic for Normal with fn cf(self, t) {
-  let r = @math.exp(-0.5 * self.scale * self.scale * t * t)
-  (r * @math.cos(self.loc * t), r * @math.sin(self.loc * t))
+fn Normal::std_mode(_self : Normal) -> Double {
+  0.0
 }
 
 ///|
-/// M(t) = exp(loc t + scale² t²/2), finite for every t.
-pub impl Mgf for Normal with fn mgf(self, t) {
-  Some(@math.exp(self.loc * t + 0.5 * self.scale * self.scale * t * t))
+/// φ(t) = exp(-t²/2).
+fn Normal::std_cf(_self : Normal, t : Double) -> (Double, Double) {
+  (@math.exp(-0.5 * t * t), 0.0)
+}
+
+///|
+/// M(t) = exp(t²/2), finite for every t.
+fn Normal::std_mgf(_self : Normal, t : Double) -> Double? {
+  Some(@math.exp(0.5 * t * t))
 }
 
 ///|
@@ -80,7 +95,7 @@ pub impl Fit for Normal with fn fit(data) {
 // ---------------------------------------------------------------------------
 
 ///|
-pub impl Moments for StudentT with fn mean(self) {
+fn StudentT::std_mean(self : StudentT) -> Double? {
   if self.df > 1.0 {
     Some(0.0)
   } else {
@@ -89,7 +104,7 @@ pub impl Moments for StudentT with fn mean(self) {
 }
 
 ///|
-pub impl Moments for StudentT with fn variance(self) {
+fn StudentT::std_variance(self : StudentT) -> Double? {
   if self.df > 2.0 {
     Some(self.df / (self.df - 2.0))
   } else if self.df > 1.0 {
@@ -100,13 +115,13 @@ pub impl Moments for StudentT with fn variance(self) {
 }
 
 ///|
-pub impl Density for StudentT with fn pdf(self, x) {
-  @math.exp(Density::logpdf(self, x))
+fn StudentT::std_pdf(self : StudentT, x : Double) -> Double {
+  @math.exp(self.std_logpdf(x))
 }
 
 ///|
 /// -ln √ν - ln B(1/2, ν/2) - (ν+1)/2 · ln(1 + x²/ν).
-pub impl Density for StudentT with fn logpdf(self, x) {
+fn StudentT::std_logpdf(self : StudentT, x : Double) -> Double {
   -0.5 * @math.ln(self.df) -
   @special.lbeta(0.5, 0.5 * self.df) -
   0.5 * (self.df + 1.0) * @math.ln_1p(x * x / self.df)
@@ -122,7 +137,7 @@ fn StudentT::half_tail(self : StudentT, x : Double) -> Double {
 }
 
 ///|
-pub impl Cdf for StudentT with fn cdf(self, x) {
+fn StudentT::std_cdf(self : StudentT, x : Double) -> Double {
   if x < 0.0 {
     self.half_tail(x)
   } else {
@@ -132,7 +147,7 @@ pub impl Cdf for StudentT with fn cdf(self, x) {
 
 ///|
 /// The p-value path of every t test, from the incomplete beta directly.
-pub impl Cdf for StudentT with fn sf(self, x) {
+fn StudentT::std_sf(self : StudentT, x : Double) -> Double {
   if x > 0.0 {
     self.half_tail(x)
   } else {
@@ -144,7 +159,7 @@ pub impl Cdf for StudentT with fn sf(self, x) {
 /// Inverts the tail it is in: I_t(ν/2, 1/2) = 2q for the far tail, and the
 /// complementary I_z(1/2, ν/2) = 1 - 2q near the centre, so x stays
 /// accurate both at 1e-300 and next to the median.
-pub impl Quantile for StudentT with fn quantile(self, p) {
+fn StudentT::std_quantile(self : StudentT, p : Double) -> Double {
   if p == 0.5 {
     return 0.0
   }
@@ -165,26 +180,26 @@ pub impl Quantile for StudentT with fn quantile(self, p) {
 }
 
 ///|
-pub impl Quantile for StudentT with fn isf(self, q) {
-  -Quantile::quantile(self, q)
+fn StudentT::std_isf(self : StudentT, q : Double) -> Double {
+  -self.std_quantile(q)
 }
 
 ///|
 /// No `Mgf`: E[exp(tX)] diverges for every t != 0. The characteristic
 /// function is a modified Bessel function of the second kind.
-pub impl Characteristic for StudentT with fn cf(self, t) {
+fn StudentT::std_cf(self : StudentT, t : Double) -> (Double, Double) {
   ignore((self, t))
   ...
 }
 
 // ---------------------------------------------------------------------------
-// Gamma: shape a and scale built in (SciPy's parameterisation); the rate
-// form is an alternative constructor.
+// Gamma: shape a, with the scale every family has; the rate form is an
+// alternative constructor.
 // ---------------------------------------------------------------------------
 
 ///|
-/// The same distribution by shape and rate (scale = 1/rate).
-pub fn Gamma::with_rate(a : Double, rate : Double) -> Gamma raise ParamError {
+/// The same distribution by shape and rate (scale = 1/rate, loc = 0).
+pub fn Gamma::with_rate(a : Double, rate~ : Double) -> Gamma raise ParamError {
   if !(rate > 0.0) || rate.is_inf() {
     raise InvalidParam(name="rate", value=rate, reason="must be in (0, inf)")
   }
@@ -193,7 +208,7 @@ pub fn Gamma::with_rate(a : Double, rate : Double) -> Gamma raise ParamError {
 
 ///|
 /// Gamma by shape and rate: a separate family value, so a fit reports its
-/// parameters in the convention asked for.
+/// parameters in the convention asked for. The location stays at 0.
 pub fn Gamma::family_rate() -> Family[Gamma] {
   {
     name: "gamma (a, rate)",
@@ -201,156 +216,75 @@ pub fn Gamma::family_rate() -> Family[Gamma] {
       { name: "a", constraint: Positive, },
       { name: "rate", constraint: Positive, },
     ],
-    make: p => Gamma::with_rate(p[0], p[1]),
+    make: p => Gamma::with_rate(p[0], rate=p[1]),
     params: d => [d.a, 1.0 / d.scale],
   }
 }
 
 ///|
-pub impl Cdf for Gamma with fn cdf(self, x) {
+fn Gamma::std_cdf(self : Gamma, x : Double) -> Double {
   if x <= 0.0 {
     0.0
   } else {
-    @special.gammainc(self.a, x / self.scale)
+    @special.gammainc(self.a, x)
   }
 }
 
 ///|
-pub impl Cdf for Gamma with fn sf(self, x) {
+fn Gamma::std_sf(self : Gamma, x : Double) -> Double {
   if x <= 0.0 {
     1.0
   } else {
-    @special.gammaincc(self.a, x / self.scale)
+    @special.gammaincc(self.a, x)
   }
 }
 
 ///|
-pub impl Density for Gamma with fn pdf(self, x) {
+fn Gamma::std_pdf(self : Gamma, x : Double) -> Double {
   if x < 0.0 {
     0.0
   } else {
-    @math.exp(Density::logpdf(self, x))
+    @math.exp(self.std_logpdf(x))
   }
 }
 
 ///|
-pub impl Density for Gamma with fn logpdf(self, x) {
+fn Gamma::std_logpdf(self : Gamma, x : Double) -> Double {
   if x < 0.0 {
     -1.0 / 0.0
   } else {
-    let z = x / self.scale
-    (self.a - 1.0) * @math.ln(z) -
-    z -
-    @special.lgamma(self.a) -
-    @math.ln(self.scale)
+    (self.a - 1.0) * @math.ln(x) - x - @special.lgamma(self.a)
   }
 }
 
 ///|
-pub impl Quantile for Gamma with fn quantile(self, p) {
-  self.scale * @special.gammaincinv(self.a, p)
+fn Gamma::std_quantile(self : Gamma, p : Double) -> Double {
+  @special.gammaincinv(self.a, p)
 }
 
 ///|
-pub impl Quantile for Gamma with fn isf(self, q) {
-  self.scale * @special.gammainccinv(self.a, q)
+fn Gamma::std_isf(self : Gamma, q : Double) -> Double {
+  @special.gammainccinv(self.a, q)
 }
 
 ///|
-/// M(t) = (1 - t scale)^(-a) for t < 1/scale; it diverges from there on.
-pub impl Mgf for Gamma with fn mgf(self, t) {
-  if t * self.scale < 1.0 {
-    Some(@math.pow(1.0 - t * self.scale, -self.a))
+fn Gamma::std_mean(self : Gamma) -> Double? {
+  Some(self.a)
+}
+
+///|
+fn Gamma::std_variance(self : Gamma) -> Double? {
+  Some(self.a)
+}
+
+///|
+/// M(t) = (1 - t)^(-a) for t < 1; it diverges from there on.
+fn Gamma::std_mgf(self : Gamma, t : Double) -> Double? {
+  if t < 1.0 {
+    Some(@math.pow(1.0 - t, -self.a))
   } else {
     None
   }
-}
-
-// ---------------------------------------------------------------------------
-// Binomial
-// ---------------------------------------------------------------------------
-
-///|
-pub impl Mass for Binomial with fn pmf(self, k) {
-  if k < 0 || k > self.n {
-    0.0
-  } else if self.p == 0.0 {
-    if k == 0 {
-      1.0
-    } else {
-      0.0
-    }
-  } else if self.p == 1.0 {
-    if k == self.n {
-      1.0
-    } else {
-      0.0
-    }
-  } else {
-    @math.exp(
-      @special.lchoose(self.n.to_double(), k.to_double()) +
-      k.to_double() * @math.ln(self.p) +
-      (self.n - k).to_double() * @math.ln_1p(-self.p),
-    )
-  }
-}
-
-///|
-/// P(X <= k) = I_{1-p}(n - k, k + 1).
-pub impl IntCdf for Binomial with fn cdf_int(self, k) {
-  if k < 0 {
-    0.0
-  } else if k >= self.n {
-    1.0
-  } else {
-    @special.betainc(
-      (self.n - k).to_double(),
-      (k + 1).to_double(),
-      1.0 - self.p,
-    )
-  }
-}
-
-///|
-/// P(X > k) = I_p(k + 1, n - k).
-pub impl IntCdf for Binomial with fn sf_int(self, k) {
-  if k < 0 {
-    1.0
-  } else if k >= self.n {
-    0.0
-  } else {
-    @special.betainc((k + 1).to_double(), (self.n - k).to_double(), self.p)
-  }
-}
-
-///|
-/// A normal-approximation start, corrected by exact comparisons.
-pub impl IntQuantile for Binomial with fn quantile_int(self, p) {
-  let n = self.n.to_double()
-  let guess = n * self.p +
-    @special.ndtri(p) * (n * self.p * (1.0 - self.p)).sqrt()
-  refine_quantile(self, p, @math.floor(guess).to_int(), 0, self.n)
-}
-
-///|
-pub impl Moments for Binomial with fn mean(self) {
-  Some(self.n.to_double() * self.p)
-}
-
-///|
-pub impl Moments for Binomial with fn variance(self) {
-  Some(self.n.to_double() * self.p * (1.0 - self.p))
-}
-
-///|
-/// φ(t) = (1 - p + p e^{it})^n, raised to the n-th power in polar form.
-pub impl Characteristic for Binomial with fn cf(self, t) {
-  let re = 1.0 - self.p + self.p * @math.cos(t)
-  let im = self.p * @math.sin(t)
-  let n = self.n.to_double()
-  let r = @math.pow(@math.hypot(re, im), n)
-  let theta = n * @math.atan2(im, re)
-  (r * @math.cos(theta), r * @math.sin(theta))
 }
 
 // ---------------------------------------------------------------------------
@@ -359,7 +293,7 @@ pub impl Characteristic for Binomial with fn cf(self, t) {
 
 ///|
 /// P(X <= x) = P(df/2, x/2), the lower regularised incomplete gamma.
-pub impl Cdf for ChiSquared with fn cdf(self, x) {
+fn ChiSquared::std_cdf(self : ChiSquared, x : Double) -> Double {
   if x <= 0.0 {
     0.0
   } else {
@@ -369,7 +303,7 @@ pub impl Cdf for ChiSquared with fn cdf(self, x) {
 
 ///|
 /// P(X > x) = Q(df/2, x/2), computed directly for small p-values.
-pub impl Cdf for ChiSquared with fn sf(self, x) {
+fn ChiSquared::std_sf(self : ChiSquared, x : Double) -> Double {
   if x <= 0.0 {
     1.0
   } else {
@@ -378,16 +312,16 @@ pub impl Cdf for ChiSquared with fn sf(self, x) {
 }
 
 ///|
-pub impl Density for ChiSquared with fn pdf(self, x) {
+fn ChiSquared::std_pdf(self : ChiSquared, x : Double) -> Double {
   if x < 0.0 {
     0.0
   } else {
-    @math.exp(Density::logpdf(self, x))
+    @math.exp(self.std_logpdf(x))
   }
 }
 
 ///|
-pub impl Density for ChiSquared with fn logpdf(self, x) {
+fn ChiSquared::std_logpdf(self : ChiSquared, x : Double) -> Double {
   if x < 0.0 {
     -1.0 / 0.0
   } else {
@@ -397,12 +331,12 @@ pub impl Density for ChiSquared with fn logpdf(self, x) {
 }
 
 ///|
-pub impl Quantile for ChiSquared with fn quantile(self, p) {
+fn ChiSquared::std_quantile(self : ChiSquared, p : Double) -> Double {
   2.0 * @special.gammaincinv(0.5 * self.df, p)
 }
 
 ///|
-pub impl Quantile for ChiSquared with fn isf(self, q) {
+fn ChiSquared::std_isf(self : ChiSquared, q : Double) -> Double {
   2.0 * @special.gammainccinv(0.5 * self.df, q)
 }
 
@@ -420,7 +354,7 @@ fn FisherF::tails(self : FisherF, x : Double) -> (Double, Double) {
 }
 
 ///|
-pub impl Cdf for FisherF with fn cdf(self, x) {
+fn FisherF::std_cdf(self : FisherF, x : Double) -> Double {
   if x <= 0.0 {
     0.0
   } else {
@@ -429,7 +363,7 @@ pub impl Cdf for FisherF with fn cdf(self, x) {
 }
 
 ///|
-pub impl Cdf for FisherF with fn sf(self, x) {
+fn FisherF::std_sf(self : FisherF, x : Double) -> Double {
   if x <= 0.0 {
     1.0
   } else {
@@ -438,16 +372,16 @@ pub impl Cdf for FisherF with fn sf(self, x) {
 }
 
 ///|
-pub impl Density for FisherF with fn pdf(self, x) {
+fn FisherF::std_pdf(self : FisherF, x : Double) -> Double {
   if x < 0.0 {
     0.0
   } else {
-    @math.exp(Density::logpdf(self, x))
+    @math.exp(self.std_logpdf(x))
   }
 }
 
 ///|
-pub impl Density for FisherF with fn logpdf(self, x) {
+fn FisherF::std_logpdf(self : FisherF, x : Double) -> Double {
   if x < 0.0 {
     -1.0 / 0.0
   } else {
@@ -463,34 +397,34 @@ pub impl Density for FisherF with fn logpdf(self, x) {
 ///|
 /// The lower tail inverts I_u(dfn/2, dfd/2); above the median the upper
 /// tail is inverted instead, so a small 1 - u is never formed.
-pub impl Quantile for FisherF with fn quantile(self, p) {
+fn FisherF::std_quantile(self : FisherF, p : Double) -> Double {
   if p > 0.5 {
-    return Quantile::isf(self, 1.0 - p)
+    return self.std_isf(1.0 - p)
   }
   let u = @special.betaincinv(0.5 * self.dfn, 0.5 * self.dfd, p)
   self.dfd * u / (self.dfn * (1.0 - u))
 }
 
 ///|
-pub impl Quantile for FisherF with fn isf(self, q) {
+fn FisherF::std_isf(self : FisherF, q : Double) -> Double {
   if q > 0.5 {
-    return Quantile::quantile(self, 1.0 - q)
+    return self.std_quantile(1.0 - q)
   }
   let v = @special.betaincinv(0.5 * self.dfd, 0.5 * self.dfn, q)
   self.dfd * (1.0 - v) / (self.dfn * v)
 }
 
 ///|
-pub impl Density for Beta with fn pdf(self, x) {
+fn Beta::std_pdf(self : Beta, x : Double) -> Double {
   if x < 0.0 || x > 1.0 {
     0.0
   } else {
-    @math.exp(Density::logpdf(self, x))
+    @math.exp(self.std_logpdf(x))
   }
 }
 
 ///|
-pub impl Density for Beta with fn logpdf(self, x) {
+fn Beta::std_logpdf(self : Beta, x : Double) -> Double {
   if x < 0.0 || x > 1.0 {
     -1.0 / 0.0
   } else {
@@ -501,7 +435,7 @@ pub impl Density for Beta with fn logpdf(self, x) {
 }
 
 ///|
-pub impl Cdf for Beta with fn sf(self, x) {
+fn Beta::std_sf(self : Beta, x : Double) -> Double {
   if x <= 0.0 {
     1.0
   } else if x >= 1.0 {
@@ -513,12 +447,12 @@ pub impl Cdf for Beta with fn sf(self, x) {
 
 ///|
 /// 1 - I_x(a, b) = q is I_{1-x}(b, a) = q.
-pub impl Quantile for Beta with fn isf(self, q) {
+fn Beta::std_isf(self : Beta, q : Double) -> Double {
   1.0 - @special.betaincinv(self.b, self.a, q)
 }
 
 ///|
-pub impl Cdf for Beta with fn cdf(self, x) {
+fn Beta::std_cdf(self : Beta, x : Double) -> Double {
   if x <= 0.0 {
     0.0
   } else if x >= 1.0 {
@@ -530,151 +464,8 @@ pub impl Cdf for Beta with fn cdf(self, x) {
 
 ///|
 /// Clopper–Pearson intervals for a proportion are quantiles of this.
-pub impl Quantile for Beta with fn quantile(self, p) {
+fn Beta::std_quantile(self : Beta, p : Double) -> Double {
   @special.betaincinv(self.a, self.b, p)
 }
 
 ///|
-/// P(X <= k) = Q(k + 1, mu).
-pub impl IntCdf for Poisson with fn cdf_int(self, k) {
-  if k < 0 {
-    0.0
-  } else {
-    @special.gammaincc((k + 1).to_double(), self.mu)
-  }
-}
-
-///|
-pub impl IntCdf for Poisson with fn sf_int(self, k) {
-  if k < 0 {
-    1.0
-  } else {
-    @special.gammainc((k + 1).to_double(), self.mu)
-  }
-}
-
-///|
-pub impl Mass for Poisson with fn pmf(self, k) {
-  if k < 0 {
-    0.0
-  } else if self.mu == 0.0 {
-    if k == 0 {
-      1.0
-    } else {
-      0.0
-    }
-  } else {
-    @math.exp(
-      k.to_double() * @math.ln(self.mu) -
-      self.mu -
-      @special.lgamma(k.to_double() + 1.0),
-    )
-  }
-}
-
-///|
-pub impl IntQuantile for Poisson with fn quantile_int(self, p) {
-  let guess = self.mu + @special.ndtri(p) * self.mu.sqrt()
-  refine_quantile(self, p, @math.floor(guess).to_int(), 0, 2147483647)
-}
-
-///|
-fn Hypergeometric::lowest(self : Hypergeometric) -> Int32 {
-  let k = self.draws - (self.population - self.successes)
-  if k > 0 {
-    k
-  } else {
-    0
-  }
-}
-
-///|
-fn Hypergeometric::highest(self : Hypergeometric) -> Int32 {
-  if self.successes < self.draws {
-    self.successes
-  } else {
-    self.draws
-  }
-}
-
-///|
-/// The null distribution of Fisher's exact test for a 2 × 2 table.
-pub impl Mass for Hypergeometric with fn pmf(self, k) {
-  if k < self.lowest() || k > self.highest() {
-    0.0
-  } else {
-    @math.exp(
-      @special.lchoose(self.successes.to_double(), k.to_double()) +
-      @special.lchoose(
-        (self.population - self.successes).to_double(),
-        (self.draws - k).to_double(),
-      ) -
-      @special.lchoose(self.population.to_double(), self.draws.to_double()),
-    )
-  }
-}
-
-///|
-/// Each tail is summed on its own side, so neither is 1 minus the other.
-pub impl IntCdf for Hypergeometric with fn cdf_int(self, k) {
-  if k < self.lowest() {
-    0.0
-  } else if k >= self.highest() {
-    1.0
-  } else {
-    let mut s = @num.CompensatedSum::zero()
-    for j in self.lowest()..<=k {
-      s = s.add(Mass::pmf(self, j))
-    }
-    s.value()
-  }
-}
-
-///|
-pub impl IntCdf for Hypergeometric with fn sf_int(self, k) {
-  if k < self.lowest() {
-    1.0
-  } else if k >= self.highest() {
-    0.0
-  } else {
-    let mut s = @num.CompensatedSum::zero()
-    for j in (k + 1)..<=self.highest() {
-      s = s.add(Mass::pmf(self, j))
-    }
-    s.value()
-  }
-}
-
-///|
-pub impl IntQuantile for Hypergeometric with fn quantile_int(self, p) {
-  let guess = self.draws.to_double() *
-    self.successes.to_double() /
-    self.population.to_double()
-  refine_quantile(
-    self,
-    p,
-    @math.floor(guess).to_int(),
-    self.lowest(),
-    self.highest(),
-  )
-}
-
-///|
-/// The distribution of a t statistic under the alternative, the basis of
-/// t-test power.
-pub impl Cdf for NoncentralT with fn cdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
-pub impl Cdf for NoncentralChiSquared with fn cdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
-pub impl Cdf for NoncentralF with fn cdf(self, x) {
-  ignore((self, x))
-  ...
-}

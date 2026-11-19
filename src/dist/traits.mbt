@@ -7,7 +7,9 @@
 /// density or a mass function is an extra capability that only some
 /// distributions have. A distribution on the integers also implements the
 /// `Int` traits for convenience; its `Double` distribution function is the
-/// step function.
+/// step function, computed without passing through an integer type, so it
+/// stays right for arguments and quantiles no integer type can hold (the
+/// median of a Zipf law with exponent 1.01 is about 7e29).
 
 ///|
 /// Raised when a constructor is given parameters outside the family's
@@ -34,13 +36,15 @@ pub(all) suberror FitError {
 // ---------------------------------------------------------------------------
 
 ///|
-/// F(x) = P(X <= x). Both tails are first class: `sf` defaults to `1 - cdf`,
-/// which loses every digit in the upper tail, so a family with a better
-/// formula overrides it. The log variants exist for p-values below the
-/// smallest positive Double.
+/// F(x) = P(X <= x). Both tails are first class: `sf` has no default,
+/// because the only generic one is `1 - cdf`, which loses every digit in
+/// the upper tail; each distribution states its own upper tail. The log
+/// variants default to the log of the tail and are overridden where a
+/// closed form reaches p-values below the smallest positive Double.
 pub(open) trait Cdf {
   fn cdf(Self, Double) -> Double
-  fn sf(Self, Double) -> Double = _
+  /// P(X > x), from its own formula.
+  fn sf(Self, Double) -> Double
   fn logcdf(Self, Double) -> Double = _
   fn logsf(Self, Double) -> Double = _
   /// P(X >= x). Equal to `sf` unless x is an atom; a p-value from a
@@ -52,11 +56,6 @@ pub(open) trait Cdf {
 ///|
 impl Cdf with fn sf_at_least(self, x) {
   self.sf(x)
-}
-
-///|
-impl Cdf with fn sf(self, x) {
-  1.0 - self.cdf(x)
 }
 
 ///|
@@ -72,21 +71,31 @@ impl Cdf with fn logsf(self, x) {
 ///|
 /// The generalised inverse: `quantile(p)` is the smallest x with
 /// F(x) >= p, which is defined for atoms and flat stretches too. `isf(q)`
-/// inverts `sf` so that an upper-tail probability such as 1e-20 is never
-/// rounded through 1 - q.
+/// is the smallest x with P(X > x) <= q. It has no default: the generic
+/// one is `quantile(1 - q)`, which rounds an upper-tail probability such
+/// as 1e-20 to 0, so each distribution inverts its own upper tail.
 pub(open) trait Quantile {
   fn quantile(Self, Double) -> Double
-  fn isf(Self, Double) -> Double = _
+  fn isf(Self, Double) -> Double
 }
 
 ///|
-impl Quantile with fn isf(self, q) {
-  self.quantile(1.0 - q)
-}
-
-///|
+/// One draw. The algorithm behind a distribution's `sample` is part of its
+/// contract and never changes once released, so a seed reproduces the same
+/// values in every version; the catalogue families invert their quantile
+/// function on one `uniform_open` draw. A faster algorithm is offered
+/// under a new name, never swapped in.
 pub(open) trait Sample {
   fn sample(Self, &@num.RandomSource) -> Double
+  /// Fill `out` with independent draws, in order.
+  fn sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit = _
+}
+
+///|
+impl Sample with fn sample_into(self, rng, out) {
+  for i in 0..<out.length() {
+    out[i] = self.sample(rng)
+  }
 }
 
 ///|
@@ -116,8 +125,8 @@ impl Density with fn logpdf(self, x) {
 ///|
 /// Point masses on the integers.
 pub(open) trait Mass {
-  fn pmf(Self, Int32) -> Double
-  fn logpmf(Self, Int32) -> Double = _
+  fn pmf(Self, Int64) -> Double
+  fn logpmf(Self, Int64) -> Double = _
 }
 
 ///|
@@ -128,25 +137,25 @@ impl Mass with fn logpmf(self, k) {
 ///|
 /// Integer versions of the distribution function and its inverse for
 /// distributions on the integers, so callers need not go through Double.
+/// `sf_int` is P(X > k) and has no default, for the reason `Cdf::sf` has
+/// none.
 pub(open) trait IntCdf {
-  fn cdf_int(Self, Int32) -> Double
-  fn sf_int(Self, Int32) -> Double = _
+  fn cdf_int(Self, Int64) -> Double
+  fn sf_int(Self, Int64) -> Double
 }
 
 ///|
-impl IntCdf with fn sf_int(self, k) {
-  1.0 - self.cdf_int(k)
-}
-
-///|
-/// The smallest k with P(X <= k) >= p.
+/// The smallest k with P(X <= k) >= p. A quantile beyond the `Int64` range
+/// comes back as the nearest end of that range; `Quantile::quantile`
+/// returns it exactly, as a Double.
 pub(open) trait IntQuantile {
-  fn quantile_int(Self, Double) -> Int32
+  fn quantile_int(Self, Double) -> Int64
 }
 
 ///|
+/// One draw as an integer, saturating like `IntQuantile`.
 pub(open) trait SampleInt {
-  fn sample_int(Self, &@num.RandomSource) -> Int32
+  fn sample_int(Self, &@num.RandomSource) -> Int64
 }
 
 // ---------------------------------------------------------------------------
@@ -159,6 +168,22 @@ pub(open) trait SampleInt {
 pub(open) trait Moments {
   fn mean(Self) -> Double?
   fn variance(Self) -> Double?
+}
+
+///|
+/// The smallest closed interval that carries all the probability; either
+/// end may be infinite. Root finders bracket on it, truncations and fits
+/// check values against it.
+pub(open) trait Support {
+  fn support_lower(Self) -> Double
+  fn support_upper(Self) -> Double
+}
+
+///|
+/// A point where the density or mass is largest. Implemented only where
+/// it is unique up to ties; for a tie on the integers, the smaller point.
+pub(open) trait Mode {
+  fn mode(Self) -> Double
 }
 
 ///|

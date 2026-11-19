@@ -24,9 +24,12 @@ test "a family rebuilds its members from parameters" {
   let fam = @dist.Normal::family()
   let d = (fam.make)([1.5, 2.0])
   assert_eq((fam.params)(d), [1.5, 2.0])
+  // every continuous family has its shape, then loc and scale
+  let gamma = @dist.Gamma::family()
+  assert_eq(gamma.specs.map(s => s.name), ["a", "loc", "scale"])
   // gamma by rate and by scale are different parameterisations of the
   // same distributions
-  let g = (@dist.Gamma::family().make)([3.0, 0.5])
+  let g = (gamma.make)([3.0, 0.0, 0.5])
   assert_eq((@dist.Gamma::family_rate().params)(g), [3.0, 2.0])
   // fixed hyperparameters live in the family value
   let b = @dist.Binomial::family(n=10)

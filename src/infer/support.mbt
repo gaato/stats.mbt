@@ -132,21 +132,21 @@ fn continuous_result(
 /// in exact arithmetic are not split by rounding.
 fn[D : @dist.Mass + @dist.IntCdf] min_likelihood_p(
   d : D,
-  k : Int32,
-  lo : Int32,
-  hi : Int32,
+  k : Int64,
+  lo : Int64,
+  hi : Int64,
   mode : Double,
 ) -> Double {
   let bound = @dist.Mass::pmf(d, k) * (1.0 + 1.0e-7)
   let p = if k.to_double() < mode {
     // the other tail starts at the first j above the mode with pmf <= bound
-    let mut j = @math.ceil(mode).to_int()
+    let mut j = @math.ceil(mode).to_int64()
     while j <= hi && @dist.Mass::pmf(d, j) > bound {
       j = j + 1
     }
     @dist.IntCdf::cdf_int(d, k) + @dist.IntCdf::sf_int(d, j - 1)
   } else if k.to_double() > mode {
-    let mut j = @math.floor(mode).to_int()
+    let mut j = @math.floor(mode).to_int64()
     while j >= lo && @dist.Mass::pmf(d, j) > bound {
       j = j - 1
     }
@@ -163,7 +163,7 @@ fn[D : @dist.Mass + @dist.IntCdf] min_likelihood_p(
 
 ///|
 /// Tail p-values of a discrete null at k: (P(X >= k), P(X <= k)).
-fn[D : @dist.IntCdf] discrete_tails(d : D, k : Int32) -> (Double, Double) {
+fn[D : @dist.IntCdf] discrete_tails(d : D, k : Int64) -> (Double, Double) {
   (@dist.IntCdf::sf_int(d, k - 1), @dist.IntCdf::cdf_int(d, k))
 }
 
@@ -171,9 +171,9 @@ fn[D : @dist.IntCdf] discrete_tails(d : D, k : Int32) -> (Double, Double) {
 /// Choose the p-value of a discrete null for the alternative and rule.
 fn[D : @dist.Mass + @dist.IntCdf] discrete_p(
   d : D,
-  k : Int32,
-  lo : Int32,
-  hi : Int32,
+  k : Int64,
+  lo : Int64,
+  hi : Int64,
   mode : Double,
   alternative : Alternative,
   rule : TwoSidedRule,

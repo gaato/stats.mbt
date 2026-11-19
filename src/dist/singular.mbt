@@ -18,8 +18,21 @@ pub impl Cdf for Cantor with fn cdf(self, x) {
 }
 
 ///|
+/// The Cantor function from the right: digits 0 and 2 exchanged.
+pub impl Cdf for Cantor with fn sf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
 pub impl Quantile for Cantor with fn quantile(self, p) {
   ignore((self, p))
+  ...
+}
+
+///|
+pub impl Quantile for Cantor with fn isf(self, q) {
+  ignore((self, q))
   ...
 }
 
@@ -32,6 +45,16 @@ pub impl Sample for Cantor with fn sample(self, rng) {
 
 ///|
 pub impl Univariate for Cantor
+
+///|
+pub impl Support for Cantor with fn support_lower(_self) {
+  0.0
+}
+
+///|
+pub impl Support for Cantor with fn support_upper(_self) {
+  1.0
+}
 
 ///|
 /// Mean 1/2 and variance 1/8, although there is no density to integrate.
@@ -50,3 +73,21 @@ pub impl Characteristic for Cantor with fn cf(self, t) {
   ignore((self, t))
   ...
 }
+
+///|
+pub extend Cantor with Cdf::{cdf, sf, logcdf, logsf, sf_at_least}
+
+///|
+pub extend Cantor with Quantile::{quantile, isf}
+
+///|
+pub extend Cantor with Sample::{sample, sample_into}
+
+///|
+pub extend Cantor with Moments::{mean, variance}
+
+///|
+pub extend Cantor with Support::{support_lower, support_upper}
+
+///|
+pub extend Cantor with Characteristic::{cf}
