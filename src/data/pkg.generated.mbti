@@ -19,6 +19,7 @@ pub(all) suberror DataError {
   InvalidShape(rows~ : Int32, cols~ : Int32)
   InvalidLabel(index~ : Int32, label~ : Int32)
   InvalidProbability(Double)
+  TooFewValues(needed~ : Int32, got~ : Int32)
 }
 
 // Types and methods

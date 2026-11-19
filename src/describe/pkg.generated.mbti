@@ -7,11 +7,17 @@ import {
 }
 
 // Values
+pub fn[A : Accumulator] accumulate(ArrayView[Double]) -> A
+
 pub fn histogram(ArrayView[Double], Bins) -> Histogram raise @data.DataError
 
 pub fn kendall_tau_b(@data.Bivariate) -> Double?
 
 pub fn mad(ArrayView[Double], MadScale) -> Double raise @data.DataError
+
+pub fn mean(ArrayView[Double]) -> Double raise @data.DataError
+
+pub fn median(ArrayView[Double]) -> Double raise @data.DataError
 
 pub fn quantile(ArrayView[Double], Double, @data.QuantileMethod) -> Double raise @data.DataError
 
@@ -21,7 +27,13 @@ pub fn ranks(ArrayView[Double], @data.RankTies) -> FixedArray[Double]
 
 pub fn spearman(@data.Bivariate) -> Double?
 
+pub fn std_dev(ArrayView[Double], ddof~ : Int32) -> Double raise @data.DataError
+
+pub fn sum(ArrayView[Double]) -> Double raise @data.DataError
+
 pub fn trimmed_mean(ArrayView[Double], Double) -> Double raise @data.DataError
+
+pub fn variance(ArrayView[Double], ddof~ : Int32) -> Double raise @data.DataError
 
 pub fn winsorize(ArrayView[Double], Double, Double, @data.QuantileMethod) -> FixedArray[Double] raise @data.DataError
 
@@ -40,11 +52,26 @@ pub struct Comoment {
   // private fields
 }
 pub fn Comoment::correlation(Self) -> Double?
+pub fn Comoment::count(Self) -> Int64
 pub fn Comoment::covariance(Self, ddof~ : Int32) -> Double?
 pub fn Comoment::empty() -> Self
 pub fn Comoment::mean_x(Self) -> Double?
+pub fn Comoment::mean_y(Self) -> Double?
 pub fn Comoment::merge(Self, Self) -> Self
 pub fn Comoment::push(Self, Double, Double) -> Self
+pub fn Comoment::variance_x(Self, ddof~ : Int32) -> Double?
+pub fn Comoment::variance_y(Self, ddof~ : Int32) -> Double?
+
+pub struct Extremes {
+  // private fields
+}
+pub fn Extremes::count(Self) -> Int64
+pub fn Extremes::empty() -> Self
+pub fn Extremes::max(Self) -> Double?
+pub fn Extremes::merge(Self, Self) -> Self
+pub fn Extremes::min(Self) -> Double?
+pub fn Extremes::push(Self, Double) -> Self
+pub impl Accumulator for Extremes
 
 pub struct Histogram {
   edges : FixedArray[Double]
@@ -63,6 +90,7 @@ pub struct MeanVar {
   // private fields
 }
 pub fn MeanVar::count(Self) -> Int64
+pub fn MeanVar::empty() -> Self
 pub fn MeanVar::mean(Self) -> Double?
 pub fn MeanVar::merge(Self, Self) -> Self
 pub fn MeanVar::push(Self, Double) -> Self
@@ -77,13 +105,16 @@ pub fn Moments4::excess_kurtosis(Self, bias_corrected~ : Bool) -> Double?
 pub fn Moments4::merge(Self, Self) -> Self
 pub fn Moments4::push(Self, Double) -> Self
 pub fn Moments4::skewness(Self, bias_corrected~ : Bool) -> Double?
+pub impl Accumulator for Moments4
 
 pub struct WeightedMeanVar {
   // private fields
 }
 pub fn WeightedMeanVar::empty(@data.WeightKind) -> Self
 pub fn WeightedMeanVar::mean(Self) -> Double?
+pub fn WeightedMeanVar::merge(Self, Self) -> Self
 pub fn WeightedMeanVar::push(Self, Double, Double) -> Self
+pub fn WeightedMeanVar::sum_weights(Self) -> Double
 pub fn WeightedMeanVar::variance(Self) -> Double?
 
 // Type aliases

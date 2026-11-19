@@ -73,5 +73,92 @@ pub fn MeanVar::variance(self : MeanVar, ddof~ : Int32) -> Double? {
 }
 
 ///|
-/// Trait methods become ordinary methods for callers in other packages.
-pub extend MeanVar with Accumulator::{push, merge}
+/// Trait methods become ordinary methods for callers in other packages:
+/// `MeanVar::empty().push(x)`.
+pub extend MeanVar with Accumulator::{empty, push, merge}
+
+///|
+/// Count, smallest and largest value. NaN is skipped by the comparisons,
+/// so it is counted but never becomes an extreme; clean the data first if
+/// that is not wanted.
+pub struct Extremes {
+  priv n : Int64
+  priv lo : Double
+  priv hi : Double
+}
+
+///|
+pub impl Accumulator for Extremes with fn empty() {
+  { n: 0, lo: 1.0 / 0.0, hi: -1.0 / 0.0, }
+}
+
+///|
+pub impl Accumulator for Extremes with fn push(self, x) {
+  {
+    n: self.n + 1,
+    lo: if x < self.lo {
+      x
+    } else {
+      self.lo
+    },
+    hi: if x > self.hi {
+      x
+    } else {
+      self.hi
+    },
+  }
+}
+
+///|
+pub impl Accumulator for Extremes with fn merge(a, b) {
+  {
+    n: a.n + b.n,
+    lo: if b.lo < a.lo {
+      b.lo
+    } else {
+      a.lo
+    },
+    hi: if b.hi > a.hi {
+      b.hi
+    } else {
+      a.hi
+    },
+  }
+}
+
+///|
+pub extend Extremes with Accumulator::{empty, push, merge}
+
+///|
+pub fn Extremes::count(self : Extremes) -> Int64 {
+  self.n
+}
+
+///|
+/// `None` before any value has been pushed.
+pub fn Extremes::min(self : Extremes) -> Double? {
+  if self.n == 0 {
+    None
+  } else {
+    Some(self.lo)
+  }
+}
+
+///|
+pub fn Extremes::max(self : Extremes) -> Double? {
+  if self.n == 0 {
+    None
+  } else {
+    Some(self.hi)
+  }
+}
+
+///|
+/// One pass over an array with any accumulator.
+pub fn[A : Accumulator] accumulate(data : ArrayView[Double]) -> A {
+  let mut acc : A = Accumulator::empty()
+  for x in data {
+    acc = acc.push(x)
+  }
+  acc
+}

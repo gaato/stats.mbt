@@ -48,6 +48,9 @@ pub(all) suberror DataError {
   InvalidLabel(index~ : Int32, label~ : Int32)
   /// A probability or proportion outside the range the function accepts.
   InvalidProbability(Double)
+  /// Fewer values than the statistic is defined for (a variance with
+  /// divisor n - 1 needs two).
+  TooFewValues(needed~ : Int32, got~ : Int32)
 }
 
 ///|

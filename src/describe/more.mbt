@@ -85,6 +85,42 @@ pub fn Comoment::mean_x(self : Comoment) -> Double? {
 }
 
 ///|
+pub fn Comoment::mean_y(self : Comoment) -> Double? {
+  if self.n == 0 {
+    None
+  } else {
+    Some(self.ky + self.my)
+  }
+}
+
+///|
+/// The number of pairs.
+pub fn Comoment::count(self : Comoment) -> Int64 {
+  self.n
+}
+
+///|
+/// The variance of x with divisor n - ddof, from the same pass.
+pub fn Comoment::variance_x(self : Comoment, ddof~ : Int32) -> Double? {
+  let d = self.n - ddof.to_int64()
+  if d <= 0 {
+    None
+  } else {
+    Some(self.m2x / d.to_double())
+  }
+}
+
+///|
+pub fn Comoment::variance_y(self : Comoment, ddof~ : Int32) -> Double? {
+  let d = self.n - ddof.to_int64()
+  if d <= 0 {
+    None
+  } else {
+    Some(self.m2y / d.to_double())
+  }
+}
+
+///|
 pub fn Comoment::covariance(self : Comoment, ddof~ : Int32) -> Double? {
   let d = self.n - ddof.to_int64()
   if d <= 0 {
@@ -141,6 +177,36 @@ pub fn WeightedMeanVar::push(
     mean,
     s: self.s + weight * d * (x - mean),
   }
+}
+
+///|
+/// The pairwise update with weights in place of counts. Both halves must
+/// have been started with the same weight kind; `a`'s is kept.
+pub fn WeightedMeanVar::merge(
+  a : WeightedMeanVar,
+  b : WeightedMeanVar,
+) -> WeightedMeanVar {
+  if a.w == 0.0 {
+    return { ..b, kind: a.kind, }
+  }
+  if b.w == 0.0 {
+    return a
+  }
+  let w = a.w + b.w
+  let d = b.mean - a.mean
+  {
+    kind: a.kind,
+    w,
+    w2: a.w2 + b.w2,
+    mean: a.mean + d * b.w / w,
+    s: a.s + b.s + d * d * a.w * b.w / w,
+  }
+}
+
+///|
+/// Σw: the count for frequency weights.
+pub fn WeightedMeanVar::sum_weights(self : WeightedMeanVar) -> Double {
+  self.w
 }
 
 ///|
@@ -202,6 +268,21 @@ pub fn Moments4::excess_kurtosis(
 ) -> Double? {
   ignore((self, bias_corrected))
   ...
+}
+
+///|
+pub impl Accumulator for Moments4 with fn empty() {
+  Moments4::empty()
+}
+
+///|
+pub impl Accumulator for Moments4 with fn push(self, x) {
+  Moments4::push(self, x)
+}
+
+///|
+pub impl Accumulator for Moments4 with fn merge(a, b) {
+  Moments4::merge(a, b)
 }
 
 ///|

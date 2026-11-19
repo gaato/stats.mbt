@@ -7,13 +7,18 @@
 ///|
 /// The p-quantile of data already sorted ascending, by one of the nine
 /// Hyndman–Fan definitions. Index arithmetic follows the paper with
-/// 1-based positions; values outside the data are clamped to the ends.
+/// 1-based positions; positions outside the data are clamped to the ends.
+/// NaN for empty data and for p outside [0, 1]: this is the unchecked
+/// inner step, and `quantile` raises for the same inputs.
 pub fn quantile_sorted(
   sorted : ArrayView[Double],
   p : Double,
   how : @data.QuantileMethod,
 ) -> Double {
   let n = sorted.length()
+  if n == 0 || !(p >= 0.0 && p <= 1.0) {
+    return 0.0 / 0.0
+  }
   // x(k) for 1-based k, clamped to [1, n]
   let at = (k : Int32) => {
     sorted[(if k < 1 { 1 } else if k > n { n } else { k }) - 1]
@@ -68,12 +73,16 @@ pub fn quantile_sorted(
 }
 
 ///|
-/// Sorts a copy, then `quantile_sorted`. Rejects empty input and NaN.
+/// Sorts a copy, then `quantile_sorted`. Rejects empty input, NaN, and a
+/// p outside [0, 1].
 pub fn quantile(
   data : ArrayView[Double],
   p : Double,
   how : @data.QuantileMethod,
 ) -> Double raise @data.DataError {
+  if !(p >= 0.0 && p <= 1.0) {
+    raise @data.InvalidProbability(p)
+  }
   let (xs, _) = @data.clean(data, Reject)
   if xs.length() == 0 {
     raise @data.Empty
@@ -149,10 +158,14 @@ pub fn mad(
 ///|
 /// Mean of the data with `proportion` cut from each end.
 /// floor(proportion · n) values are cut from each end, as SciPy's trim_mean.
+/// The proportion is in [0, 1/2): from a half on nothing would be left.
 pub fn trimmed_mean(
   data : ArrayView[Double],
   proportion : Double,
 ) -> Double raise @data.DataError {
+  if !(proportion >= 0.0 && proportion < 0.5) {
+    raise @data.InvalidProbability(proportion)
+  }
   let (xs, _) = @data.clean(data, Reject)
   if xs.length() == 0 {
     raise @data.Empty
