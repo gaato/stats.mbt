@@ -58,9 +58,7 @@ pub fn bootstrap(
     raise Unsupported(reason="BCa intervals are not implemented yet")
   }
   let draw = (x : ArrayView[Double]) => {
-    FixedArray::makei(x.length(), _ => {
-      x[@num.uniform_below(rng, x.length().to_uint64()).to_int()]
-    })
+    FixedArray::makei(x.length(), _ => x[@num.uniform_index(rng, x.length())])
   }
   let resample = () => {
     match sample {
@@ -68,7 +66,7 @@ pub fn bootstrap(
       Two(x, y) => Two(draw(x)[:], draw(y)[:])
       Paired(x, y) => {
         let idx = FixedArray::makei(x.length(), _ => {
-          @num.uniform_below(rng, x.length().to_uint64()).to_int()
+          @num.uniform_index(rng, x.length())
         })
         Paired(
           FixedArray::makei(x.length(), i => x[idx[i]])[:],

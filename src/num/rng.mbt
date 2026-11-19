@@ -47,14 +47,20 @@ pub fn Xoshiro256::seed(seed : UInt64) -> Xoshiro256 {
 }
 
 ///|
-/// Raw state, for checking against the reference implementation.
+/// Raw state, for checking against the reference implementation. `None`
+/// for the all-zero state, which the generator never leaves: every output
+/// from it is 0.
 pub fn Xoshiro256::from_state(
   s0 : UInt64,
   s1 : UInt64,
   s2 : UInt64,
   s3 : UInt64,
-) -> Xoshiro256 {
-  { s0, s1, s2, s3, }
+) -> Xoshiro256? {
+  if (s0 | s1 | s2 | s3) == 0UL {
+    None
+  } else {
+    Some({ s0, s1, s2, s3, })
+  }
 }
 
 ///|
@@ -94,6 +100,13 @@ pub fn uniform_below(rng : &RandomSource, n : UInt64) -> UInt64 {
     }
   }
   0
+}
+
+///|
+/// Uniform index in [0, n) for an array of length n > 0: `uniform_below`
+/// with the conversions resampling code would otherwise repeat.
+pub fn uniform_index(rng : &RandomSource, n : Int32) -> Int32 {
+  uniform_below(rng, n.to_uint64()).to_int()
 }
 
 ///|
@@ -149,20 +162,10 @@ pub fn standard_gamma(
 }
 
 ///|
-#derive(Eq, Debug)
-pub(all) enum DiscreteMethod {
-  /// Inversion by sequential search; exact, slow for large means.
-  Inversion
-  /// BTPE for the binomial (Kachitvichyanukul and Schmeiser), PTRS for the
-  /// Poisson (Hörmann).
-  Rejection
-}
-
-///|
 /// Shuffle in place (Fisher–Yates), the core of permutation tests.
 pub fn[T] shuffle(rng : &RandomSource, xs : FixedArray[T]) -> Unit {
   for i = xs.length() - 1; i > 0; i = i - 1 {
-    let j = uniform_below(rng, (i + 1).to_uint64()).to_int()
+    let j = uniform_index(rng, i + 1)
     let t = xs[i]
     xs[i] = xs[j]
     xs[j] = t

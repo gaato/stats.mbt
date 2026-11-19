@@ -12,7 +12,7 @@ pub struct Design {
   /// Known additive term on the linear predictor (log exposure in a
   /// Poisson rate model).
   offset : FixedArray[Double]?
-  weights : @data.Weighted?
+  weights : @data.Weights?
   names : Array[String]
 }
 

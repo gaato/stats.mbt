@@ -40,6 +40,8 @@ pub fn uniform(&RandomSource) -> Double
 
 pub fn uniform_below(&RandomSource, UInt64) -> UInt64
 
+pub fn uniform_index(&RandomSource, Int32) -> Int32
+
 pub fn uniform_open(&RandomSource) -> Double
 
 // Errors
@@ -58,12 +60,6 @@ pub fn CompensatedSum::add(Self, Double) -> Self
 pub fn CompensatedSum::merge(Self, Self) -> Self
 pub fn CompensatedSum::value(Self) -> Double
 pub fn CompensatedSum::zero() -> Self
-
-#derive(Eq, @debug.Debug)
-pub(all) enum DiscreteMethod {
-  Inversion
-  Rejection
-}
 
 #derive(Eq, @debug.Debug)
 pub(all) enum ExponentialMethod {
@@ -97,16 +93,10 @@ pub(all) enum Status {
   NaN
 }
 
-pub struct Tolerance {
-  x_abs : Double
-  x_rel : Double
-  f_abs : Double
-}
-
 pub struct Xoshiro256 {
   // private fields
 }
-pub fn Xoshiro256::from_state(UInt64, UInt64, UInt64, UInt64) -> Self
+pub fn Xoshiro256::from_state(UInt64, UInt64, UInt64, UInt64) -> Self?
 pub fn Xoshiro256::next_u64(Self) -> UInt64
 pub fn Xoshiro256::seed(UInt64) -> Self
 pub impl Jump for Xoshiro256

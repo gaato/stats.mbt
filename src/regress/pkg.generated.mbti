@@ -44,7 +44,7 @@ pub struct Design {
   x : @data.DataMatrix
   intercept : Bool
   offset : FixedArray[Double]?
-  weights : @data.Weighted?
+  weights : @data.Weights?
   names : Array[String]
 }
 

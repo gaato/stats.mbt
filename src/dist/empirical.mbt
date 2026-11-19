@@ -80,7 +80,7 @@ pub impl Quantile for Empirical with fn quantile(self, p) {
 ///|
 /// Bootstrap resampling is sampling from the empirical distribution.
 pub impl Sample for Empirical with fn sample(self, rng) {
-  self.sorted[@num.uniform_below(rng, self.sorted.length().to_uint64()).to_int()]
+  self.sorted[@num.uniform_index(rng, self.sorted.length())]
 }
 
 ///|

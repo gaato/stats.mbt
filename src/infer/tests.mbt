@@ -72,10 +72,10 @@ pub fn t_test_one(
 
 ///|
 fn two_sample_t(
-  n1 : Int32,
+  n1 : Int64,
   m1 : Double,
   v1 : Double,
-  n2 : Int32,
+  n2 : Int64,
   m2 : Double,
   v2 : Double,
   variances : Variances,
@@ -85,7 +85,7 @@ fn two_sample_t(
 ) -> TestResult raise QuestionError {
   check_level(level)
   if n1 < 2 || n2 < 2 {
-    raise TooFewPoints(needed=2, got=if n1 < n2 { n1 } else { n2 })
+    raise TooFewPoints(needed=2, got=(if n1 < n2 { n1 } else { n2 }).to_int())
   }
   let pooled = ((n1 - 1).to_double() * v1 + (n2 - 1).to_double() * v2) /
     (n1 + n2 - 2).to_double()
@@ -147,7 +147,16 @@ pub fn t_test_two(
   let (n1, m1, v1) = summarize(x)
   let (n2, m2, v2) = summarize(y)
   two_sample_t(
-    n1, m1, v1, n2, m2, v2, variances, alternative, level, equal_variance,
+    n1.to_int64(),
+    m1,
+    v1,
+    n2.to_int64(),
+    m2,
+    v2,
+    variances,
+    alternative,
+    level,
+    equal_variance,
   )
 }
 

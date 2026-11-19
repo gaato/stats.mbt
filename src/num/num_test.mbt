@@ -2,7 +2,7 @@
 /// The published reference outputs of xoshiro256** from state {1, 2, 3, 4},
 /// and splitmix64 seeding checked against an independent implementation.
 test "xoshiro256** matches the reference" {
-  let r = @num.Xoshiro256::from_state(1, 2, 3, 4)
+  let r = @num.Xoshiro256::from_state(1, 2, 3, 4).unwrap()
   let got = [r.next_u64(), r.next_u64(), r.next_u64(), r.next_u64()]
   assert_eq(got, [11520UL, 0UL, 1509978240UL, 1215971899390074240UL])
   let s = @num.Xoshiro256::seed(42)
@@ -21,8 +21,48 @@ test "uniform conversions stay in range" {
     assert_true(v > 0.0 && v < 1.0)
   }
   // the extreme words map to the ends of the ranges
-  let lo = @num.Xoshiro256::from_state(0, 0, 0, 0)
+  let lo : Constant = { word: 0UL, }
   assert_eq(@num.uniform(lo), 0.0)
+  assert_true(@num.uniform_open(lo) > 0.0)
+  let hi : Constant = { word: 0xffffffffffffffffUL, }
+  assert_true(@num.uniform(hi) < 1.0)
+  assert_true(@num.uniform_open(hi) < 1.0)
+}
+
+///|
+/// A source that repeats one word, to reach the ends of the ranges.
+priv struct Constant {
+  word : UInt64
+}
+
+///|
+impl @num.RandomSource for Constant with fn next_u64(self) {
+  self.word
+}
+
+///|
+test "the all-zero state is refused" {
+  // xoshiro256** never leaves it: every output would be 0
+  assert_true(@num.Xoshiro256::from_state(0, 0, 0, 0) is None)
+}
+
+///|
+test "uniform_index covers the range and shuffle permutes" {
+  let r = @num.Xoshiro256::seed(11)
+  let seen = FixedArray::make(5, 0)
+  for _ in 0..<2000 {
+    let i = @num.uniform_index(r, 5)
+    assert_true(i >= 0 && i < 5)
+    seen[i] = seen[i] + 1
+  }
+  for c in seen {
+    assert_true(c > 300)
+  }
+  let xs : FixedArray[Int32] = [0, 1, 2, 3, 4, 5, 6, 7]
+  @num.shuffle(r, xs)
+  let sorted = xs.copy()
+  sorted.sort()
+  assert_eq(sorted, [0, 1, 2, 3, 4, 5, 6, 7])
 }
 
 ///|
