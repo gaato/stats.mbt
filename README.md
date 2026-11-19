@@ -29,12 +29,15 @@ backend; most bodies are still unimplemented, and nothing is published yet.
 
 | Package | Contents |
 |---|---|
-| `special` | Incomplete beta and gamma functions, normal tail functions |
-| `dist` | Capability traits, families and their parameters, empirical and finite discrete distributions, mixtures, transforms, a singular distribution |
+| `num` | Log-space arithmetic, compensated sums, solvers, random sources |
+| `special` | Incomplete beta and gamma, normal tails, gamma family |
+| `data` | Observations, data shapes, weights, tables, conventions |
+| `dist` | Distributions, families and parameters, composition |
 | `multi` | Multivariate distributions and copulas |
-| `fit` | Maximum likelihood, information criteria, model comparison |
-| `describe` | Mergeable accumulators |
-| `infer` | Questions, null models, test results, intervals, estimates |
+| `describe` | Mergeable accumulators, quantiles, ranks, robust summaries |
+| `fit` | Maximum likelihood, information criteria |
+| `infer` | Questions, null models, tests, multiple testing, power, resampling |
+| `regress`, `survival`, `timeseries`, `multivariate`, `bayes` | Models |
 
 [DESIGN.md](DESIGN.md) maps every concept to its type and status,
 including the ones not yet typed.

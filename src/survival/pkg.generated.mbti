@@ -1,0 +1,59 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/survival"
+
+import {
+  "gaato/stats/data",
+  "gaato/stats/dist",
+  "gaato/stats/fit",
+  "gaato/stats/infer",
+  "gaato/stats/regress",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn cox(ArrayView[@data.SurvivalRecord], @data.DataMatrix, Ties) -> CoxFit raise @regress.ModelError
+
+pub fn[D : @dist.Density + @dist.Cdf] fit_censored(@dist.Family[D], ArrayView[@data.Observation], start~ : ArrayView[Double]) -> @fit.MleResult[D] raise @dist.FitError
+
+pub fn kaplan_meier(ArrayView[@data.SurvivalRecord]) -> SurvivalCurve
+
+pub fn log_rank(ArrayView[ArrayView[@data.SurvivalRecord]]) -> @infer.TestResult
+
+pub fn nelson_aalen(ArrayView[@data.SurvivalRecord]) -> SurvivalCurve
+
+// Errors
+
+// Types and methods
+pub struct CoxFit {
+  coef : FixedArray[Double]
+  se : FixedArray[Double]
+  hazard_ratio : FixedArray[Double]
+  loglik : Double
+  converged : Bool
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum CurveInterval {
+  Plain
+  LogLog
+  Log
+}
+
+pub struct SurvivalCurve {
+  times : FixedArray[Double]
+  survival : FixedArray[Double]
+  se : FixedArray[Double]
+  at_risk : FixedArray[Int32]
+  events : FixedArray[Int32]
+}
+pub fn SurvivalCurve::interval(Self, Double, CurveInterval) -> (FixedArray[Double], FixedArray[Double])
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Ties {
+  Breslow
+  Efron
+}
+
+// Type aliases
+
+// Traits

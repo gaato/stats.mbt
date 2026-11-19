@@ -1,11 +1,64 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "gaato/stats/describe"
 
+import {
+  "gaato/stats/data",
+  "moonbitlang/core/debug",
+}
+
 // Values
+pub fn histogram(ArrayView[Double], Bins) -> Histogram raise @data.DataError
+
+pub fn kendall_tau_b(@data.Bivariate) -> Double?
+
+pub fn mad(ArrayView[Double], MadScale) -> Double raise @data.DataError
+
+pub fn quantile(ArrayView[Double], Double, @data.QuantileMethod) -> Double raise @data.DataError
+
+pub fn quantile_sorted(ArrayView[Double], Double, @data.QuantileMethod) -> Double
+
+pub fn ranks(ArrayView[Double], @data.RankTies) -> FixedArray[Double]
+
+pub fn spearman(@data.Bivariate) -> Double?
+
+pub fn trimmed_mean(ArrayView[Double], Double) -> Double raise @data.DataError
+
+pub fn winsorize(ArrayView[Double], Double, Double, @data.QuantileMethod) -> FixedArray[Double] raise @data.DataError
 
 // Errors
 
 // Types and methods
+pub(all) enum Bins {
+  Edges(FixedArray[Double])
+  Uniform(k~ : Int32, lo~ : Double, hi~ : Double)
+  Sturges
+  Scott
+  FreedmanDiaconis
+}
+
+pub struct Comoment {
+  // private fields
+}
+pub fn Comoment::correlation(Self) -> Double?
+pub fn Comoment::covariance(Self, ddof~ : Int32) -> Double?
+pub fn Comoment::empty() -> Self
+pub fn Comoment::mean_x(Self) -> Double?
+pub fn Comoment::merge(Self, Self) -> Self
+pub fn Comoment::push(Self, Double, Double) -> Self
+
+pub struct Histogram {
+  edges : FixedArray[Double]
+  counts : FixedArray[Int64]
+  below : Int64
+  above : Int64
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum MadScale {
+  Raw
+  Normal
+}
+
 pub struct MeanVar {
   // private fields
 }
@@ -15,6 +68,23 @@ pub fn MeanVar::merge(Self, Self) -> Self
 pub fn MeanVar::push(Self, Double) -> Self
 pub fn MeanVar::variance(Self, ddof~ : Int32) -> Double?
 pub impl Accumulator for MeanVar
+
+pub struct Moments4 {
+  // private fields
+}
+pub fn Moments4::empty() -> Self
+pub fn Moments4::excess_kurtosis(Self, bias_corrected~ : Bool) -> Double?
+pub fn Moments4::merge(Self, Self) -> Self
+pub fn Moments4::push(Self, Double) -> Self
+pub fn Moments4::skewness(Self, bias_corrected~ : Bool) -> Double?
+
+pub struct WeightedMeanVar {
+  // private fields
+}
+pub fn WeightedMeanVar::empty(@data.WeightKind) -> Self
+pub fn WeightedMeanVar::mean(Self) -> Double?
+pub fn WeightedMeanVar::push(Self, Double, Double) -> Self
+pub fn WeightedMeanVar::variance(Self) -> Double?
 
 // Type aliases
 

@@ -136,3 +136,23 @@ pub fn CompensatedSum::merge(
 pub fn CompensatedSum::value(self : CompensatedSum) -> Double {
   self.sum + self.c
 }
+
+///|
+/// Stopping rule for iterative methods: stop when the step (or bracket)
+/// is below `x_abs + x_rel * |x|`, or when |f(x)| is below `f_abs`.
+/// Root finders need both, as Boost's tools separate them: a flat function
+/// can have a tiny |f| far from the root, a steep one a large |f| at it.
+pub struct Tolerance {
+  x_abs : Double
+  x_rel : Double
+  f_abs : Double
+}
+
+///|
+/// A domain error for the checked variants of special functions; the
+/// plain variants return NaN instead.
+#derive(Debug)
+pub(all) suberror DomainError {
+  OutsideDomain(function~ : String, argument~ : Double)
+  Overflow(function~ : String)
+}

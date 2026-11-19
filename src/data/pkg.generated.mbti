@@ -19,6 +19,43 @@ pub(all) suberror DataError {
 }
 
 // Types and methods
+pub struct Bivariate {
+  x : FixedArray[Double]
+  y : FixedArray[Double]
+}
+pub fn Bivariate::new(ArrayView[Double], ArrayView[Double]) -> Self raise DataError
+
+pub struct Blocks {
+  blocks : Int32
+  treatments : Int32
+  values : FixedArray[Double]
+}
+
+pub struct CategoryCounts {
+  counts : FixedArray[Int64]
+  null_probs : FixedArray[Double]?
+}
+
+pub struct Circular {
+  angles : FixedArray[Double]
+}
+
+pub struct DataMatrix {
+  rows : Int32
+  cols : Int32
+  values : FixedArray[Double]
+}
+pub fn DataMatrix::at(Self, Int32, Int32) -> Double
+pub fn DataMatrix::new(Int32, Int32, ArrayView[Double]) -> Self raise DataError
+
+pub struct Grouped {
+  values : FixedArray[Double]
+  labels : FixedArray[Int32]
+  groups : Int32
+}
+pub fn Grouped::group(Self, Int32) -> FixedArray[Double]
+pub fn Grouped::new(ArrayView[Double], ArrayView[Int32], groups~ : Int32) -> Self raise DataError
+
 #derive(Eq, @debug.Debug)
 pub(all) enum MissingPolicy {
   Reject
@@ -34,6 +71,46 @@ pub(all) enum Observation {
   IntervalCensored(lo~ : Double, hi~ : Double)
 }
 
+pub struct Proportion {
+  successes : Int64
+  trials : Int64
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum QuantileMethod {
+  Type1
+  Type2
+  Type3
+  Type4
+  Type5
+  Type6
+  Type7
+  Type8
+  Type9
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum RankTies {
+  Average
+  Min
+  Max
+  Dense
+  Ordinal
+}
+
+pub struct Summary {
+  n : Int32
+  mean : Double
+  sd : Double
+}
+
+pub struct SurvivalRecord {
+  time : Double
+  event : Bool
+  entry : Double
+}
+pub fn SurvivalRecord::to_observation(Self) -> Observation
+
 pub struct Table {
   rows : Int32
   cols : Int32
@@ -42,6 +119,12 @@ pub struct Table {
 pub fn Table::at(Self, Int32, Int32) -> Int64
 pub fn Table::new(Int32, Int32, ArrayView[Int64]) -> Self raise DataError
 pub fn Table::total(Self) -> Int64
+
+pub struct TimeSeries {
+  values : FixedArray[Double]
+  start : Double
+  frequency : Int32
+}
 
 #derive(Eq, @debug.Debug)
 pub(all) enum WeightKind {

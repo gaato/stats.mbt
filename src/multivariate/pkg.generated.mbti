@@ -1,0 +1,99 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/multivariate"
+
+import {
+  "gaato/stats/data",
+  "gaato/stats/num",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn cca(@data.DataMatrix, @data.DataMatrix) -> FixedArray[Double]
+
+pub fn correspondence(@data.Table, Int32) -> (@data.DataMatrix, @data.DataMatrix)
+
+pub fn discriminant(@data.DataMatrix, ArrayView[Int32], Discriminant) -> Classifier
+
+pub fn factor_analysis(@data.DataMatrix, Int32, Rotation) -> FactorFit
+
+pub fn hierarchical(@data.DataMatrix, Linkage) -> Dendrogram
+
+pub fn kmeans(@data.DataMatrix, Int32, rng~ : &@num.RandomSource) -> KMeans
+
+pub fn mds(@data.DataMatrix, Int32) -> @data.DataMatrix
+
+pub fn pca(@data.DataMatrix, Scaling) -> Pca
+
+pub fn roc(ArrayView[Double], ArrayView[Bool]) -> Roc
+
+// Errors
+
+// Types and methods
+pub struct Classifier {
+  classes : Int32
+  predict : (@data.DataMatrix) -> @data.DataMatrix
+}
+
+pub struct Dendrogram {
+  merges : FixedArray[(Int32, Int32)]
+  heights : FixedArray[Double]
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Discriminant {
+  Linear
+  Quadratic
+}
+
+pub struct FactorFit {
+  loadings : @data.DataMatrix
+  uniqueness : FixedArray[Double]
+  loglik : Double
+  converged : Bool
+}
+
+pub struct KMeans {
+  centers : @data.DataMatrix
+  labels : FixedArray[Int32]
+  within_ss : FixedArray[Double]
+  iterations : Int32
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Linkage {
+  Single
+  Complete
+  Average
+  Ward
+}
+
+pub struct Pca {
+  loadings : @data.DataMatrix
+  scores : @data.DataMatrix
+  variances : FixedArray[Double]
+  explained : FixedArray[Double]
+}
+
+pub struct Roc {
+  false_positive : FixedArray[Double]
+  true_positive : FixedArray[Double]
+  thresholds : FixedArray[Double]
+  auc : Double
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Rotation {
+  None
+  Varimax
+  Promax(power~ : Double)
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Scaling {
+  Center
+  Standardize
+}
+
+// Type aliases
+
+// Traits

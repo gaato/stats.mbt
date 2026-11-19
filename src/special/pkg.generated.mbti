@@ -8,9 +8,27 @@ pub fn betaincc(Double, Double, Double) -> Double
 
 pub fn betaincinv(Double, Double, Double) -> Double
 
+pub fn digamma(Double) -> Double
+
+pub fn erf(Double) -> Double
+
+pub fn erfc(Double) -> Double
+
+pub fn erfinv(Double) -> Double
+
 pub fn gammainc(Double, Double) -> Double
 
 pub fn gammaincc(Double, Double) -> Double
+
+pub fn gammainccinv(Double, Double) -> Double
+
+pub fn gammaincinv(Double, Double) -> Double
+
+pub fn kolmogorov_sf(Double) -> Double
+
+pub fn lbeta(Double, Double) -> Double
+
+pub fn lchoose(Double, Double) -> Double
 
 pub fn lgamma(Double) -> Double
 
@@ -19,6 +37,12 @@ pub fn log_ndtr(Double) -> Double
 pub fn ndtr(Double) -> Double
 
 pub fn ndtri(Double) -> Double
+
+pub fn owens_t(Double, Double) -> Double
+
+pub fn studentized_range_sf(Double, Double, Double) -> Double
+
+pub fn trigamma(Double) -> Double
 
 // Errors
 

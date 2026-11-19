@@ -2,6 +2,7 @@
 package "gaato/stats/dist"
 
 import {
+  "gaato/stats/data",
   "gaato/stats/num",
   "moonbitlang/core/debug",
 }
@@ -33,6 +34,13 @@ pub impl[D : Cdf] Cdf for Affine[D]
 pub impl[D : Density] Density for Affine[D]
 pub impl[D : Quantile] Quantile for Affine[D]
 pub impl[D : Sample] Sample for Affine[D]
+
+pub struct Beta {
+  // private fields
+}
+pub fn Beta::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Beta
+pub impl Quantile for Beta
 
 pub struct Binomial {
   // private fields
@@ -67,6 +75,12 @@ pub struct Censored[D] {
 pub fn[D] Censored::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
 pub impl[D : Cdf] Cdf for Censored[D]
 
+pub struct ChiSquared {
+  // private fields
+}
+pub fn ChiSquared::new(Double) -> Self raise ParamError
+pub impl Cdf for ChiSquared
+
 pub struct Conjugate[P, D] {
   name : String
   update : (P, ArrayView[Double]) -> P raise ParamError
@@ -87,7 +101,7 @@ pub fn Constraint::to_unconstrained(Self, Double) -> Double
 pub struct Empirical {
   // private fields
 }
-pub fn Empirical::new(ArrayView[Double], quantile_method~ : QuantileMethod) -> Self raise ParamError
+pub fn Empirical::new(ArrayView[Double], quantile_method~ : @data.QuantileMethod) -> Self raise ParamError
 pub impl Cdf for Empirical
 pub impl Moments for Empirical
 pub impl Quantile for Empirical
@@ -122,6 +136,12 @@ pub impl IntCdf for FiniteDiscrete
 pub impl IntQuantile for FiniteDiscrete
 pub impl Mass for FiniteDiscrete
 
+pub struct FisherF {
+  // private fields
+}
+pub fn FisherF::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for FisherF
+
 pub struct Gamma {
   // private fields
 }
@@ -132,6 +152,12 @@ pub fn Gamma::with_scale(Double, Double) -> Self raise ParamError
 pub impl Cdf for Gamma
 pub impl Mgf for Gamma
 
+pub struct Hypergeometric {
+  // private fields
+}
+pub fn Hypergeometric::new(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Self raise ParamError
+pub impl Mass for Hypergeometric
+
 pub struct Mixture {
   // private fields
 }
@@ -140,6 +166,24 @@ pub impl Cdf for Mixture
 pub impl Quantile for Mixture
 pub impl Sample for Mixture
 pub impl Univariate for Mixture
+
+pub struct NoncentralChiSquared {
+  // private fields
+}
+pub fn NoncentralChiSquared::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for NoncentralChiSquared
+
+pub struct NoncentralF {
+  // private fields
+}
+pub fn NoncentralF::new(Double, Double, Double) -> Self raise ParamError
+pub impl Cdf for NoncentralF
+
+pub struct NoncentralT {
+  // private fields
+}
+pub fn NoncentralT::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for NoncentralT
 
 pub struct Normal {
   // private fields
@@ -173,18 +217,11 @@ pub impl Quantile for PointMass
 pub impl Sample for PointMass
 pub impl Univariate for PointMass
 
-#derive(Eq, @debug.Debug)
-pub(all) enum QuantileMethod {
-  Type1
-  Type2
-  Type3
-  Type4
-  Type5
-  Type6
-  Type7
-  Type8
-  Type9
+pub struct Poisson {
+  // private fields
 }
+pub fn Poisson::new(Double) -> Self raise ParamError
+pub impl IntCdf for Poisson
 
 pub struct StudentT {
   // private fields

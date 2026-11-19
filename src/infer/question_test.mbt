@@ -24,6 +24,8 @@ test "p-values from a discrete null count the observed value" {
   let m : @infer.NullModel = {
     observed: 1.0,
     null_dist,
+    two_sided: Doubling,
+    p_kind: Exact,
     procedure: "toy permutation null",
   }
   assert_eq(m.p_value(Greater), 0.75)

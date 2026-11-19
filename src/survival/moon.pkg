@@ -1,0 +1,7 @@
+import {
+  "gaato/stats/data",
+  "gaato/stats/dist",
+  "gaato/stats/fit",
+  "gaato/stats/infer",
+  "gaato/stats/regress",
+}

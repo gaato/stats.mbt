@@ -161,3 +161,17 @@ pub fn[T] shuffle(rng : &RandomSource, xs : FixedArray[T]) -> Unit {
 ///|
 /// `rng.next_u64()` on a concrete generator, for callers outside this package.
 pub extend Xoshiro256 with RandomSource::{next_u64}
+
+///|
+/// Independent streams from one seed, for parallel resampling: `jump`
+/// advances the state by 2^128 draws (xoshiro256's jump polynomial), so
+/// each worker takes the next jumped copy.
+pub(open) trait Jump {
+  jump(Self) -> Unit
+}
+
+///|
+pub impl Jump for Xoshiro256 with jump(self) {
+  ignore(self)
+  ...
+}

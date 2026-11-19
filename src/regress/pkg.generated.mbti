@@ -1,0 +1,125 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/regress"
+
+import {
+  "gaato/stats/data",
+  "gaato/stats/infer",
+  "gaato/stats/num",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn cross_validate(ArrayView[Double], Design, (ArrayView[Double], Design) -> LinearFit raise ModelError, folds~ : Int32, rng~ : &@num.RandomSource) -> @infer.Estimate raise ModelError
+
+pub fn glm(ArrayView[Double], Design, GlmFamily, Link, max_iterations? : Int32) -> GlmFit raise ModelError
+
+pub fn gls(ArrayView[Double], Design, @data.DataMatrix) -> LinearFit raise ModelError
+
+pub fn nonlinear_least_squares(ArrayView[Double], ArrayView[Double], (Double, ArrayView[Double]) -> Double, (Double, ArrayView[Double], FixedArray[Double]) -> Unit, ArrayView[Double]) -> LinearFit raise ModelError
+
+pub fn ols(ArrayView[Double], Design) -> LinearFit raise ModelError
+
+pub fn penalized(ArrayView[Double], Design, Penalty) -> LinearFit raise ModelError
+
+// Errors
+#derive(@debug.Debug)
+pub(all) suberror ModelError {
+  TooFewObservations(needed~ : Int32, got~ : Int32)
+  NotConverged(iterations~ : Int32)
+  Separation
+  BadResponse(index~ : Int32, value~ : Double)
+}
+
+// Types and methods
+pub struct AnovaRow {
+  source : String
+  df : Double
+  sum_sq : Double
+  mean_sq : Double
+  f : Double?
+  p_value : Double?
+}
+
+pub struct Design {
+  x : @data.DataMatrix
+  intercept : Bool
+  offset : FixedArray[Double]?
+  weights : @data.Weighted?
+  names : Array[String]
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum GlmFamily {
+  Gaussian
+  Binomial
+  Poisson
+  Gamma
+  InverseGaussian
+  NegativeBinomial(theta~ : Double)
+}
+
+pub struct GlmFit {
+  coef : FixedArray[Double]
+  se : FixedArray[Double]
+  covariance : FixedArray[Double]
+  deviance : Double
+  null_deviance : Double
+  dispersion : Double
+  loglik : Double
+  aic : Double
+  bic : Double
+  iterations : Int32
+  converged : Bool
+  deviance_residuals : FixedArray[Double]
+  pearson_residuals : FixedArray[Double]
+}
+
+pub struct LinearDiagnostics {
+  leverage : FixedArray[Double]
+  cooks_distance : FixedArray[Double]
+  studentized : FixedArray[Double]
+  vif : FixedArray[Double]
+  durbin_watson : Double
+  condition_number : Double
+}
+
+pub struct LinearFit {
+  coef : FixedArray[Double]
+  se : FixedArray[Double]
+  covariance : FixedArray[Double]
+  fitted : FixedArray[Double]
+  residuals : FixedArray[Double]
+  sigma : Double
+  r_squared : Double
+  adj_r_squared : Double
+  df_residual : Int32
+  anova : Array[AnovaRow]
+  loglik : Double
+  aic : Double
+  bic : Double
+  diagnostics : LinearDiagnostics
+  rank : Int32
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Link {
+  Identity
+  Log
+  Logit
+  Probit
+  CLogLog
+  Inverse
+  InverseSquare
+  Sqrt
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Penalty {
+  Ridge(lambda~ : Double)
+  Lasso(lambda~ : Double)
+  ElasticNet(lambda~ : Double, alpha~ : Double)
+}
+
+// Type aliases
+
+// Traits

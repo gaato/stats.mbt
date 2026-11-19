@@ -32,13 +32,27 @@ pub(all) enum Normality {}
 pub(all) enum EqualVariance {}
 
 ///|
+/// What a test returns. Fields follow the union of R's htest, SciPy's
+/// result objects and HypothesisTests.jl; anything a test cannot provide is
+/// `None` rather than a placeholder. The null model is kept, so the
+/// p-value for another alternative needs no recomputation.
 pub struct TestResult {
   statistic : Double
   p_value : Double
   /// Log of the p-value, for values below the smallest positive Double.
   log_p_value : Double
   df : Double?
+  /// Second degrees of freedom (F tests).
+  df2 : Double?
   alternative : Alternative
+  /// The estimate the test is about (a mean difference, an odds ratio).
+  estimate : Double?
+  /// Its value under the null hypothesis.
+  null_value : Double?
+  interval : Interval?
+  effect : Effect?
+  p_kind : PValueKind
+  null_model : NullModel?
   procedure : String
 }
 
@@ -61,7 +75,23 @@ pub struct Interval {
   lo : Double
   hi : Double
   level : Double
+  kind : IntervalKind
   procedure : String
+}
+
+///|
+/// Intervals with different meanings are different values of this, never
+/// the same struct with a comment.
+#derive(Eq, Debug)
+pub(all) enum IntervalKind {
+  /// Covers the true parameter with the stated frequency.
+  Confidence
+  /// Holds the stated posterior probability.
+  Credible
+  /// Covers a future observation.
+  Prediction
+  /// Covers the stated proportion of the population.
+  Tolerance
 }
 
 ///|

@@ -1,0 +1,45 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/bayes"
+
+import {
+  "gaato/stats/data",
+  "gaato/stats/infer",
+  "gaato/stats/num",
+}
+
+// Values
+pub fn diagnose(ArrayView[Chain]) -> Diagnostics
+
+pub fn em_normal_mixture(ArrayView[Double], Int32, rng~ : &@num.RandomSource, max_iterations? : Int32) -> MixtureFit
+
+pub fn gibbs((Int32, ArrayView[Double], &@num.RandomSource) -> Double, ArrayView[Double], draws~ : Int32, burn_in~ : Int32, rng~ : &@num.RandomSource) -> Chain
+
+pub fn metropolis((ArrayView[Double]) -> Double, ArrayView[Double], ArrayView[Double], draws~ : Int32, burn_in~ : Int32, rng~ : &@num.RandomSource) -> Chain
+
+pub fn summarize(Chain, Int32, Double) -> @infer.Estimate
+
+// Errors
+
+// Types and methods
+pub struct Chain {
+  draws : @data.DataMatrix
+  acceptance : Double
+}
+
+pub struct Diagnostics {
+  r_hat : FixedArray[Double]
+  effective_size : FixedArray[Double]
+}
+
+pub struct MixtureFit {
+  weights : FixedArray[Double]
+  means : FixedArray[Double]
+  sds : FixedArray[Double]
+  loglik : Double
+  iterations : Int32
+  converged : Bool
+}
+
+// Type aliases
+
+// Traits

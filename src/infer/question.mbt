@@ -29,10 +29,18 @@ pub(all) enum Estimand {
 
 ///|
 /// The shape of the data, which fixes which estimands make sense.
+/// Fixed now, because adding a case later would break callers'
+/// exhaustive matches; the cases cover the shapes found in R, SciPy,
+/// statsmodels and the mooncakes survey that resampling can act on.
 pub(all) enum Sample {
   One(ArrayView[Double])
   Two(ArrayView[Double], ArrayView[Double])
+  /// Two measurements on the same units, or (x, y) pairs.
   Paired(ArrayView[Double], ArrayView[Double])
+  /// k independent groups.
+  Groups(Array[ArrayView[Double]])
+  /// k related measurements on each of n blocks.
+  Blocks(@data.Blocks)
 }
 
 ///|
@@ -61,6 +69,7 @@ pub fn Question::new(
     (MeanDifference | MedianDifference | MeanRatio, Two(_, _) | Paired(_, _)) =>
       true
     (Correlation, Paired(_, _)) => true
+    (Mean | Median | Variance, Groups(_) | Blocks(_)) => true
     _ => false
   }
   if !ok {
@@ -107,6 +116,8 @@ pub fn estimate(
 pub(all) struct NullModel {
   observed : Double
   null_dist : &@dist.Univariate
+  two_sided : TwoSidedRule
+  p_kind : PValueKind
   procedure : String
 }
 
@@ -132,13 +143,18 @@ pub fn NullModel::p_value(self : NullModel, alternative : Alternative) -> Double
   match alternative {
     Greater => upper
     Less => lower
-    TwoSided => {
-      let p = 2.0 * (if upper < lower { upper } else { lower })
-      if p > 1.0 {
-        1.0
-      } else {
-        p
+    TwoSided =>
+      match self.two_sided {
+        Doubling => {
+          let p = 2.0 * (if upper < lower { upper } else { lower })
+          if p > 1.0 {
+            1.0
+          } else {
+            p
+          }
+        }
+        // needs the null's mass function, which `Univariate` does not carry
+        MinLikelihood => ...
       }
-    }
   }
 }

@@ -1,0 +1,72 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/timeseries"
+
+import {
+  "gaato/stats/data",
+  "gaato/stats/infer",
+  "gaato/stats/regress",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn acf(@data.TimeSeries, Int32) -> FixedArray[Double]
+
+pub fn adf_test(@data.TimeSeries, Int32) -> @infer.TestResult
+
+pub fn arima(@data.TimeSeries, ArimaOrder) -> ArimaFit raise @regress.ModelError
+
+pub fn kalman_filter(StateSpace, ArrayView[Double]) -> (@data.DataMatrix, Double)
+
+pub fn ljung_box(ArrayView[Double], Int32, fitted_params~ : Int32) -> @infer.TestResult
+
+pub fn pacf(@data.TimeSeries, Int32) -> FixedArray[Double]
+
+pub fn periodogram(@data.TimeSeries, Taper) -> Spectrum
+
+// Errors
+
+// Types and methods
+pub struct ArimaFit {
+  order : ArimaOrder
+  ar : FixedArray[Double]
+  ma : FixedArray[Double]
+  sigma2 : Double
+  loglik : Double
+  aic : Double
+  residuals : FixedArray[Double]
+}
+pub fn ArimaFit::forecast(Self, Int32, Double) -> (FixedArray[Double], Array[@infer.Interval])
+
+pub struct ArimaOrder {
+  p : Int32
+  d : Int32
+  q : Int32
+  seasonal_p : Int32
+  seasonal_d : Int32
+  seasonal_q : Int32
+  period : Int32
+}
+
+pub struct Spectrum {
+  frequencies : FixedArray[Double]
+  power : FixedArray[Double]
+}
+
+pub struct StateSpace {
+  transition : @data.DataMatrix
+  selection : @data.DataMatrix
+  observation : @data.DataMatrix
+  state_noise : @data.DataMatrix
+  observation_noise : Double
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Taper {
+  None
+  Hann
+  CosineBell(Double)
+}
+
+// Type aliases
+
+// Traits

@@ -5,33 +5,16 @@
 /// by polynomial multiplication or FFT convolution).
 
 ///|
-/// The nine sample quantile definitions of Hyndman and Fan (1996). R's
-/// default is `Type7`. The choice is made when the distribution is built,
-/// so `Quantile::quantile` keeps one signature for every distribution.
-#derive(Eq, Debug)
-pub(all) enum QuantileMethod {
-  Type1
-  Type2
-  Type3
-  Type4
-  Type5
-  Type6
-  Type7
-  Type8
-  Type9
-}
-
-///|
 pub struct Empirical {
   priv sorted : FixedArray[Double]
-  priv quantile_method : QuantileMethod
+  priv quantile_method : @data.QuantileMethod
 }
 
 ///|
 /// Rejects empty data and NaN instead of dropping them silently.
 pub fn Empirical::new(
   data : ArrayView[Double],
-  quantile_method~ : QuantileMethod,
+  quantile_method~ : @data.QuantileMethod,
 ) -> Empirical raise ParamError {
   if data.length() == 0 {
     raise InvalidParam(name="data", value=0.0, reason="must not be empty")
