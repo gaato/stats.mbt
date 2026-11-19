@@ -202,6 +202,10 @@ def box_checks(dist, infos):
 
 def constraint(s):
     lo, hi = float(s.domain[0]), float(s.domain[1])
+    # SciPy writes "strictly positive" as a lower bound of the smallest
+    # subnormal in some families
+    if 0.0 < lo < 1e-300:
+        lo = 0.0
     if not math.isfinite(lo) and not math.isfinite(hi):
         return "Real"
     if lo == 0.0 and not math.isfinite(hi):

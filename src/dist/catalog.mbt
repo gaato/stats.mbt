@@ -19,7 +19,7 @@ pub fn Alpha::new(a : Double) -> Alpha raise ParamError {
 pub fn Alpha::family() -> Family[Alpha] {
   {
     name: "alpha",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }],
     make: p => Alpha::new(p[0]),
     params: d => [d.a],
   }
@@ -129,7 +129,7 @@ pub fn Argus::new(chi : Double) -> Argus raise ParamError {
 pub fn Argus::family() -> Family[Argus] {
   {
     name: "argus",
-    specs: [{ name: "chi", constraint: Above(5.0e-324) }],
+    specs: [{ name: "chi", constraint: Positive }],
     make: p => Argus::new(p[0]),
     params: d => [d.chi],
   }
@@ -185,7 +185,7 @@ pub fn BetaPrime::new(a : Double, b : Double) -> BetaPrime raise ParamError {
 pub fn BetaPrime::family() -> Family[BetaPrime] {
   {
     name: "betaprime",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
     make: p => BetaPrime::new(p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -237,7 +237,7 @@ pub fn Bradford::new(c : Double) -> Bradford raise ParamError {
 pub fn Bradford::family() -> Family[Bradford] {
   {
     name: "bradford",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => Bradford::new(p[0]),
     params: d => [d.c],
   }
@@ -275,7 +275,7 @@ pub fn Burr::new(c : Double, d : Double) -> Burr raise ParamError {
 pub fn Burr::family() -> Family[Burr] {
   {
     name: "burr",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }, { name: "d", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }, { name: "d", constraint: Positive }],
     make: p => Burr::new(p[0], p[1]),
     params: d => [d.c, d.d],
   }
@@ -313,7 +313,7 @@ pub fn Burr12::new(c : Double, d : Double) -> Burr12 raise ParamError {
 pub fn Burr12::family() -> Family[Burr12] {
   {
     name: "burr12",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }, { name: "d", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }, { name: "d", constraint: Positive }],
     make: p => Burr12::new(p[0], p[1]),
     params: d => [d.c, d.d],
   }
@@ -376,7 +376,7 @@ pub fn Chi::new(df : Double) -> Chi raise ParamError {
 pub fn Chi::family() -> Family[Chi] {
   {
     name: "chi",
-    specs: [{ name: "df", constraint: Above(5.0e-324) }],
+    specs: [{ name: "df", constraint: Positive }],
     make: p => Chi::new(p[0]),
     params: d => [d.df],
   }
@@ -479,7 +479,7 @@ pub fn CrystalBall::new(beta : Double, m : Double) -> CrystalBall raise ParamErr
 pub fn CrystalBall::family() -> Family[CrystalBall] {
   {
     name: "crystalball",
-    specs: [{ name: "beta", constraint: Above(5.0e-324) }, { name: "m", constraint: Above(1.0000000000000002) }],
+    specs: [{ name: "beta", constraint: Positive }, { name: "m", constraint: Above(1.0000000000000002) }],
     make: p => CrystalBall::new(p[0], p[1]),
     params: d => [d.beta, d.m],
   }
@@ -531,7 +531,7 @@ pub fn DoubleGamma::new(a : Double) -> DoubleGamma raise ParamError {
 pub fn DoubleGamma::family() -> Family[DoubleGamma] {
   {
     name: "dgamma",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }],
     make: p => DoubleGamma::new(p[0]),
     params: d => [d.a],
   }
@@ -595,7 +595,7 @@ pub fn DoubleParetoLognormal::new(u : Double, s : Double, a : Double, b : Double
 pub fn DoubleParetoLognormal::family() -> Family[DoubleParetoLognormal] {
   {
     name: "dpareto_lognorm",
-    specs: [{ name: "u", constraint: Real }, { name: "s", constraint: Above(5.0e-324) }, { name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "u", constraint: Real }, { name: "s", constraint: Positive }, { name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
     make: p => DoubleParetoLognormal::new(p[0], p[1], p[2], p[3]),
     params: d => [d.u, d.s, d.a, d.b],
   }
@@ -647,7 +647,7 @@ pub fn DoubleWeibull::new(c : Double) -> DoubleWeibull raise ParamError {
 pub fn DoubleWeibull::family() -> Family[DoubleWeibull] {
   {
     name: "dweibull",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => DoubleWeibull::new(p[0]),
     params: d => [d.c],
   }
@@ -762,7 +762,7 @@ pub fn ExponentiallyModifiedNormal::new(k : Double) -> ExponentiallyModifiedNorm
 pub fn ExponentiallyModifiedNormal::family() -> Family[ExponentiallyModifiedNormal] {
   {
     name: "exponnorm",
-    specs: [{ name: "k", constraint: Above(5.0e-324) }],
+    specs: [{ name: "k", constraint: Positive }],
     make: p => ExponentiallyModifiedNormal::new(p[0]),
     params: d => [d.k],
   }
@@ -814,7 +814,7 @@ pub fn ExponentialPower::new(b : Double) -> ExponentialPower raise ParamError {
 pub fn ExponentialPower::family() -> Family[ExponentialPower] {
   {
     name: "exponpow",
-    specs: [{ name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "b", constraint: Positive }],
     make: p => ExponentialPower::new(p[0]),
     params: d => [d.b],
   }
@@ -852,7 +852,7 @@ pub fn ExponentiatedWeibull::new(a : Double, c : Double) -> ExponentiatedWeibull
 pub fn ExponentiatedWeibull::family() -> Family[ExponentiatedWeibull] {
   {
     name: "exponweib",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "c", constraint: Positive }],
     make: p => ExponentiatedWeibull::new(p[0], p[1]),
     params: d => [d.a, d.c],
   }
@@ -886,7 +886,7 @@ pub fn FatigueLife::new(c : Double) -> FatigueLife raise ParamError {
 pub fn FatigueLife::family() -> Family[FatigueLife] {
   {
     name: "fatiguelife",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => FatigueLife::new(p[0]),
     params: d => [d.c],
   }
@@ -938,7 +938,7 @@ pub fn Fisk::new(c : Double) -> Fisk raise ParamError {
 pub fn Fisk::family() -> Family[Fisk] {
   {
     name: "fisk",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => Fisk::new(p[0]),
     params: d => [d.c],
   }
@@ -1088,7 +1088,7 @@ pub fn GaussHypergeometric::new(a : Double, b : Double, c : Double, z : Double) 
 pub fn GaussHypergeometric::family() -> Family[GaussHypergeometric] {
   {
     name: "gausshyper",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }, { name: "c", constraint: Real }, { name: "z", constraint: Above(-0.9999999999999999) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }, { name: "c", constraint: Real }, { name: "z", constraint: Above(-0.9999999999999999) }],
     make: p => GaussHypergeometric::new(p[0], p[1], p[2], p[3]),
     params: d => [d.a, d.b, d.c, d.z],
   }
@@ -1148,7 +1148,7 @@ pub fn GeneralizedExponential::new(a : Double, b : Double, c : Double) -> Genera
 pub fn GeneralizedExponential::family() -> Family[GeneralizedExponential] {
   {
     name: "genexpon",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }, { name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }, { name: "c", constraint: Positive }],
     make: p => GeneralizedExponential::new(p[0], p[1], p[2]),
     params: d => [d.a, d.b, d.c],
   }
@@ -1238,7 +1238,7 @@ pub fn GeneralizedGamma::new(a : Double, c : Double) -> GeneralizedGamma raise P
 pub fn GeneralizedGamma::family() -> Family[GeneralizedGamma] {
   {
     name: "gengamma",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "c", constraint: Real }],
+    specs: [{ name: "a", constraint: Positive }, { name: "c", constraint: Real }],
     make: p => GeneralizedGamma::new(p[0], p[1]),
     params: d => [d.a, d.c],
   }
@@ -1290,7 +1290,7 @@ pub fn GeneralizedHalfLogistic::new(c : Double) -> GeneralizedHalfLogistic raise
 pub fn GeneralizedHalfLogistic::family() -> Family[GeneralizedHalfLogistic] {
   {
     name: "genhalflogistic",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => GeneralizedHalfLogistic::new(p[0]),
     params: d => [d.c],
   }
@@ -1410,7 +1410,7 @@ pub fn GeneralizedInverseGaussian::new(p : Double, b : Double) -> GeneralizedInv
 pub fn GeneralizedInverseGaussian::family() -> Family[GeneralizedInverseGaussian] {
   {
     name: "geninvgauss",
-    specs: [{ name: "p", constraint: Real }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "p", constraint: Real }, { name: "b", constraint: Positive }],
     make: p => GeneralizedInverseGaussian::new(p[0], p[1]),
     params: d => [d.p, d.b],
   }
@@ -1462,7 +1462,7 @@ pub fn GeneralizedLogistic::new(c : Double) -> GeneralizedLogistic raise ParamEr
 pub fn GeneralizedLogistic::family() -> Family[GeneralizedLogistic] {
   {
     name: "genlogistic",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => GeneralizedLogistic::new(p[0]),
     params: d => [d.c],
   }
@@ -1496,7 +1496,7 @@ pub fn GeneralizedNormal::new(beta : Double) -> GeneralizedNormal raise ParamErr
 pub fn GeneralizedNormal::family() -> Family[GeneralizedNormal] {
   {
     name: "gennorm",
-    specs: [{ name: "beta", constraint: Above(5.0e-324) }],
+    specs: [{ name: "beta", constraint: Positive }],
     make: p => GeneralizedNormal::new(p[0]),
     params: d => [d.beta],
   }
@@ -1548,7 +1548,7 @@ pub fn HalfGeneralizedNormal::new(beta : Double) -> HalfGeneralizedNormal raise 
 pub fn HalfGeneralizedNormal::family() -> Family[HalfGeneralizedNormal] {
   {
     name: "halfgennorm",
-    specs: [{ name: "beta", constraint: Above(5.0e-324) }],
+    specs: [{ name: "beta", constraint: Positive }],
     make: p => HalfGeneralizedNormal::new(p[0]),
     params: d => [d.beta],
   }
@@ -1681,7 +1681,7 @@ pub fn Gompertz::new(c : Double) -> Gompertz raise ParamError {
 pub fn Gompertz::family() -> Family[Gompertz] {
   {
     name: "gompertz",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => Gompertz::new(p[0]),
     params: d => [d.c],
   }
@@ -1907,7 +1907,7 @@ pub fn InverseGamma::new(a : Double) -> InverseGamma raise ParamError {
 pub fn InverseGamma::family() -> Family[InverseGamma] {
   {
     name: "invgamma",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }],
     make: p => InverseGamma::new(p[0]),
     params: d => [d.a],
   }
@@ -1959,7 +1959,7 @@ pub fn InverseGaussian::new(mu : Double) -> InverseGaussian raise ParamError {
 pub fn InverseGaussian::family() -> Family[InverseGaussian] {
   {
     name: "invgauss",
-    specs: [{ name: "mu", constraint: Above(5.0e-324) }],
+    specs: [{ name: "mu", constraint: Positive }],
     make: p => InverseGaussian::new(p[0]),
     params: d => [d.mu],
   }
@@ -2011,7 +2011,7 @@ pub fn InverseWeibull::new(c : Double) -> InverseWeibull raise ParamError {
 pub fn InverseWeibull::family() -> Family[InverseWeibull] {
   {
     name: "invweibull",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => InverseWeibull::new(p[0]),
     params: d => [d.c],
   }
@@ -2119,7 +2119,7 @@ pub fn JonesFaddySkewT::new(a : Double, b : Double) -> JonesFaddySkewT raise Par
 pub fn JonesFaddySkewT::family() -> Family[JonesFaddySkewT] {
   {
     name: "jf_skew_t",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
     make: p => JonesFaddySkewT::new(p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -2175,7 +2175,7 @@ pub fn JohnsonSB::new(a : Double, b : Double) -> JohnsonSB raise ParamError {
 pub fn JohnsonSB::family() -> Family[JohnsonSB] {
   {
     name: "johnsonsb",
-    specs: [{ name: "a", constraint: Real }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Real }, { name: "b", constraint: Positive }],
     make: p => JohnsonSB::new(p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -2231,7 +2231,7 @@ pub fn JohnsonSU::new(a : Double, b : Double) -> JohnsonSU raise ParamError {
 pub fn JohnsonSU::family() -> Family[JohnsonSU] {
   {
     name: "johnsonsu",
-    specs: [{ name: "a", constraint: Real }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Real }, { name: "b", constraint: Positive }],
     make: p => JohnsonSU::new(p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -2339,7 +2339,7 @@ pub fn Kappa3::new(a : Double) -> Kappa3 raise ParamError {
 pub fn Kappa3::family() -> Family[Kappa3] {
   {
     name: "kappa3",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }],
     make: p => Kappa3::new(p[0]),
     params: d => [d.a],
   }
@@ -2600,7 +2600,7 @@ pub fn AsymmetricLaplace::new(kappa : Double) -> AsymmetricLaplace raise ParamEr
 pub fn AsymmetricLaplace::family() -> Family[AsymmetricLaplace] {
   {
     name: "laplace_asymmetric",
-    specs: [{ name: "kappa", constraint: Above(5.0e-324) }],
+    specs: [{ name: "kappa", constraint: Positive }],
     make: p => AsymmetricLaplace::new(p[0]),
     params: d => [d.kappa],
   }
@@ -2732,7 +2732,7 @@ pub fn Stable::new(alpha : Double, beta : Double) -> Stable raise ParamError {
 pub fn Stable::family() -> Family[Stable] {
   {
     name: "levy_stable",
-    specs: [{ name: "alpha", constraint: Interval(lo=5.0e-324, hi=2.0) }, { name: "beta", constraint: Interval(lo=-1.0, hi=1.0) }],
+    specs: [{ name: "alpha", constraint: Interval(lo=0.0, hi=2.0) }, { name: "beta", constraint: Interval(lo=-1.0, hi=1.0) }],
     make: p => Stable::new(p[0], p[1]),
     params: d => [d.alpha, d.beta],
   }
@@ -2784,7 +2784,7 @@ pub fn LogGamma::new(c : Double) -> LogGamma raise ParamError {
 pub fn LogGamma::family() -> Family[LogGamma] {
   {
     name: "loggamma",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => LogGamma::new(p[0]),
     params: d => [d.c],
   }
@@ -2865,7 +2865,7 @@ pub fn LogLaplace::new(c : Double) -> LogLaplace raise ParamError {
 pub fn LogLaplace::family() -> Family[LogLaplace] {
   {
     name: "loglaplace",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => LogLaplace::new(p[0]),
     params: d => [d.c],
   }
@@ -2899,7 +2899,7 @@ pub fn LogNormal::new(s : Double) -> LogNormal raise ParamError {
 pub fn LogNormal::family() -> Family[LogNormal] {
   {
     name: "lognorm",
-    specs: [{ name: "s", constraint: Above(5.0e-324) }],
+    specs: [{ name: "s", constraint: Positive }],
     make: p => LogNormal::new(p[0]),
     params: d => [d.s],
   }
@@ -2959,7 +2959,7 @@ pub fn LogUniform::new(a : Double, b : Double) -> LogUniform raise ParamError {
 pub fn LogUniform::family() -> Family[LogUniform] {
   {
     name: "loguniform",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
     make: p => LogUniform::new(p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -2993,7 +2993,7 @@ pub fn Lomax::new(c : Double) -> Lomax raise ParamError {
 pub fn Lomax::family() -> Family[Lomax] {
   {
     name: "lomax",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => Lomax::new(p[0]),
     params: d => [d.c],
   }
@@ -3078,7 +3078,7 @@ pub fn Mielke::new(k : Double, s : Double) -> Mielke raise ParamError {
 pub fn Mielke::family() -> Family[Mielke] {
   {
     name: "mielke",
-    specs: [{ name: "k", constraint: Above(5.0e-324) }, { name: "s", constraint: Above(5.0e-324) }],
+    specs: [{ name: "k", constraint: Positive }, { name: "s", constraint: Positive }],
     make: p => Mielke::new(p[0], p[1]),
     params: d => [d.k, d.s],
   }
@@ -3177,7 +3177,7 @@ pub fn Nakagami::new(nu : Double) -> Nakagami raise ParamError {
 pub fn Nakagami::family() -> Family[Nakagami] {
   {
     name: "nakagami",
-    specs: [{ name: "nu", constraint: Above(5.0e-324) }],
+    specs: [{ name: "nu", constraint: Positive }],
     make: p => Nakagami::new(p[0]),
     params: d => [d.nu],
   }
@@ -3237,7 +3237,7 @@ pub fn NormalInverseGaussian::new(a : Double, b : Double) -> NormalInverseGaussi
 pub fn NormalInverseGaussian::family() -> Family[NormalInverseGaussian] {
   {
     name: "norminvgauss",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Real }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Real }],
     make: p => NormalInverseGaussian::new(p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -3289,7 +3289,7 @@ pub fn Pareto::new(b : Double) -> Pareto raise ParamError {
 pub fn Pareto::family() -> Family[Pareto] {
   {
     name: "pareto",
-    specs: [{ name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "b", constraint: Positive }],
     make: p => Pareto::new(p[0]),
     params: d => [d.b],
   }
@@ -3375,7 +3375,7 @@ pub fn PowerLaw::new(a : Double) -> PowerLaw raise ParamError {
 pub fn PowerLaw::family() -> Family[PowerLaw] {
   {
     name: "powerlaw",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }],
     make: p => PowerLaw::new(p[0]),
     params: d => [d.a],
   }
@@ -3413,7 +3413,7 @@ pub fn PowerLogNormal::new(c : Double, s : Double) -> PowerLogNormal raise Param
 pub fn PowerLogNormal::family() -> Family[PowerLogNormal] {
   {
     name: "powerlognorm",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }, { name: "s", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }, { name: "s", constraint: Positive }],
     make: p => PowerLogNormal::new(p[0], p[1]),
     params: d => [d.c, d.s],
   }
@@ -3465,7 +3465,7 @@ pub fn PowerNormal::new(c : Double) -> PowerNormal raise ParamError {
 pub fn PowerNormal::family() -> Family[PowerNormal] {
   {
     name: "powernorm",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => PowerNormal::new(p[0]),
     params: d => [d.c],
   }
@@ -3546,7 +3546,7 @@ pub fn RDist::new(c : Double) -> RDist raise ParamError {
 pub fn RDist::family() -> Family[RDist] {
   {
     name: "rdist",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => RDist::new(p[0]),
     params: d => [d.c],
   }
@@ -3598,7 +3598,7 @@ pub fn ReciprocalInverseGaussian::new(mu : Double) -> ReciprocalInverseGaussian 
 pub fn ReciprocalInverseGaussian::family() -> Family[ReciprocalInverseGaussian] {
   {
     name: "recipinvgauss",
-    specs: [{ name: "mu", constraint: Above(5.0e-324) }],
+    specs: [{ name: "mu", constraint: Positive }],
     make: p => ReciprocalInverseGaussian::new(p[0]),
     params: d => [d.mu],
   }
@@ -3650,7 +3650,7 @@ pub fn RelativisticBreitWigner::new(rho : Double) -> RelativisticBreitWigner rai
 pub fn RelativisticBreitWigner::family() -> Family[RelativisticBreitWigner] {
   {
     name: "rel_breitwigner",
-    specs: [{ name: "rho", constraint: Above(5.0e-324) }],
+    specs: [{ name: "rho", constraint: Positive }],
     make: p => RelativisticBreitWigner::new(p[0]),
     params: d => [d.rho],
   }
@@ -3891,7 +3891,7 @@ pub fn StudentizedRange::new(k : Double, df : Double) -> StudentizedRange raise 
 pub fn StudentizedRange::family() -> Family[StudentizedRange] {
   {
     name: "studentized_range",
-    specs: [{ name: "k", constraint: Above(1.0000000000000002) }, { name: "df", constraint: Above(5.0e-324) }],
+    specs: [{ name: "k", constraint: Above(1.0000000000000002) }, { name: "df", constraint: Positive }],
     make: p => StudentizedRange::new(p[0], p[1]),
     params: d => [d.k, d.df],
   }
@@ -4037,7 +4037,7 @@ pub fn TruncatedExponential::new(b : Double) -> TruncatedExponential raise Param
 pub fn TruncatedExponential::family() -> Family[TruncatedExponential] {
   {
     name: "truncexpon",
-    specs: [{ name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "b", constraint: Positive }],
     make: p => TruncatedExponential::new(p[0]),
     params: d => [d.b],
   }
@@ -4181,7 +4181,7 @@ pub fn TruncatedWeibull::new(c : Double, a : Double, b : Double) -> TruncatedWei
 pub fn TruncatedWeibull::family() -> Family[TruncatedWeibull] {
   {
     name: "truncweibull_min",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }, { name: "a", constraint: Positive }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }, { name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
     make: p => TruncatedWeibull::new(p[0], p[1], p[2]),
     params: d => [d.c, d.a, d.b],
   }
@@ -4465,7 +4465,7 @@ pub fn WeibullMax::new(c : Double) -> WeibullMax raise ParamError {
 pub fn WeibullMax::family() -> Family[WeibullMax] {
   {
     name: "weibull_max",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => WeibullMax::new(p[0]),
     params: d => [d.c],
   }
@@ -4499,7 +4499,7 @@ pub fn Weibull::new(c : Double) -> Weibull raise ParamError {
 pub fn Weibull::family() -> Family[Weibull] {
   {
     name: "weibull_min",
-    specs: [{ name: "c", constraint: Above(5.0e-324) }],
+    specs: [{ name: "c", constraint: Positive }],
     make: p => Weibull::new(p[0]),
     params: d => [d.c],
   }
@@ -4533,7 +4533,7 @@ pub fn WrappedCauchy::new(c : Double) -> WrappedCauchy raise ParamError {
 pub fn WrappedCauchy::family() -> Family[WrappedCauchy] {
   {
     name: "wrapcauchy",
-    specs: [{ name: "c", constraint: Interval(lo=5.0e-324, hi=0.9999999999999999) }],
+    specs: [{ name: "c", constraint: Interval(lo=0.0, hi=0.9999999999999999) }],
     make: p => WrappedCauchy::new(p[0]),
     params: d => [d.c],
   }
@@ -4652,7 +4652,7 @@ pub fn BetaBinomial::new(n : Int, a : Double, b : Double) -> BetaBinomial raise 
 pub fn BetaBinomial::family(n~ : Int) -> Family[BetaBinomial] {
   {
     name: "betabinom",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
     make: p => BetaBinomial::new(n, p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -4737,7 +4737,7 @@ pub fn BetaNegativeBinomial::new(n : Int, a : Double, b : Double) -> BetaNegativ
 pub fn BetaNegativeBinomial::family(n~ : Int) -> Family[BetaNegativeBinomial] {
   {
     name: "betanbinom",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }, { name: "b", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
     make: p => BetaNegativeBinomial::new(n, p[0], p[1]),
     params: d => [d.a, d.b],
   }
@@ -4822,7 +4822,7 @@ pub fn Boltzmann::new(lambda : Double, n : Int) -> Boltzmann raise ParamError {
 pub fn Boltzmann::family(n~ : Int) -> Family[Boltzmann] {
   {
     name: "boltzmann",
-    specs: [{ name: "lambda", constraint: Above(5.0e-324) }],
+    specs: [{ name: "lambda", constraint: Positive }],
     make: p => Boltzmann::new(p[0], n),
     params: d => [d.lambda],
   }
@@ -4881,7 +4881,7 @@ pub fn DiscreteLaplace::new(a : Double) -> DiscreteLaplace raise ParamError {
 pub fn DiscreteLaplace::family() -> Family[DiscreteLaplace] {
   {
     name: "dlaplace",
-    specs: [{ name: "a", constraint: Above(5.0e-324) }],
+    specs: [{ name: "a", constraint: Positive }],
     make: p => DiscreteLaplace::new(p[0]),
     params: d => [d.a],
   }
@@ -5015,7 +5015,7 @@ pub fn FisherNoncentralHypergeometric::new(population : Int, successes : Int, dr
 pub fn FisherNoncentralHypergeometric::family(population~ : Int, successes~ : Int, draws~ : Int) -> Family[FisherNoncentralHypergeometric] {
   {
     name: "nchypergeom_fisher",
-    specs: [{ name: "odds", constraint: Above(5.0e-324) }],
+    specs: [{ name: "odds", constraint: Positive }],
     make: p => FisherNoncentralHypergeometric::new(population, successes, draws, p[0]),
     params: d => [d.odds],
   }
@@ -5108,7 +5108,7 @@ pub fn WalleniusNoncentralHypergeometric::new(population : Int, successes : Int,
 pub fn WalleniusNoncentralHypergeometric::family(population~ : Int, successes~ : Int, draws~ : Int) -> Family[WalleniusNoncentralHypergeometric] {
   {
     name: "nchypergeom_wallenius",
-    specs: [{ name: "odds", constraint: Above(5.0e-324) }],
+    specs: [{ name: "odds", constraint: Positive }],
     make: p => WalleniusNoncentralHypergeometric::new(population, successes, draws, p[0]),
     params: d => [d.odds],
   }
@@ -5347,7 +5347,7 @@ pub fn Planck::new(lambda : Double) -> Planck raise ParamError {
 pub fn Planck::family() -> Family[Planck] {
   {
     name: "planck",
-    specs: [{ name: "lambda", constraint: Above(5.0e-324) }],
+    specs: [{ name: "lambda", constraint: Positive }],
     make: p => Planck::new(p[0]),
     params: d => [d.lambda],
   }
@@ -5471,7 +5471,7 @@ pub fn Skellam::new(mu1 : Double, mu2 : Double) -> Skellam raise ParamError {
 pub fn Skellam::family() -> Family[Skellam] {
   {
     name: "skellam",
-    specs: [{ name: "mu1", constraint: Above(5.0e-324) }, { name: "mu2", constraint: Above(5.0e-324) }],
+    specs: [{ name: "mu1", constraint: Positive }, { name: "mu2", constraint: Positive }],
     make: p => Skellam::new(p[0], p[1]),
     params: d => [d.mu1, d.mu2],
   }
@@ -5692,7 +5692,7 @@ pub fn YuleSimon::new(alpha : Double) -> YuleSimon raise ParamError {
 pub fn YuleSimon::family() -> Family[YuleSimon] {
   {
     name: "yulesimon",
-    specs: [{ name: "alpha", constraint: Above(5.0e-324) }],
+    specs: [{ name: "alpha", constraint: Positive }],
     make: p => YuleSimon::new(p[0]),
     params: d => [d.alpha],
   }
