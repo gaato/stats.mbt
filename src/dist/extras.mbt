@@ -37,6 +37,12 @@ pub impl Quantile for Normal with quantile(self, p) {
 }
 
 ///|
+/// By symmetry, never through 1 - q.
+pub impl Quantile for Normal with isf(self, q) {
+  self.loc - self.scale * @special.ndtri(q)
+}
+
+///|
 pub impl Moments for Normal with mean(self) {
   Some(self.loc)
 }
@@ -91,6 +97,75 @@ pub impl Moments for StudentT with variance(self) {
   } else {
     None
   }
+}
+
+///|
+pub impl Density for StudentT with pdf(self, x) {
+  @math.exp(Density::logpdf(self, x))
+}
+
+///|
+/// -ln √ν - ln B(1/2, ν/2) - (ν+1)/2 · ln(1 + x²/ν).
+pub impl Density for StudentT with logpdf(self, x) {
+  -0.5 * @math.ln(self.df) - @special.lbeta(0.5, 0.5 * self.df) -
+  0.5 * (self.df + 1.0) * @math.ln_1p(x * x / self.df)
+}
+
+///|
+/// Half the lower tail, I_t(ν/2, 1/2)/2 with t = ν/(ν + x²); both t and
+/// 1 - t = x²/(ν + x²) are formed directly, so neither end cancels.
+fn StudentT::half_tail(self : StudentT, x : Double) -> Double {
+  let d = self.df + x * x
+  let (i, _) = @special.betainc_pair(0.5 * self.df, 0.5, self.df / d, x * x / d)
+  0.5 * i
+}
+
+///|
+pub impl Cdf for StudentT with cdf(self, x) {
+  if x < 0.0 {
+    self.half_tail(x)
+  } else {
+    1.0 - self.half_tail(x)
+  }
+}
+
+///|
+/// The p-value path of every t test, from the incomplete beta directly.
+pub impl Cdf for StudentT with sf(self, x) {
+  if x > 0.0 {
+    self.half_tail(x)
+  } else {
+    1.0 - self.half_tail(x)
+  }
+}
+
+///|
+/// Inverts the tail it is in: I_t(ν/2, 1/2) = 2q for the far tail, and the
+/// complementary I_z(1/2, ν/2) = 1 - 2q near the centre, so x stays
+/// accurate both at 1e-300 and next to the median.
+pub impl Quantile for StudentT with quantile(self, p) {
+  if p == 0.5 {
+    return 0.0
+  }
+  let q = if p < 0.5 { p } else { 1.0 - p }
+  let target = 2.0 * q
+  let x = if target <= 0.5 {
+    let t = @special.betaincinv(0.5 * self.df, 0.5, target)
+    (self.df * (1.0 - t) / t).sqrt()
+  } else {
+    let z = @special.betaincinv(0.5, 0.5 * self.df, 1.0 - target)
+    (self.df * z / (1.0 - z)).sqrt()
+  }
+  if p < 0.5 {
+    -x
+  } else {
+    x
+  }
+}
+
+///|
+pub impl Quantile for StudentT with isf(self, q) {
+  -Quantile::quantile(self, q)
 }
 
 ///|
@@ -149,6 +224,36 @@ pub impl Cdf for Gamma with sf(self, x) {
 }
 
 ///|
+pub impl Density for Gamma with pdf(self, x) {
+  if x < 0.0 {
+    0.0
+  } else {
+    @math.exp(Density::logpdf(self, x))
+  }
+}
+
+///|
+pub impl Density for Gamma with logpdf(self, x) {
+  if x < 0.0 {
+    -1.0 / 0.0
+  } else {
+    let z = x / self.scale
+    (self.a - 1.0) * @math.ln(z) - z - @special.lgamma(self.a) -
+    @math.ln(self.scale)
+  }
+}
+
+///|
+pub impl Quantile for Gamma with quantile(self, p) {
+  self.scale * @special.gammaincinv(self.a, p)
+}
+
+///|
+pub impl Quantile for Gamma with isf(self, q) {
+  self.scale * @special.gammainccinv(self.a, q)
+}
+
+///|
 /// M(t) = (1 - t scale)^(-a) for t < 1/scale; it diverges from there on.
 pub impl Mgf for Gamma with mgf(self, t) {
   if t * self.scale < 1.0 {
@@ -164,8 +269,27 @@ pub impl Mgf for Gamma with mgf(self, t) {
 
 ///|
 pub impl Mass for Binomial with pmf(self, k) {
-  ignore((self, k))
-  ...
+  if k < 0 || k > self.n {
+    0.0
+  } else if self.p == 0.0 {
+    if k == 0 {
+      1.0
+    } else {
+      0.0
+    }
+  } else if self.p == 1.0 {
+    if k == self.n {
+      1.0
+    } else {
+      0.0
+    }
+  } else {
+    @math.exp(
+      @special.lchoose(self.n.to_double(), k.to_double()) +
+      k.to_double() * @math.ln(self.p) +
+      (self.n - k).to_double() * @math.ln_1p(-self.p),
+    )
+  }
 }
 
 ///|
@@ -197,9 +321,12 @@ pub impl IntCdf for Binomial with sf_int(self, k) {
 }
 
 ///|
+/// A normal-approximation start, corrected by exact comparisons.
 pub impl IntQuantile for Binomial with quantile_int(self, p) {
-  ignore((self, p))
-  ...
+  let n = self.n.to_double()
+  let guess = n * self.p +
+    @special.ndtri(p) * (n * self.p * (1.0 - self.p)).sqrt()
+  refine_quantile(self, p, @math.floor(guess).to_int(), 0, self.n)
 }
 
 ///|
@@ -248,17 +375,40 @@ pub impl Cdf for ChiSquared with sf(self, x) {
 }
 
 ///|
-/// P(X > x) = I_{dfd/(dfd + dfn x)}(dfd/2, dfn/2).
-pub impl Cdf for FisherF with sf(self, x) {
-  if x <= 0.0 {
-    1.0
+pub impl Density for ChiSquared with pdf(self, x) {
+  if x < 0.0 {
+    0.0
   } else {
-    @special.betainc(
-      0.5 * self.dfd,
-      0.5 * self.dfn,
-      self.dfd / (self.dfd + self.dfn * x),
-    )
+    @math.exp(Density::logpdf(self, x))
   }
+}
+
+///|
+pub impl Density for ChiSquared with logpdf(self, x) {
+  if x < 0.0 {
+    -1.0 / 0.0
+  } else {
+    let k = 0.5 * self.df
+    (k - 1.0) * @math.ln(x) - 0.5 * x - k * @math.ln(2.0) - @special.lgamma(k)
+  }
+}
+
+///|
+pub impl Quantile for ChiSquared with quantile(self, p) {
+  2.0 * @special.gammaincinv(0.5 * self.df, p)
+}
+
+///|
+pub impl Quantile for ChiSquared with isf(self, q) {
+  2.0 * @special.gammainccinv(0.5 * self.df, q)
+}
+
+///|
+/// (P(X <= x), P(X > x)) = I_u(dfn/2, dfd/2) and its complement, with
+/// u = dfn x/(dfn x + dfd) and 1 - u = dfd/(dfn x + dfd) both formed directly.
+fn FisherF::tails(self : FisherF, x : Double) -> (Double, Double) {
+  let d = self.dfn * x + self.dfd
+  @special.betainc_pair(0.5 * self.dfn, 0.5 * self.dfd, self.dfn * x / d, self.dfd / d)
 }
 
 ///|
@@ -266,12 +416,95 @@ pub impl Cdf for FisherF with cdf(self, x) {
   if x <= 0.0 {
     0.0
   } else {
-    @special.betaincc(
-      0.5 * self.dfd,
-      0.5 * self.dfn,
-      self.dfd / (self.dfd + self.dfn * x),
-    )
+    self.tails(x).0
   }
+}
+
+///|
+pub impl Cdf for FisherF with sf(self, x) {
+  if x <= 0.0 {
+    1.0
+  } else {
+    self.tails(x).1
+  }
+}
+
+///|
+pub impl Density for FisherF with pdf(self, x) {
+  if x < 0.0 {
+    0.0
+  } else {
+    @math.exp(Density::logpdf(self, x))
+  }
+}
+
+///|
+pub impl Density for FisherF with logpdf(self, x) {
+  if x < 0.0 {
+    -1.0 / 0.0
+  } else {
+    let m = self.dfn
+    let n = self.dfd
+    0.5 * m * @math.ln(m / n) + (0.5 * m - 1.0) * @math.ln(x) -
+    0.5 * (m + n) * @math.ln_1p(m * x / n) -
+    @special.lbeta(0.5 * m, 0.5 * n)
+  }
+}
+
+///|
+/// The lower tail inverts I_u(dfn/2, dfd/2); above the median the upper
+/// tail is inverted instead, so a small 1 - u is never formed.
+pub impl Quantile for FisherF with quantile(self, p) {
+  if p > 0.5 {
+    return Quantile::isf(self, 1.0 - p)
+  }
+  let u = @special.betaincinv(0.5 * self.dfn, 0.5 * self.dfd, p)
+  self.dfd * u / (self.dfn * (1.0 - u))
+}
+
+///|
+pub impl Quantile for FisherF with isf(self, q) {
+  if q > 0.5 {
+    return Quantile::quantile(self, 1.0 - q)
+  }
+  let v = @special.betaincinv(0.5 * self.dfd, 0.5 * self.dfn, q)
+  self.dfd * (1.0 - v) / (self.dfn * v)
+}
+
+///|
+pub impl Density for Beta with pdf(self, x) {
+  if x < 0.0 || x > 1.0 {
+    0.0
+  } else {
+    @math.exp(Density::logpdf(self, x))
+  }
+}
+
+///|
+pub impl Density for Beta with logpdf(self, x) {
+  if x < 0.0 || x > 1.0 {
+    -1.0 / 0.0
+  } else {
+    (self.a - 1.0) * @math.ln(x) + (self.b - 1.0) * @math.ln_1p(-x) -
+    @special.lbeta(self.a, self.b)
+  }
+}
+
+///|
+pub impl Cdf for Beta with sf(self, x) {
+  if x <= 0.0 {
+    1.0
+  } else if x >= 1.0 {
+    0.0
+  } else {
+    @special.betaincc(self.a, self.b, x)
+  }
+}
+
+///|
+/// 1 - I_x(a, b) = q is I_{1-x}(b, a) = q.
+pub impl Quantile for Beta with isf(self, q) {
+  1.0 - @special.betaincinv(self.b, self.a, q)
 }
 
 ///|
@@ -311,10 +544,102 @@ pub impl IntCdf for Poisson with sf_int(self, k) {
 }
 
 ///|
+pub impl Mass for Poisson with pmf(self, k) {
+  if k < 0 {
+    0.0
+  } else if self.mu == 0.0 {
+    if k == 0 {
+      1.0
+    } else {
+      0.0
+    }
+  } else {
+    @math.exp(
+      k.to_double() * @math.ln(self.mu) - self.mu - @special.lgamma(
+        k.to_double() + 1.0,
+      ),
+    )
+  }
+}
+
+///|
+pub impl IntQuantile for Poisson with quantile_int(self, p) {
+  let guess = self.mu + @special.ndtri(p) * self.mu.sqrt()
+  refine_quantile(self, p, @math.floor(guess).to_int(), 0, 2147483647)
+}
+
+///|
+fn Hypergeometric::lowest(self : Hypergeometric) -> Int {
+  let k = self.draws - (self.population - self.successes)
+  if k > 0 {
+    k
+  } else {
+    0
+  }
+}
+
+///|
+fn Hypergeometric::highest(self : Hypergeometric) -> Int {
+  if self.successes < self.draws {
+    self.successes
+  } else {
+    self.draws
+  }
+}
+
+///|
 /// The null distribution of Fisher's exact test for a 2 × 2 table.
 pub impl Mass for Hypergeometric with pmf(self, k) {
-  ignore((self, k))
-  ...
+  if k < self.lowest() || k > self.highest() {
+    0.0
+  } else {
+    @math.exp(
+      @special.lchoose(self.successes.to_double(), k.to_double()) +
+      @special.lchoose(
+        (self.population - self.successes).to_double(),
+        (self.draws - k).to_double(),
+      ) -
+      @special.lchoose(self.population.to_double(), self.draws.to_double()),
+    )
+  }
+}
+
+///|
+/// Each tail is summed on its own side, so neither is 1 minus the other.
+pub impl IntCdf for Hypergeometric with cdf_int(self, k) {
+  if k < self.lowest() {
+    0.0
+  } else if k >= self.highest() {
+    1.0
+  } else {
+    let mut s = @num.CompensatedSum::zero()
+    for j in self.lowest()..=k {
+      s = s.add(Mass::pmf(self, j))
+    }
+    s.value()
+  }
+}
+
+///|
+pub impl IntCdf for Hypergeometric with sf_int(self, k) {
+  if k < self.lowest() {
+    1.0
+  } else if k >= self.highest() {
+    0.0
+  } else {
+    let mut s = @num.CompensatedSum::zero()
+    for j in (k + 1)..=self.highest() {
+      s = s.add(Mass::pmf(self, j))
+    }
+    s.value()
+  }
+}
+
+///|
+pub impl IntQuantile for Hypergeometric with quantile_int(self, p) {
+  let guess = self.draws.to_double() * self.successes.to_double() /
+    self.population.to_double()
+  refine_quantile(self, p, @math.floor(guess).to_int(), self.lowest(), self.highest())
 }
 
 ///|

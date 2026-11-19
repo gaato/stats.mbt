@@ -49,3 +49,43 @@ test "compensated sum keeps what plain summation loses" {
   assert_eq(plain, 1.0)
   assert_eq(acc.value(), 2.0)
 }
+
+///|
+test "brent and bracketed newton find x = cos x" {
+  let r = @num.find_root(x => x - @math.cos(x), 0.0, 1.0)
+  assert_eq(r.status, Converged)
+  assert_true((r.value - 0.7390851332151607).abs() < 2.0e-16)
+  let n = @num.find_root_newton(x => (x - @math.cos(x), 1.0 + @math.sin(x)), 0.0, 1.0, 0.5)
+  assert_eq(n.status, Converged)
+  assert_true((n.value - 0.7390851332151607).abs() < 2.0e-16)
+  assert_eq(@num.find_root(x => x * x + 1.0, -1.0, 1.0).status, NoBracket)
+}
+
+///|
+test "series and continued fraction" {
+  // e = Σ 1/n!
+  let s = @num.sum_series(n => {
+    let mut f = 1.0
+    for i in 1..=n {
+      f = f * i.to_double()
+    }
+    1.0 / f
+  })
+  assert_true((s.value - 2.718281828459045).abs() < 5.0e-16)
+  // √2 = 1 + 1/(2 + 1/(2 + ...))
+  let cf = @num.continued_fraction(1.0, _ => (1.0, 2.0))
+  assert_eq(cf.status, Converged)
+  // Lentz multiplies one rounded ratio per term, so the error grows with the
+  // number of terms: 22 terms here, about 5 ulp
+  assert_true((cf.value - 1.4142135623730951).abs() < 1.0e-15, msg="\{cf.value} after \{cf.iterations}")
+}
+
+///|
+test "tanh-sinh handles endpoint singularities" {
+  let a = @num.integrate(x => @math.ln(x), 0.0, 1.0)
+  assert_true((a.value + 1.0).abs() < 1.0e-14, msg="\{a.value}")
+  let b = @num.integrate(x => x.sqrt(), 0.0, 1.0)
+  assert_true((b.value - 2.0 / 3.0).abs() < 1.0e-15, msg="\{b.value}")
+  let c = @num.integrate(x => 1.0 / (1.0 + x * x), 0.0, 1.0)
+  assert_true((c.value - 0.25 * @math.PI).abs() < 4.0e-16, msg="\{c.value}")
+}

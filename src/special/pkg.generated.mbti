@@ -4,6 +4,8 @@ package "gaato/stats/special"
 // Values
 pub fn betainc(Double, Double, Double) -> Double
 
+pub fn betainc_pair(Double, Double, Double, Double) -> (Double, Double)
+
 pub fn betaincc(Double, Double, Double) -> Double
 
 pub fn betaincinv(Double, Double, Double) -> Double
@@ -14,9 +16,13 @@ pub fn erf(Double) -> Double
 
 pub fn erfc(Double) -> Double
 
+pub fn erfcx(Double) -> Double
+
 pub fn erfinv(Double) -> Double
 
 pub fn gammainc(Double, Double) -> Double
+
+pub fn gammainc_pair(Double, Double) -> (Double, Double)
 
 pub fn gammaincc(Double, Double) -> Double
 

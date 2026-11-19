@@ -158,10 +158,13 @@ HAND_DISCRETE = {
 HAND_METHODS = {name: {"pdf", "cdf", "quantile"} for name in HAND_CONTINUOUS}
 HAND_METHODS.update({name: {"pmf", "cdf_int", "quantile_int"} for name in HAND_DISCRETE})
 HAND_METHODS.update({
-    "norm": {"pdf", "cdf", "quantile"}, "gamma": {"cdf"}, "chi2": {"cdf"},
-    "f": {"cdf"}, "beta": {"cdf", "quantile"}, "nct": {"cdf"}, "ncx2": {"cdf"},
-    "ncf": {"cdf"}, "binom": {"pmf", "cdf_int", "quantile_int"},
-    "poisson": {"cdf_int"}, "hypergeom": {"pmf"},
+    "norm": {"pdf", "cdf", "quantile"}, "t": {"pdf", "cdf", "quantile"},
+    "gamma": {"pdf", "cdf", "quantile"}, "chi2": {"pdf", "cdf", "quantile"},
+    "f": {"pdf", "cdf", "quantile"}, "beta": {"pdf", "cdf", "quantile"},
+    "nct": {"cdf"}, "ncx2": {"cdf"}, "ncf": {"cdf"},
+    "binom": {"pmf", "cdf_int", "quantile_int"},
+    "poisson": {"pmf", "cdf_int", "quantile_int"},
+    "hypergeom": {"pmf", "cdf_int", "quantile_int"},
 })
 
 
@@ -429,9 +432,37 @@ def floats(xs):
 # the oracle shares no formula with the MoonBit code. Each is also checked
 # against SciPy below, which catches a mismatch in parameter conventions.
 def mp_cdfs():
-    from mpmath import mp, mpf, exp, log, atan, asin, sin, tanh, pi, sqrt, power
+    from mpmath import mp, mpf, exp, log, atan, asin, sin, tanh, pi, sqrt, power, ncdf, gammainc, betainc, binomial, inf
     one = mpf(1)
+
+    def t_cdf(df):
+        # near 0 use I_z(1/2, ν/2) with z = x²/(ν + x²) small; in the tails
+        # I_t(ν/2, 1/2) with t = ν/(ν + x²) small, so neither form sits next
+        # to an endpoint of betainc, where mpmath's derivative loses digits
+        def F(x):
+            if abs(x) < 1:
+                h = betainc(one / 2, df / 2, 0, x * x / (df + x * x), regularized=True) / 2
+                return one / 2 + h if x >= 0 else one / 2 - h
+            lower = betainc(df / 2, one / 2, 0, df / (df + x * x), regularized=True) / 2
+            return lower if x < 0 else 1 - lower
+        return F
+
+    def hyper(M, n, N):
+        def pmf(k):
+            return binomial(n, k) * binomial(M - n, N - k) / binomial(M, N)
+        lo = max(0, N - (M - n))
+        return lambda k: sum((pmf(j) for j in range(lo, int(k) + 1)), mpf(0)) if k >= lo else mpf(0)
+
     return {
+        "norm": lambda: lambda x: ncdf(x),
+        "t": t_cdf,
+        "chi2": lambda df: lambda x: gammainc(df / 2, 0, x / 2, regularized=True),
+        "gamma": lambda a: lambda x: gammainc(a, 0, x, regularized=True),
+        "beta": lambda a, b: lambda x: betainc(a, b, 0, x, regularized=True),
+        "f": lambda m, n: lambda x: betainc(m / 2, n / 2, 0, m * x / (m * x + n), regularized=True),
+        "binom": lambda n, p: lambda k: mpf(0) if k < 0 else (one if k >= n else betainc(n - k, k + 1, 0, 1 - p, regularized=True)),
+        "poisson": lambda mu: lambda k: mpf(0) if k < 0 else gammainc(k + 1, mu, inf, regularized=True),
+        "hypergeom": hyper,
         "uniform": lambda: lambda x: x,
         "expon": lambda: lambda x: 1 - exp(-x),
         "laplace": lambda: lambda x: exp(x) / 2 if x < 0 else 1 - exp(-x) / 2,
@@ -667,7 +698,7 @@ def main():
                 continue
             code.append(emit_family(name, kind))
             tests.append(argcheck_tests(name, kind, rng))
-            if name in (HAND_CONTINUOUS if kind == "c" else HAND_DISCRETE):
+            if name in mp_cdfs():
                 tests.append(oracle_test(name, kind, params))
     text = header + "\n" + "\n\n".join(code) + "\n"
     (ROOT / "src/dist/catalog.mbt").write_text(text.replace("///|\n\n", "///|\n"))

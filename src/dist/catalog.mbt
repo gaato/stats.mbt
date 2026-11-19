@@ -192,12 +192,6 @@ pub fn Beta::family() -> Family[Beta] {
 }
 
 ///|
-pub impl Density for Beta with pdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
 /// Inversion of the quantile function.
 pub impl Sample for Beta with sample(self, rng) {
   Quantile::quantile(self, @num.uniform_open(rng))
@@ -476,18 +470,6 @@ pub fn ChiSquared::family() -> Family[ChiSquared] {
     make: p => ChiSquared::new(p[0]),
     params: d => [d.df],
   }
-}
-
-///|
-pub impl Density for ChiSquared with pdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
-pub impl Quantile for ChiSquared with quantile(self, p) {
-  ignore((self, p))
-  ...
 }
 
 ///|
@@ -987,18 +969,6 @@ pub fn FisherF::family() -> Family[FisherF] {
 }
 
 ///|
-pub impl Density for FisherF with pdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
-pub impl Quantile for FisherF with quantile(self, p) {
-  ignore((self, p))
-  ...
-}
-
-///|
 /// Inversion of the quantile function.
 pub impl Sample for FisherF with sample(self, rng) {
   Quantile::quantile(self, @num.uniform_open(rng))
@@ -1224,18 +1194,6 @@ pub fn Gamma::family() -> Family[Gamma] {
     make: p => Gamma::new(p[0], scale=p[1]),
     params: d => [d.a, d.scale],
   }
-}
-
-///|
-pub impl Density for Gamma with pdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
-pub impl Quantile for Gamma with quantile(self, p) {
-  ignore((self, p))
-  ...
 }
 
 ///|
@@ -4332,24 +4290,6 @@ pub fn StudentT::family() -> Family[StudentT] {
 }
 
 ///|
-pub impl Density for StudentT with pdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
-pub impl Cdf for StudentT with cdf(self, x) {
-  ignore((self, x))
-  ...
-}
-
-///|
-pub impl Quantile for StudentT with quantile(self, p) {
-  ignore((self, p))
-  ...
-}
-
-///|
 /// Inversion of the quantile function.
 pub impl Sample for StudentT with sample(self, rng) {
   Quantile::quantile(self, @num.uniform_open(rng))
@@ -5515,18 +5455,6 @@ pub fn Hypergeometric::family(population~ : Int, successes~ : Int, draws~ : Int)
 }
 
 ///|
-pub impl IntCdf for Hypergeometric with cdf_int(self, k) {
-  ignore((self, k))
-  ...
-}
-
-///|
-pub impl IntQuantile for Hypergeometric with quantile_int(self, p) {
-  ignore((self, p))
-  ...
-}
-
-///|
 /// Inversion of the quantile function.
 pub impl SampleInt for Hypergeometric with sample_int(self, rng) {
   IntQuantile::quantile_int(self, @num.uniform_open(rng))
@@ -5990,18 +5918,6 @@ pub fn Poisson::family() -> Family[Poisson] {
     make: p => Poisson::new(p[0]),
     params: d => [d.mu],
   }
-}
-
-///|
-pub impl Mass for Poisson with pmf(self, k) {
-  ignore((self, k))
-  ...
-}
-
-///|
-pub impl IntQuantile for Poisson with quantile_int(self, p) {
-  ignore((self, p))
-  ...
 }
 
 ///|
