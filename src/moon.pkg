@@ -1,0 +1,5 @@
+import {
+  "gaato/stats/describe",
+  "gaato/stats/dist",
+  "gaato/stats/infer",
+} for "test"

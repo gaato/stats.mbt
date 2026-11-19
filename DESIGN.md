@@ -39,9 +39,9 @@ this repository):
 num        log-space, compensated sums, solvers with status, random sources
 special    incomplete beta/gamma, normal tails, gamma family, ...
 data       observations, shapes, weights, tables, conventions on data
+describe   accumulators (monoids), quantiles, ranks, robust summaries
 dist       distributions, families and parameters, composition
 multi      multivariate distributions, copulas
-describe   accumulators (monoids), quantiles, ranks, robust summaries
 fit        maximum likelihood, information criteria
 infer      questions, null models, tests, multiple testing, power, resampling
 regress    linear models, GLM, penalised and nonlinear least squares
@@ -51,7 +51,10 @@ multivariate PCA, factor analysis, discriminants, clustering, ROC
 bayes      MCMC, diagnostics, EM
 ```
 
-Each layer imports only layers above it in this list.
+Each layer imports only layers above it in this list. `describe` comes
+before `dist` because an empirical distribution's quantile is a sample
+quantile. `regress` also owns `ModelError`, the failure type of every
+model layer after it.
 
 ## num
 
@@ -59,13 +62,13 @@ Each layer imports only layers above it in this list.
 |---|---|---|
 | log(e^a ± e^b), log1p(e^x), log(1 − e^x), log Σ e^x | `log_add_exp`, `log_sub_exp`, `log1p_exp`, `log1m_exp`, `log_sum_exp` | works |
 | Compensated summation (Neumaier), mergeable | `CompensatedSum` | works |
-| Status of an iteration | `Status`, `Solution`, `Tolerance` | works |
+| Status of an iteration | `Status`, `Solution` | works |
 | Bracketed root finding (Brent; Newton inside a bracket, bisecting in the logarithm across decades) | `find_root`, `find_root_newton` | works |
 | Continued fractions (modified Lentz), series, double-exponential quadrature | `continued_fraction`, `sum_series`, `integrate` | works |
 | Domain errors for checked variants | `DomainError` | typed |
-| Random source, generator, streams | `RandomSource`, `Xoshiro256`, `Jump` | generator works (reference outputs); `jump` typed |
-| Uniforms | `uniform`, `uniform_open`, `uniform_below` | first two work |
-| Standard variates with frozen, caller-chosen methods | `NormalMethod`, `ExponentialMethod`, `GammaMethod`, `DiscreteMethod`, `shuffle` | typed |
+| Random source, generator, streams | `RandomSource`, `Xoshiro256` (`from_state` refuses the all-zero state), `Jump` | generator works (reference outputs); `jump` typed |
+| Uniforms, indices, shuffling | `uniform`, `uniform_open`, `uniform_below`, `uniform_index`, `shuffle` | works |
+| Standard variates with frozen, caller-chosen methods | `NormalMethod`, `ExponentialMethod`, `GammaMethod` | typed |
 
 Reproducibility: for a given generator, seed and method the stream never
 changes; a better algorithm is a new enum case. NumPy's NEP 19 chose
@@ -98,7 +101,11 @@ Worst relative error measured over the test points:
 | `studentized_range_sf` | — | typed; a double integral not yet written |
 
 Error policy after Boost.Math: these plain functions return NaN outside
-their domain; checked variants raising `DomainError` are planned.
+their domain; checked variants raising `DomainError` are planned. The
+incomplete gamma and beta functions take up to 20√a + 1000 terms (about
+twice what a ≈ x needs) and return NaN, not a partial sum, where even that
+does not converge: P and Q at a = 1e10 are right to 2e-12, at 1e14 they
+are NaN until a uniform asymptotic expansion is written.
 
 Lessons recorded in the code: mpmath's `betainc(a, b, x, 1)` subtracts and
 returns 0 below about 1e-50 (use the symmetric form); an oracle inverse
@@ -112,53 +119,75 @@ prefactors must switch from ln1p(t) to ln(x/a) far from the mean, where
 |---|---|---|
 | Observation with censoring | `Observation` | works |
 | Missing values | `MissingPolicy`, `clean` | works |
-| Weights and their meaning | `WeightKind`, `Weighted` | works |
-| Contingency table | `Table` | works |
+| Weights and their meaning, with or without the values | `WeightKind`, `Weights`, `Weighted` | works |
+| Contingency table, margins, cross-tabulation of labels | `Table` (`row_totals`, `col_totals`, `from_labels`) | works |
 | Quantile definition, rank ties | `QuantileMethod`, `RankTies` | works |
-| (x, y) pairs, long format with labels, blocks | `Bivariate`, `Grouped`, `Blocks` | `Bivariate` works |
-| Published summaries, proportions, category counts | `Summary`, `Proportion`, `CategoryCounts` | typed |
+| (x, y) pairs of equal length, long format with labels, blocks | `Bivariate`, `Grouped`, `Blocks` | works |
+| Published summaries, proportions, category counts | `Summary`, `Proportion`, `CategoryCounts` | works |
 | Survival records (time, event, entry) | `SurvivalRecord` | works |
-| Data matrix, time series, angles | `DataMatrix`, `TimeSeries`, `Circular` | containers work |
+| Data matrix, time series, angles | `DataMatrix` (`from_rows`, `row`, `column`), `TimeSeries`, `Circular` | containers work |
+
+Counts of observations are `Int64` everywhere (a published summary or a
+table can exceed an array length); dimensions, indices and labels are
+`Int32`. Shapes are checked when built, and every indexed access checks
+each index against its own bound.
 
 ## dist
 
 Every distribution on the real line has a distribution function, so `Cdf`,
 `Quantile` and `Sample` are common; `Density` and `Mass` are extra.
+`sf`, `isf` and `sf_int` have no default implementation: the only
+generic one is 1 − the other tail, which loses every digit there, so each
+distribution states its own upper tail. Every distribution's methods are
+reachable with dot syntax (`d.cdf(x)`), its parameters are readable
+fields, and it derives `Eq` and `Debug`.
 
 | Concept | Type | Status |
 |---|---|---|
 | Distribution function, both tails, logs, P(X ≥ x) | `Cdf` (incl. `sf_at_least`) | works |
-| Quantile, upper-tail inverse | `Quantile` | typed |
-| Density, mass, integer convenience | `Density`, `Mass`, `IntCdf`, `IntQuantile`, `SampleInt` | typed |
+| Quantile, upper-tail inverse | `Quantile` | works |
+| Density, mass, integer convenience | `Density`, `Mass`, `IntCdf`, `IntQuantile`, `SampleInt` (`Int64`) | works |
+| Support, mode | `Support`, `Mode` | works (support for every family with a constant or hand-written one; mode for normal, binomial, Poisson, hypergeometric) |
 | Moments, shape, entropy | `Moments`, `Shape`, `Entropy` | works for some |
 | Characteristic and moment generating functions | `Characteristic`, `Mgf` | works (normal, binomial; normal, gamma) |
 | Fitting, score | `Fit`, `Score` | typed |
+| Sampling one or many | `Sample` (`sample`, `sample_into`) | works (inversion) |
 | Composite bundle (trait objects) | `Univariate` | works |
 | Catalogue (generated, SciPy names) | 129 families, e.g. `Normal`, `Gamma`, `StudentT`, `Binomial`, `Exponential`, `Weibull`, `GeneralizedExtremeValue`, `Geometric`, `Zipfian` | constructors work; 53 families work (44 closed forms; normal, t, χ², gamma, beta, F, binomial, Poisson, hypergeometric through the special functions) |
 | Capabilities on top of the catalogue | `extras.mbt`: special-function paths of the reference distributions, `Mgf`, `Characteristic`, `Fit`, `Gamma::with_rate` | partly |
-| From data, from tables | `Empirical`, `FiniteDiscrete` | partly |
-| Point mass, mixture, affine, truncated, censored | `PointMass`, `Mixture`, `Affine[D]`, `Truncated[D]`, `Censored[D]` | distribution functions work |
+| From data, from tables on the integers, from atoms anywhere | `Empirical`, `FiniteDiscrete`, `Atoms` (`from_weighted`, `Empirical::to_atoms`) | works |
+| Point mass, mixture, affine, truncated, censored | `PointMass`, `Mixture`, `Affine[D]`, `Truncated[D]`, `Censored[D]` | works; each is a `Univariate` and forwards every tail of its base |
 | Singular | `Cantor` | moments work |
-| Families as records, constraints, exponential families, conjugacy, log-likelihood | `Family[D]`, `Constraint`, `ExpFamily[D]`, `Conjugate[P, D]`, `loglik` | works for normal; others partly |
+| Families as records, constraints, held parameters, exponential families, conjugacy, log-likelihood | `Family[D]` (`fix`), `Constraint`, `ExpFamily[D]`, `Conjugate[P, D]`, `loglik` | works for normal; others partly |
 
 ### Catalogue
 
 `src/dist/catalog.mbt` is generated by `scripts/gen_catalog.py` from SciPy
 1.18.1: 109 continuous and 20 discrete families, with SciPy's names for
-types' parameters. Each is in standard form (shape parameters only;
-location and scale through `Affine`, as Distributions.jl's
-`LocationScale`), except that `Normal` keeps `loc` and `scale` and `Gamma`
-keeps `scale` as their own parameters, because the exponential-family,
-conjugate and rate-based code on top of them needs them. The generator is
-the skeleton for every family; what needs judgement (closed forms,
-special-function paths, moments, fitting, alternative constructors) is
-written by hand in `closed_forms.mbt` and `extras.mbt`, and the generator
-emits stubs only for the required methods not written there. Every
-family has a type, a constructor whose parameter checks agree with
+types' parameters. Every continuous family has SciPy's `loc` and `scale`
+as well (defaults 0 and 1), so the exponential with rate λ is
+`Exponential::new(scale=1/λ)`; a constructor with one shape parameter
+takes it positionally, one with several takes them all by label
+(`Beta::new(a=, b=)`), so that two of the same type cannot be swapped.
+
+The formulas are written by hand as private methods of the standard form
+(`std_cdf`, `std_sf`, `std_quantile`, `std_isf`, `std_pdf`, and the
+optional `std_logpdf`, `std_logcdf`, `std_logsf`, moments, support, mode)
+in `closed_forms.mbt` and `extras.mbt`, and of the integer lattice
+(`lattice_cdf`, `lattice_sf`, `lattice_quantile`, ...) in `lattice.mbt`
+and `lattice_special.mbt`. The generator finds them by name and emits the
+trait implementations around them, applying location and scale in one
+place: no family can forget to forward a tail. A required formula not
+written yet is a typed `...` stub, never 1 − the other tail. A discrete
+family's `Double` interface passes floor(x) straight to its lattice
+methods, so quantiles beyond every integer type (a Zipf median of 7e29)
+are exact; the `Int64` interface converts at the boundary and saturates.
+
+Every family has a type, a constructor whose parameter checks agree with
 SciPy's `_argcheck` (generated tests over random parameters, including
 the cross-parameter constraints of 14 families), a `Family` record with
 constraints (integer parameters become fixed hyperparameters), sampling
-by inversion, and `Univariate`.
+by inversion, `Univariate`, and `pub extend` for dot syntax.
 
 37 continuous and 7 discrete families have closed forms, written by hand
 in `closed_forms.mbt` and tested against a 60-digit mpmath oracle derived
@@ -166,25 +195,33 @@ only from each distribution function (densities by differentiation,
 quantiles by bisection), at 1e-13 relative. SciPy is not the oracle: on
 the tails it was off by 1e-12 to 2e-10 in 11 of 13 disagreements, where
 these closed forms were exact; the generator still checks the oracle
-against SciPy at 1e-7 to catch convention mismatches. The other bodies wait
+against SciPy at 1e-7 to catch convention mismatches. Each oracle test is
+generated twice, at scale 1 and at scale 2 (exact in binary), and checks
+the log tails too: where the tail is at most a half and well conditioned,
+and, for a family with a closed-form log tail, beyond the point where the
+tail underflows. The other bodies wait
 for the special functions. Not generated: `poisson_binom` (a vector
 parameter) and SciPy's multivariate distributions.
 
 ## multi
 
-`Dimension`, `MvDensity`, `MvMass`, `MvSample`, `MvMoments`, `Marginal`;
+`Dimension`, `MvDensity`, `MvMass` (`Int64` counts), `MvSample`
+(`sample`, and `sample_into` a caller's buffer), `MvMoments` (mean and
+covariance as values, `None` where they do not exist), `Marginal`;
 `MvNormal` (Cholesky factor), `Dirichlet`, `Multinomial`; `Copula`,
-`GaussianCopula`, `Joint[C]`. Typed; needs dense linear algebra.
+`GaussianCopula`, `Joint[C]`. Covariances are `DataMatrix`. Typed; needs
+dense linear algebra.
 
 ## describe
 
 | Concept | Type | Status |
 |---|---|---|
-| Mergeable accumulators | `Accumulator`, `MeanVar` | works |
+| Mergeable accumulators, one pass over an array | `Accumulator`, `MeanVar`, `Extremes`, `accumulate` | works |
+| Sum, mean, variance, standard deviation, median of an array | `sum`, `mean`, `variance`, `std_dev`, `median` | works |
 | Covariance and correlation, shifted for large offsets | `Comoment` | works (1e-14 at offset 1e9) |
-| Weighted mean and variance by weight kind | `WeightedMeanVar` | mean works |
-| Skewness and kurtosis with explicit bias correction | `Moments4` | typed |
-| Nine quantile definitions | `quantile`, `quantile_sorted` | works (matches NumPy for all nine) |
+| Weighted mean and variance by weight kind | `WeightedMeanVar` | mean and merge work |
+| Skewness and kurtosis with explicit bias correction | `Moments4` (an `Accumulator`) | typed |
+| Nine quantile definitions | `quantile` (p checked), `quantile_sorted` (NaN outside [0, 1]) | works (matches NumPy for all nine) |
 | Ranks with five tie rules | `ranks` | works (matches SciPy) |
 | MAD with explicit scale, trimmed mean, winsorizing | `mad`, `MadScale`, `trimmed_mean`, `winsorize` | typed |
 | Histogram with bin rules, out-of-range counts | `histogram`, `Bins`, `Histogram` | typed |
@@ -192,9 +229,11 @@ parameter) and SciPy's multivariate distributions.
 
 ## fit
 
-`MleResult[D]` with AIC, AICc, BIC; `fit_exp_family` (works for the
-normal); `fit_mle` (typed, needs an optimiser); `Candidate`,
-`akaike_weights` (works).
+`MleResult[D]` with AIC, AICc, BIC and the covariance as a `DataMatrix`;
+`fit_exp_family` (works for the normal); `fit_mle` (typed, needs an
+optimiser); `Candidate`, `akaike_weights` (works). A parameter held fixed
+in a fit (SciPy's `floc`) is a family with that parameter fixed:
+`Family::fix`.
 
 ## infer
 
@@ -204,12 +243,13 @@ intervals at 1e-10 relative, every alternative).
 
 | Concept | Type | Status |
 |---|---|---|
-| Question: estimand × data shape, checked | `Estimand`, `Sample`, `Question` | works |
+| Question: estimand × data shape, checked (one number must answer it; pairs are a `Bivariate`) | `Estimand`, `Samples`, `Question` | works |
 | Estimates: t, Welch, paired, χ² (variance), Clopper–Pearson, Fisher z; bootstrap percentile for any estimand | `estimate`, `Estimate` | works |
-| Null model, p-values | `NullModel`, `null_model` (permutation nulls) | works |
-| Test result, interval with kind | `TestResult`, `Interval`, `IntervalKind` | works |
-| Assumptions as certificates (a pooled t test without `Assumed[EqualVariance]` raises `MissingAssumption`) | `Assumed[A]` | works |
-| Conventions | `TwoSidedRule` (doubling, minimum likelihood with R's and SciPy's 1 + 1e-7), `PValueKind`, `Exactness`, `Variances`, `Zeros`, `TieTolerance`, `LeveneCenter` | works |
+| Null model, p-values for every alternative and either two-sided rule | `NullModel` (`new`, `discrete`, `atoms`), `null_model` (permutation nulls) | works |
+| Test result, interval with kind, pairwise comparisons | `TestResult`, `Interval`, `IntervalKind`, `Comparison` | works |
+| Assumptions as certificates (the pooled choice carries one: `Variances::Pooled(Assumed[EqualVariance])`) | `Assumed[A]` | works |
+| Conventions | `TwoSidedRule` (doubling, minimum likelihood with R's and SciPy's 1 + 1e-7), `PValueKind` (`ExactNull`, `AsymptoticNull`, `MonteCarlo`), `Exactness`, `Variances`, `Zeros`, `TieTolerance`, `LeveneCenter`, `Resamples` (`All`, `Random(n)`) | works |
+| Errors that say whose problem it is | `QuestionError`: `ShapeMismatch`, `SchemeMismatch`, `LengthMismatch`, `InvalidArgument`, `TooFewPoints`, `Degenerate`, `Unsupported` (no answer by that method), `NotImplemented` (not yet) | works |
 | t tests: one, two (Welch, pooled), paired, from summaries | `t_test_*` | works |
 | Exact binomial (Clopper–Pearson interval), χ² goodness of fit and independence (Yates), Fisher 2 × 2 | | works |
 | One-way ANOVA (classic, Welch), Levene (mean, median, trimmed), Bartlett, Kruskal–Wallis | | works |
@@ -217,24 +257,33 @@ intervals at 1e-10 relative, every alternative).
 | Mann–Whitney: exact null as a Gaussian binomial in a `FiniteDiscrete`, or normal with tie and continuity corrections | `mann_whitney` | works |
 | Resampling with user statistics: bootstrap (percentile, basic), exact and randomised permutation tests, Monte Carlo tests, jackknife | | works (BCa, exact pairings not yet) |
 | Multiple testing | `adjust`, `reject` | works except Hommel |
-| Not yet | proportion z test, McNemar, Wilcoxon signed-rank, Friedman, KS, Shapiro–Wilk, Anderson–Darling, Kendall, post hoc, power | raise `Unsupported` |
+| Power: the unknown is the case | `PowerQuery` (`SampleSize`, `Power`, `Effect`, `Alpha`), `solve_power` | typed |
+| Not yet | proportion z test, McNemar, Wilcoxon signed-rank, Friedman, KS, Shapiro–Wilk, Anderson–Darling, Kendall, post hoc | raise `NotImplemented` |
 
 ## Models
 
-- **regress**: `Design` (matrix, intercept, offset, weights), `ols` by QR,
-  `gls`, `glm` with `GlmFamily` and `Link` by IRLS, `penalized` (ridge,
-  lasso, elastic net), `cross_validate`, `nonlinear_least_squares`;
-  results carry diagnostics (leverage, Cook's distance, studentized
-  residuals, VIF, Durbin–Watson, condition number) and an ANOVA table.
-- **survival**: `kaplan_meier`, `nelson_aalen`, `log_rank`, `cox`
-  (Breslow, Efron), `fit_censored` for parametric models.
-- **timeseries**: `acf`, `pacf`, `ljung_box`, `periodogram` (needs FFT),
-  `arima` with forecasts, `StateSpace` and `kalman_filter`, `adf_test`.
+- **regress**: `Design::new` (matrix, intercept, offset, `Weights`,
+  names; lengths checked), `ols` by QR, `gls`, `glm` on a `GlmResponse`
+  (values, or successes out of trials) with `GlmFamily` and `Link` by
+  IRLS, `penalized` (ridge, lasso, elastic net) returning a
+  `PenalizedFit` without standard errors, `cross_validate`,
+  `nonlinear_least_squares` returning a `NonlinearFit`; linear results
+  carry diagnostics (leverage, Cook's distance, studentized residuals,
+  VIF, Durbin–Watson, condition number) and an ANOVA table. `ModelError`
+  is the failure type of every model layer.
+- **survival**: `kaplan_meier` (`SurvivalCurve`), `nelson_aalen`
+  (`HazardCurve`), `log_rank`, `cox` (Breslow, Efron) with its baseline
+  hazard and covariance, `fit_censored` for parametric models.
+- **timeseries**: `acf`, `pacf`, `ljung_box`, `adf_test` on arrays,
+  `periodogram` (needs FFT), `ArimaOrder::new` and `arima` with seasonal
+  coefficients, intercept and `Forecast`s, `StateSpace::new` (dimensions
+  checked) and `kalman_filter` (`KalmanResult`).
 - **multivariate**: `pca` by SVD, `factor_analysis` with rotations,
-  `discriminant` (LDA, QDA), `roc`, `kmeans`, `hierarchical`, `mds`,
-  `cca`, `correspondence`.
-- **bayes**: `metropolis`, `gibbs`, `Chain`, `diagnose` (split R-hat,
-  effective size), `summarize` (credible intervals), `em_normal_mixture`.
+  `discriminant` (LDA, QDA), `roc`, `kmeans`, `hierarchical` (a list of
+  `Merge`s), `mds`, `cca`, `correspondence` (`Correspondence`).
+- **bayes**: `metropolis`, `gibbs`, `Chain` (also `from_draws` made
+  elsewhere), `diagnose` (split R-hat, effective size), `summarize`
+  (credible intervals), `em_normal_mixture`.
 
 All typed; most need dense linear algebra.
 
@@ -255,15 +304,18 @@ All typed; most need dense linear algebra.
 1. **Variate methods: explicit always, or a default?** Explicit methods
    make streams reproducible but every call longer. NEP 19 instead
    promises only the bit stream.
-2. **Two-sided p-values by minimum likelihood** need the null's mass
-   function, which `&Univariate` does not carry: add a mass closure to
-   `NullModel`, or a discrete counterpart of `Univariate`.
+2. ~~Two-sided p-values by minimum likelihood from a `NullModel`.~~
+   Resolved: the value is computed when the model is built from a concrete
+   null (`NullModel::discrete` from `Mass + Support + Mode`,
+   `NullModel::atoms` from `Atoms`), so `p_value` never needs the mass
+   function through the trait object.
 3. **Discrete exponential-family fitting** needs an integer-data variant
    of `fit_exp_family`.
 4. **Shifted accumulation** should also go into `MeanVar` and
    `WeightedMeanVar`, as in `Comoment`.
 5. **Matrix type**: `DataMatrix` is a placeholder until a dense linear
-   algebra module exists; the model layer's types will switch to it.
+   algebra module exists; the covariance matrices and the model layers'
+   matrices are `DataMatrix` until then.
 6. **Checked special functions**: names and which functions get a
    checked variant.
 
@@ -279,7 +331,11 @@ generators, and NIST StRD certified values for summaries and regression.
   object; call `Cdf::cdf(d, x)`.
 - Trait methods implemented for a concrete type are not reachable with
   dot syntax, even in the same package, unless exposed with
-  `pub extend T with Trait::{...}`.
+  `pub extend T with Trait::{...}`. Every distribution type has these
+  lines (the generator writes them for the catalogue); a generic type is
+  extended without its parameters (`pub extend Affine with Cdf::{...}`).
+- Traits take no type parameters, so the integer traits have one integer
+  type (`Int64`), not a choice; the `Double` interface is the exact one.
 - Traits have one `Self` and no associated types: families, exponential
   families and conjugate pairs are records of functions.
 - `pub struct` cannot be constructed outside its package; `pub(all)` can.
@@ -287,4 +343,7 @@ generators, and NIST StRD certified values for summaries and regression.
 - `method` and `var` are reserved; an empty struct literal is `T::{ }`;
   a function in a record field is called `(f.make)(x)`.
 - Adding a case to a `pub(all)` enum breaks callers' exhaustive matches, so
-  shapes such as `Sample` are fixed up front.
+  shapes such as `Samples` are fixed up front.
+- A choice that needs an assumption carries the certificate as the
+  case's payload (`Pooled(Assumed[EqualVariance])`); an optional
+  certificate argument could be left out and only fail at run time.

@@ -7,8 +7,16 @@
 - Never compute an upper tail as `1 - cdf`; each tail has its own formula.
 - R's nmath and GSL are GPL: compare against them, never copy or follow
   their code.
-- A path not implemented yet raises `Unsupported`; it never approximates
-  silently.
+- A path not implemented yet raises an error that says so
+  (`NotImplemented` in infer) or is a typed `...` body; it never
+  approximates silently. `Unsupported` is for requests that have no
+  answer by the method asked for, so callers can tell the two apart.
+- Catalogue formulas are private `T::std_*` (continuous, standard form)
+  and `T::lattice_*` (discrete, integer-valued Doubles) methods, which
+  `scripts/gen_catalog.py` finds by name and wraps; its docstring lists
+  them. A hand-written `pub impl` of a trait the generator also emits
+  would be a duplicate that does not compile, and wrapping in one place
+  is what keeps location, scale and every tail forwarded.
 - Run `scripts/gates.sh` before handing work back.
 
 ## API changes
