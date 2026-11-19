@@ -105,9 +105,13 @@ pub impl Univariate for Bernoulli
 pub struct Beta {
   // private fields
 }
+pub fn Beta::family() -> Family[Self]
 pub fn Beta::new(Double, Double) -> Self raise ParamError
 pub impl Cdf for Beta
+pub impl Density for Beta
 pub impl Quantile for Beta
+pub impl Sample for Beta
+pub impl Univariate for Beta
 
 pub struct BetaBinomial {
   // private fields
@@ -252,8 +256,13 @@ pub impl Univariate for Chi
 pub struct ChiSquared {
   // private fields
 }
+pub fn ChiSquared::family() -> Family[Self]
 pub fn ChiSquared::new(Double) -> Self raise ParamError
 pub impl Cdf for ChiSquared
+pub impl Density for ChiSquared
+pub impl Quantile for ChiSquared
+pub impl Sample for ChiSquared
+pub impl Univariate for ChiSquared
 
 pub struct Conjugate[P, D] {
   name : String
@@ -462,8 +471,13 @@ pub impl Mass for FiniteDiscrete
 pub struct FisherF {
   // private fields
 }
+pub fn FisherF::family() -> Family[Self]
 pub fn FisherF::new(Double, Double) -> Self raise ParamError
 pub impl Cdf for FisherF
+pub impl Density for FisherF
+pub impl Quantile for FisherF
+pub impl Sample for FisherF
+pub impl Univariate for FisherF
 
 pub struct FisherNoncentralHypergeometric {
   // private fields
@@ -515,12 +529,16 @@ pub impl Univariate for FoldedNormal
 pub struct Gamma {
   // private fields
 }
+pub fn Gamma::family() -> Family[Self]
 pub fn Gamma::family_rate() -> Family[Self]
-pub fn Gamma::family_scale() -> Family[Self]
+pub fn Gamma::new(Double, scale? : Double) -> Self raise ParamError
 pub fn Gamma::with_rate(Double, Double) -> Self raise ParamError
-pub fn Gamma::with_scale(Double, Double) -> Self raise ParamError
 pub impl Cdf for Gamma
+pub impl Density for Gamma
 pub impl Mgf for Gamma
+pub impl Quantile for Gamma
+pub impl Sample for Gamma
+pub impl Univariate for Gamma
 
 pub struct GaussHypergeometric {
   // private fields
@@ -741,8 +759,16 @@ pub impl Univariate for HyperbolicSecant
 pub struct Hypergeometric {
   // private fields
 }
-pub fn Hypergeometric::new(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Self raise ParamError
+pub fn Hypergeometric::family(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Family[Self]
+pub fn Hypergeometric::new(Int32, Int32, Int32) -> Self raise ParamError
+pub impl Cdf for Hypergeometric
+pub impl IntCdf for Hypergeometric
+pub impl IntQuantile for Hypergeometric
 pub impl Mass for Hypergeometric
+pub impl Quantile for Hypergeometric
+pub impl Sample for Hypergeometric
+pub impl SampleInt for Hypergeometric
+pub impl Univariate for Hypergeometric
 
 pub struct InverseGamma {
   // private fields
@@ -1076,20 +1102,35 @@ pub impl Univariate for NegativeHypergeometric
 pub struct NoncentralChiSquared {
   // private fields
 }
+pub fn NoncentralChiSquared::family() -> Family[Self]
 pub fn NoncentralChiSquared::new(Double, Double) -> Self raise ParamError
 pub impl Cdf for NoncentralChiSquared
+pub impl Density for NoncentralChiSquared
+pub impl Quantile for NoncentralChiSquared
+pub impl Sample for NoncentralChiSquared
+pub impl Univariate for NoncentralChiSquared
 
 pub struct NoncentralF {
   // private fields
 }
+pub fn NoncentralF::family() -> Family[Self]
 pub fn NoncentralF::new(Double, Double, Double) -> Self raise ParamError
 pub impl Cdf for NoncentralF
+pub impl Density for NoncentralF
+pub impl Quantile for NoncentralF
+pub impl Sample for NoncentralF
+pub impl Univariate for NoncentralF
 
 pub struct NoncentralT {
   // private fields
 }
+pub fn NoncentralT::family() -> Family[Self]
 pub fn NoncentralT::new(Double, Double) -> Self raise ParamError
 pub impl Cdf for NoncentralT
+pub impl Density for NoncentralT
+pub impl Quantile for NoncentralT
+pub impl Sample for NoncentralT
+pub impl Univariate for NoncentralT
 
 pub struct Normal {
   // private fields
@@ -1097,7 +1138,7 @@ pub struct Normal {
 pub fn Normal::exp_family() -> ExpFamily[Self]
 pub fn Normal::family() -> Family[Self]
 pub fn Normal::known_variance_prior(Double) -> Conjugate[Self, Self]
-pub fn Normal::new(mu? : Double, sigma? : Double) -> Self raise ParamError
+pub fn Normal::new(loc? : Double, scale? : Double) -> Self raise ParamError
 pub impl Cdf for Normal
 pub impl Characteristic for Normal
 pub impl Density for Normal
@@ -1173,8 +1214,16 @@ pub impl Univariate for PointMass
 pub struct Poisson {
   // private fields
 }
+pub fn Poisson::family() -> Family[Self]
 pub fn Poisson::new(Double) -> Self raise ParamError
+pub impl Cdf for Poisson
 pub impl IntCdf for Poisson
+pub impl IntQuantile for Poisson
+pub impl Mass for Poisson
+pub impl Quantile for Poisson
+pub impl Sample for Poisson
+pub impl SampleInt for Poisson
+pub impl Univariate for Poisson
 
 pub struct PowerLaw {
   // private fields

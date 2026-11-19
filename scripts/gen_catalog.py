@@ -19,15 +19,21 @@ from scipy.stats._distr_params import distcont, distdiscrete
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
-# Families written by hand elsewhere with their own parameterisation.
-EXISTING = {
-    "beta", "chi2", "f", "gamma", "ncf", "nct", "ncx2", "norm", "t",
-    "binom", "poisson", "hypergeom",
-}
+# SciPy names not generated.
+EXISTING = set()
+# Families that keep SciPy's location and scale as their own parameters,
+# because the capabilities written on top of them (exponential-family
+# fitting, conjugate updates, gamma by rate) need them; the rest take
+# location and scale from `Affine`.
+BUILTIN = {"norm": ("loc", "scale"), "gamma": ("scale",)}
 # Aliases of another SciPy name.
 ALIASES = {"reciprocal": "loguniform"}
 
 NAMES = {
+    "norm": "Normal", "t": "StudentT", "gamma": "Gamma", "beta": "Beta",
+    "chi2": "ChiSquared", "f": "FisherF", "nct": "NoncentralT",
+    "ncx2": "NoncentralChiSquared", "ncf": "NoncentralF", "binom": "Binomial",
+    "poisson": "Poisson", "hypergeom": "Hypergeometric",
     "alpha": "Alpha", "anglit": "Anglit", "arcsine": "Arcsine", "argus": "Argus",
     "betaprime": "BetaPrime", "bradford": "Bradford", "burr": "Burr",
     "burr12": "Burr12", "cauchy": "Cauchy", "chi": "Chi", "cosine": "Cosine",
@@ -93,6 +99,9 @@ FIELD_RENAMES = {
     ("nchypergeom_wallenius", "M"): "population",
     ("nchypergeom_wallenius", "n"): "successes",
     ("nchypergeom_wallenius", "N"): "draws",
+    ("hypergeom", "M"): "population",
+    ("hypergeom", "n"): "successes",
+    ("hypergeom", "N"): "draws",
     ("nhypergeom", "M"): "population",
     ("nhypergeom", "n"): "successes",
     ("nhypergeom", "r"): "failures",
@@ -109,6 +118,10 @@ EXTRA = {
     "truncnorm": ("a < b", "b", "need a < b"),
     "truncweibull_min": ("a < b", "b", "need a < b"),
     "boltzmann": ("n > 0", "n", "need n > 0"),
+    "hypergeom": (
+        "successes <= population && draws <= population", "successes",
+        "need successes, draws <= population",
+    ),
     "nchypergeom_fisher": (
         "successes <= population && draws <= population", "successes",
         "need successes, draws <= population",
@@ -139,6 +152,17 @@ HAND_CONTINUOUS = {
 HAND_DISCRETE = {
     "bernoulli", "geom", "randint", "dlaplace", "planck", "boltzmann", "zipfian",
 }
+
+# Required methods written by hand (closed_forms.mbt, extras.mbt); the
+# generator emits a stub only for the others.
+HAND_METHODS = {name: {"pdf", "cdf", "quantile"} for name in HAND_CONTINUOUS}
+HAND_METHODS.update({name: {"pmf", "cdf_int", "quantile_int"} for name in HAND_DISCRETE})
+HAND_METHODS.update({
+    "norm": {"pdf", "cdf", "quantile"}, "gamma": {"cdf"}, "chi2": {"cdf"},
+    "f": {"cdf"}, "beta": {"cdf", "quantile"}, "nct": {"cdf"}, "ncx2": {"cdf"},
+    "ncf": {"cdf"}, "binom": {"pmf", "cdf_int", "quantile_int"},
+    "poisson": {"cdf_int"}, "hypergeom": {"pmf"},
+})
 
 
 def field(dist, shape):
@@ -224,24 +248,39 @@ def emit_family(name, kind):
     tname = NAMES[name]
     infos = shape_infos(d)
     fields = [(field(name, s.name), "Int" if s.integrality else "Double", s) for s in infos]
+    builtin = BUILTIN.get(name, ())
     out = []
-    doc = [
-        f"/// `scipy.stats.{name}` in standard form"
-        + (" (loc 0, scale 1); wrap in `Affine` for location and scale." if kind == "c"
-           else " (loc 0)."),
-    ]
+    if builtin:
+        doc = [f"/// `scipy.stats.{name}` with {' and '.join(builtin)} as its own parameters."]
+    else:
+        doc = [
+            f"/// `scipy.stats.{name}` in standard form"
+            + (" (loc 0, scale 1); wrap in `Affine` for location and scale." if kind == "c"
+               else " (loc 0)."),
+        ]
     if name in EXTRA:
         doc.append(f"/// Parameters: {EXTRA[name][2]}.")
     out.append("///|\n" + "\n".join(doc))
-    if fields:
-        out.append(f"pub struct {tname} {{\n" + "\n".join(f"  priv {f} : {t}" for f, t, _ in fields) + "\n}")
+    if fields or builtin:
+        out.append(
+            f"pub struct {tname} {{\n"
+            + "\n".join([f"  priv {f} : {t}" for f, t, _ in fields] + [f"  priv {b} : Double" for b in builtin])
+            + "\n}"
+        )
     else:
         out.append(f"pub struct {tname} {{}}")
     # constructor
-    args = ", ".join(f"{f} : {t}" for f, t, _ in fields)
+    args = ", ".join(
+        [f"{f} : {t}" for f, t, _ in fields]
+        + [f"{b}? : Double = {'0.0' if b == 'loc' else '1.0'}" for b in builtin]
+    )
     out.append("///|")
-    if fields:
+    if fields or builtin:
         body = box_checks(name, infos)
+        for b in builtin:
+            cond = "!loc.is_nan() && !loc.is_inf()" if b == "loc" else "scale > 0.0 && !scale.is_inf()"
+            why = "must be finite" if b == "loc" else "must be in (0, inf)"
+            body.append(f"  if !({cond}) {{\n    raise InvalidParam(name=\"{b}\", value={b}, reason=\"{why}\")\n  }}")
         if name in EXTRA:
             cond, f0, why = EXTRA[name]
             t0 = dict((f, t) for f, t, _ in fields)[f0]
@@ -249,8 +288,8 @@ def emit_family(name, kind):
             body.append(
                 f"  if !({cond}) {{\n    raise InvalidParam(name=\"{f0}\", value={v0}, reason=\"{why}\")\n  }}"
             )
-        ctor = ", ".join(f for f, _, _ in fields)
-        if len(fields) == 1:
+        ctor = ", ".join([f for f, _, _ in fields] + list(builtin))
+        if len(fields) + len(builtin) == 1:
             ctor += ","
         out.append(
             f"pub fn {tname}::new({args}) -> {tname} raise ParamError {{\n"
@@ -259,10 +298,11 @@ def emit_family(name, kind):
     else:
         out.append(f"pub fn {tname}::new() -> {tname} {{\n  {tname}::{{  }}\n}}")
     # family: continuous parameters free, integer parameters fixed
-    free = [(f, s) for f, t, s in fields if t == "Double"]
+    free = [(f, constraint(s)) for f, t, s in fields if t == "Double"]
+    free += [(b, "Real" if b == "loc" else "Positive") for b in builtin]
     fixed = [(f, t) for f, t, _ in fields if t == "Int"]
     fixed_args = ", ".join(f"{f}~ : Int" for f, _ in fixed)
-    specs = ", ".join(f"{{ name: \"{f}\", constraint: {constraint(s)} }}" for f, s in free)
+    specs = ", ".join(f"{{ name: \"{f}\", constraint: {c} }}" for f, c in free)
     make_args = []
     k = 0
     for f, t, _ in fields:
@@ -271,7 +311,10 @@ def emit_family(name, kind):
         else:
             make_args.append(f"p[{k}]")
             k += 1
-    make = f"{tname}::new({', '.join(make_args)})" if fields else f"{tname}::new()"
+    for b in builtin:
+        make_args.append(f"{b}=p[{k}]")
+        k += 1
+    make = f"{tname}::new({', '.join(make_args)})"
     params = "[" + ", ".join(f"d.{f}" for f, _ in free) + "]"
     out.append("///|")
     out.append(
@@ -280,13 +323,13 @@ def emit_family(name, kind):
         f"    make: {'p' if free else '_'} => {make},\n"
         f"    params: {'d' if free else '_'} => {params if free else '[]'},\n  }}\n}}"
     )
-    hand = name in (HAND_CONTINUOUS if kind == "c" else HAND_DISCRETE)
+    hand = HAND_METHODS.get(name, set())
     if kind == "c":
-        if not hand:
-            for trait, sig in (
-                ("Density", "pdf(self, x)"), ("Cdf", "cdf(self, x)"),
-                ("Quantile", "quantile(self, p)"),
-            ):
+        for trait, sig in (
+            ("Density", "pdf(self, x)"), ("Cdf", "cdf(self, x)"),
+            ("Quantile", "quantile(self, p)"),
+        ):
+            if sig.split("(")[0] not in hand:
                 a = sig[sig.index("(") + 1:-1]
                 out.append(f"///|\npub impl {trait} for {tname} with {sig} {{\n  ignore(({a}))\n  ...\n}}")
         out.append(
@@ -296,11 +339,11 @@ def emit_family(name, kind):
         )
         out.append(f"///|\npub impl Univariate for {tname}")
     else:
-        if not hand:
-            for trait, sig in (
-                ("Mass", "pmf(self, k)"), ("IntCdf", "cdf_int(self, k)"),
-                ("IntQuantile", "quantile_int(self, p)"),
-            ):
+        for trait, sig in (
+            ("Mass", "pmf(self, k)"), ("IntCdf", "cdf_int(self, k)"),
+            ("IntQuantile", "quantile_int(self, p)"),
+        ):
+            if sig.split("(")[0] not in hand:
                 a = sig[sig.index("(") + 1:-1]
                 out.append(f"///|\npub impl {trait} for {tname} with {sig} {{\n  ignore(({a}))\n  ...\n}}")
         out.append(

@@ -105,23 +105,33 @@ test "catalog: argus parameters agree with SciPy" {
 }
 
 ///|
+test "catalog: beta parameters agree with SciPy" {
+  ignore(@dist.Beta::new(8.183778456973767, 2.61152142610783))
+  ignore(@dist.Beta::new(18.763377086239174, 6.096040811276032))
+  ignore(@dist.Beta::new(8.227521828577052, 19.10263271792609))
+  ignore(@dist.Beta::new(17.34430076695219, 15.502910139586445))
+  ignore(@dist.Beta::new(7.337515489428661, 15.788048244653455))
+  ignore(@dist.Beta::new(15.521315496680572, 10.481069840451696))
+}
+
+///|
 test "catalog: betaprime parameters agree with SciPy" {
-  ignore(@dist.BetaPrime::new(8.183778456973767, 2.61152142610783))
-  ignore(@dist.BetaPrime::new(18.763377086239174, 6.096040811276032))
-  ignore(@dist.BetaPrime::new(8.227521828577052, 19.10263271792609))
-  ignore(@dist.BetaPrime::new(17.34430076695219, 15.502910139586445))
-  ignore(@dist.BetaPrime::new(7.337515489428661, 15.788048244653455))
-  ignore(@dist.BetaPrime::new(15.521315496680572, 10.481069840451696))
+  ignore(@dist.BetaPrime::new(16.14811750757735, 16.08168450794907))
+  ignore(@dist.BetaPrime::new(19.162236622158005, 9.070000477387701))
+  ignore(@dist.BetaPrime::new(12.312152326256596, 5.806623722848929))
+  ignore(@dist.BetaPrime::new(13.142577029515618, 19.577221547030977))
+  ignore(@dist.BetaPrime::new(11.764591481472397, 15.950657685274214))
+  ignore(@dist.BetaPrime::new(10.176618386901652, 10.8823033286398))
 }
 
 ///|
 test "catalog: bradford parameters agree with SciPy" {
-  ignore(@dist.Bradford::new(16.14811750757735))
-  ignore(@dist.Bradford::new(16.08168450794907))
-  ignore(@dist.Bradford::new(19.162236622158005))
-  ignore(@dist.Bradford::new(9.070000477387701))
-  ignore(@dist.Bradford::new(12.312152326256596))
-  ignore(@dist.Bradford::new(5.806623722848929))
+  ignore(@dist.Bradford::new(10.14947584449001))
+  ignore(@dist.Bradford::new(13.85744413982435))
+  ignore(@dist.Bradford::new(14.800510121222876))
+  ignore(@dist.Bradford::new(4.435206094309489))
+  ignore(@dist.Bradford::new(4.788123371870587))
+  ignore(@dist.Bradford::new(7.3727822051866765))
 }
 
 ///|
@@ -142,12 +152,12 @@ test "catalog: bradford matches the high-precision oracle" {
 
 ///|
 test "catalog: burr parameters agree with SciPy" {
-  ignore(@dist.Burr::new(15.673331109472766, 8.027974280345507))
-  ignore(@dist.Burr::new(10.24890276560173, 2.077062620188459))
-  ignore(@dist.Burr::new(4.176809127234424, 7.815961236407816))
-  ignore(@dist.Burr::new(13.929804611479062, 6.797003038626661))
-  ignore(@dist.Burr::new(1.4540640175296082, 6.75960320410238))
-  ignore(@dist.Burr::new(12.562441981193537, 4.953297208831202))
+  ignore(@dist.Burr::new(12.947398086897174, 8.976485876003435))
+  ignore(@dist.Burr::new(18.212038578038587, 13.46822038088913))
+  ignore(@dist.Burr::new(4.090866726746358, 12.991305839071192))
+  ignore(@dist.Burr::new(10.637980796826362, 2.4352029276309572))
+  ignore(@dist.Burr::new(12.193208796206337, 5.480459296401767))
+  ignore(@dist.Burr::new(16.31721793930742, 1.6590890189916285))
 }
 
 ///|
@@ -168,12 +178,12 @@ test "catalog: burr matches the high-precision oracle" {
 
 ///|
 test "catalog: burr12 parameters agree with SciPy" {
-  ignore(@dist.Burr12::new(12.947398086897174, 8.976485876003435))
-  ignore(@dist.Burr12::new(18.212038578038587, 13.46822038088913))
-  ignore(@dist.Burr12::new(4.090866726746358, 12.991305839071192))
-  ignore(@dist.Burr12::new(10.637980796826362, 2.4352029276309572))
-  ignore(@dist.Burr12::new(12.193208796206337, 5.480459296401767))
-  ignore(@dist.Burr12::new(16.31721793930742, 1.6590890189916285))
+  ignore(@dist.Burr12::new(9.289279759804113, 9.610688288696634))
+  ignore(@dist.Burr12::new(18.26732712163642, 19.325543307758167))
+  ignore(@dist.Burr12::new(3.697357562986856, 1.276528933181511))
+  ignore(@dist.Burr12::new(14.297346357045587, 6.85881079139725))
+  ignore(@dist.Burr12::new(17.278388159729325, 7.312708331857287))
+  ignore(@dist.Burr12::new(13.37264244641678, 0.3002907591856796))
 }
 
 ///|
@@ -210,52 +220,62 @@ test "catalog: cauchy matches the high-precision oracle" {
 
 ///|
 test "catalog: chi parameters agree with SciPy" {
-  ignore(@dist.Chi::new(9.289279759804113))
-  ignore(@dist.Chi::new(9.610688288696634))
-  ignore(@dist.Chi::new(18.26732712163642))
-  ignore(@dist.Chi::new(19.325543307758167))
-  ignore(@dist.Chi::new(3.697357562986856))
-  ignore(@dist.Chi::new(1.276528933181511))
+  ignore(@dist.Chi::new(3.464246017026875))
+  ignore(@dist.Chi::new(19.33565876980555))
+  ignore(@dist.Chi::new(10.98146222587306))
+  ignore(@dist.Chi::new(14.916726271245563))
+  ignore(@dist.Chi::new(10.558782893965875))
+  ignore(@dist.Chi::new(13.108981246603015))
+}
+
+///|
+test "catalog: chi2 parameters agree with SciPy" {
+  ignore(@dist.ChiSquared::new(12.903446629608815))
+  ignore(@dist.ChiSquared::new(14.483995568858683))
+  ignore(@dist.ChiSquared::new(2.4620564291871805))
+  ignore(@dist.ChiSquared::new(2.4365389255914183))
+  ignore(@dist.ChiSquared::new(15.918046728041965))
+  ignore(@dist.ChiSquared::new(16.899969415112746))
 }
 
 ///|
 test "catalog: crystalball parameters agree with SciPy" {
-  ignore(@dist.CrystalBall::new(13.351977140516142, 8.728060370141707))
-  ignore(@dist.CrystalBall::new(9.846995007669, 15.341948874089706))
-  ignore(@dist.CrystalBall::new(2.1248373672790333, 8.493202067465425))
-  ignore(@dist.CrystalBall::new(5.488673790611777, 9.69068115782865))
-  ignore(@dist.CrystalBall::new(0.7694222311244459, 7.117821186725209))
-  ignore(@dist.CrystalBall::new(10.250169174508004, 17.71930920665678))
+  ignore(@dist.CrystalBall::new(6.491334759024023, 13.019513882232797))
+  ignore(@dist.CrystalBall::new(5.790255070573387, 3.291953338803272))
+  ignore(@dist.CrystalBall::new(16.2488941381551, 7.740090572141586))
+  ignore(@dist.CrystalBall::new(6.070771340228438, 3.9956637289927714))
+  ignore(@dist.CrystalBall::new(12.223513778307664, 14.396103193252431))
+  ignore(@dist.CrystalBall::new(6.201968645571199, 6.538660464011223))
 }
 
 ///|
 test "catalog: dgamma parameters agree with SciPy" {
-  ignore(@dist.DoubleGamma::new(12.903446629608815))
-  ignore(@dist.DoubleGamma::new(14.483995568858683))
-  ignore(@dist.DoubleGamma::new(2.4620564291871805))
-  ignore(@dist.DoubleGamma::new(2.4365389255914183))
-  ignore(@dist.DoubleGamma::new(15.918046728041965))
-  ignore(@dist.DoubleGamma::new(16.899969415112746))
+  ignore(@dist.DoubleGamma::new(13.118048906576583))
+  ignore(@dist.DoubleGamma::new(13.737725301437951))
+  ignore(@dist.DoubleGamma::new(16.85506598415701))
+  ignore(@dist.DoubleGamma::new(12.194099880627235))
+  ignore(@dist.DoubleGamma::new(3.301039773001855))
+  ignore(@dist.DoubleGamma::new(18.197899690333074))
 }
 
 ///|
 test "catalog: dpareto_lognorm parameters agree with SciPy" {
-  ignore(@dist.DoubleParetoLognormal::new(-7.017330481951953, 12.652119876034522, 5.790255070573387, 2.4125824618981806))
-  ignore(@dist.DoubleParetoLognormal::new(12.497788276310203, 7.094832181201669, 6.070771340228438, 3.1533302410450226))
-  ignore(@dist.DoubleParetoLognormal::new(4.447027556615328, 14.10116125605519, 6.201968645571199, 5.830168909485498))
-  ignore(@dist.DoubleParetoLognormal::new(6.77515638861923, 15.61702160797336, 5.627219684557074, 8.488963704999644))
-  ignore(@dist.DoubleParetoLognormal::new(18.39506688802748, 5.912887035194951, 5.4634818380400585, 10.88866266353672))
-  ignore(@dist.DoubleParetoLognormal::new(15.906290106045944, 2.6540904537421817, 11.340347529209927, 3.625744850216086))
+  ignore(@dist.DoubleParetoLognormal::new(-15.66267818086786, 9.467068651665185, 18.421227199535316, 14.27706784072969))
+  ignore(@dist.DoubleParetoLognormal::new(9.898755824231102, 19.169117556517797, 3.2634213103815957, 1.9398881358348263))
+  ignore(@dist.DoubleParetoLognormal::new(-2.2005004608356344, 2.9852401599206035, 16.05283154492846, 17.576420173223706))
+  ignore(@dist.DoubleParetoLognormal::new(10.465476432950563, 2.9334063615010386, 1.0185334587670325, 5.921204699017137))
+  ignore(@dist.DoubleParetoLognormal::new(-13.20834946713401, 15.628907342397715, 16.941899883773832, 15.738355340181068))
+  ignore(@dist.DoubleParetoLognormal::new(-1.970877930331845, 13.864583196124205, 10.201840723848967, 3.4086466004605787))
 }
 
 ///|
 test "catalog: dweibull parameters agree with SciPy" {
-  ignore(@dist.DoubleWeibull::new(10.248292724832353))
-  ignore(@dist.DoubleWeibull::new(13.695596280497304))
-  ignore(@dist.DoubleWeibull::new(0.27240381043310613))
-  ignore(@dist.DoubleWeibull::new(14.530478308778012))
-  ignore(@dist.DoubleWeibull::new(6.747042900408262))
-  ignore(@dist.DoubleWeibull::new(12.781091061680826))
+  ignore(@dist.DoubleWeibull::new(9.145456056890426))
+  ignore(@dist.DoubleWeibull::new(8.719641584845142))
+  ignore(@dist.DoubleWeibull::new(4.0135772347280945))
+  ignore(@dist.DoubleWeibull::new(8.035314679217882))
+  ignore(@dist.DoubleWeibull::new(4.320222846672845))
+  ignore(@dist.DoubleWeibull::new(2.6807809968312646))
 }
 
 ///|
@@ -276,12 +296,12 @@ test "catalog: dweibull matches the high-precision oracle" {
 
 ///|
 test "catalog: erlang parameters agree with SciPy" {
-  ignore(@dist.Erlang::new(5))
-  ignore(@dist.Erlang::new(16))
-  ignore(@dist.Erlang::new(4))
-  ignore(@dist.Erlang::new(4))
+  ignore(@dist.Erlang::new(20))
+  ignore(@dist.Erlang::new(18))
+  ignore(@dist.Erlang::new(11))
   ignore(@dist.Erlang::new(15))
-  ignore(@dist.Erlang::new(10))
+  ignore(@dist.Erlang::new(16))
+  ignore(@dist.Erlang::new(7))
 }
 
 ///|
@@ -302,22 +322,22 @@ test "catalog: expon matches the high-precision oracle" {
 
 ///|
 test "catalog: exponnorm parameters agree with SciPy" {
-  ignore(@dist.ExponentiallyModifiedNormal::new(7.036728854826791))
-  ignore(@dist.ExponentiallyModifiedNormal::new(5.437353612501417))
-  ignore(@dist.ExponentiallyModifiedNormal::new(16.547617925628888))
-  ignore(@dist.ExponentiallyModifiedNormal::new(11.396285940254929))
-  ignore(@dist.ExponentiallyModifiedNormal::new(10.953860530260712))
-  ignore(@dist.ExponentiallyModifiedNormal::new(11.523578249289248))
+  ignore(@dist.ExponentiallyModifiedNormal::new(12.694541412745215))
+  ignore(@dist.ExponentiallyModifiedNormal::new(13.86687048961658))
+  ignore(@dist.ExponentiallyModifiedNormal::new(7.516100848185361))
+  ignore(@dist.ExponentiallyModifiedNormal::new(7.701525707936718))
+  ignore(@dist.ExponentiallyModifiedNormal::new(4.803218178760842))
+  ignore(@dist.ExponentiallyModifiedNormal::new(0.997061864552331))
 }
 
 ///|
 test "catalog: exponpow parameters agree with SciPy" {
-  ignore(@dist.ExponentialPower::new(9.145456056890426))
-  ignore(@dist.ExponentialPower::new(8.719641584845142))
-  ignore(@dist.ExponentialPower::new(4.0135772347280945))
-  ignore(@dist.ExponentialPower::new(8.035314679217882))
-  ignore(@dist.ExponentialPower::new(4.320222846672845))
-  ignore(@dist.ExponentialPower::new(2.6807809968312646))
+  ignore(@dist.ExponentialPower::new(2.740995549160119))
+  ignore(@dist.ExponentialPower::new(14.715568164598531))
+  ignore(@dist.ExponentialPower::new(12.625286085735748))
+  ignore(@dist.ExponentialPower::new(11.925805026129837))
+  ignore(@dist.ExponentialPower::new(11.628593882808989))
+  ignore(@dist.ExponentialPower::new(13.574965216243235))
 }
 
 ///|
@@ -338,12 +358,12 @@ test "catalog: exponpow matches the high-precision oracle" {
 
 ///|
 test "catalog: exponweib parameters agree with SciPy" {
-  ignore(@dist.ExponentiatedWeibull::new(19.527101054698214, 17.859086424939328))
-  ignore(@dist.ExponentiatedWeibull::new(10.914875548915946, 15.181886087488774))
-  ignore(@dist.ExponentiatedWeibull::new(15.602634937857978, 6.654885803066226))
-  ignore(@dist.ExponentiatedWeibull::new(7.523283895952564, 17.386209329318884))
-  ignore(@dist.ExponentiatedWeibull::new(7.82024759719913, 0.378126956833742))
-  ignore(@dist.ExponentiatedWeibull::new(8.193144147425604, 6.775252806617884))
+  ignore(@dist.ExponentiatedWeibull::new(14.124980239503152, 9.708417437540097))
+  ignore(@dist.ExponentiatedWeibull::new(11.15923962148327, 7.046222351264351))
+  ignore(@dist.ExponentiatedWeibull::new(14.66370674259145, 5.020331906341822))
+  ignore(@dist.ExponentiatedWeibull::new(17.04692374613717, 7.642633915455336))
+  ignore(@dist.ExponentiatedWeibull::new(4.500720574599035, 1.4807540950298503))
+  ignore(@dist.ExponentiatedWeibull::new(4.611945112264834, 18.812681501701785))
 }
 
 ///|
@@ -363,23 +383,33 @@ test "catalog: exponweib matches the high-precision oracle" {
 }
 
 ///|
+test "catalog: f parameters agree with SciPy" {
+  ignore(@dist.FisherF::new(14.174142676697015, 15.492188935275827))
+  ignore(@dist.FisherF::new(18.389976659594378, 2.7265354649261586))
+  ignore(@dist.FisherF::new(16.85289250878996, 13.352928967869307))
+  ignore(@dist.FisherF::new(1.9629386058353093, 8.30056151626964))
+  ignore(@dist.FisherF::new(0.28442836069271005, 15.87539882318475))
+  ignore(@dist.FisherF::new(0.5532351739361285, 12.378808372918195))
+}
+
+///|
 test "catalog: fatiguelife parameters agree with SciPy" {
-  ignore(@dist.FatigueLife::new(2.740995549160119))
-  ignore(@dist.FatigueLife::new(14.715568164598531))
-  ignore(@dist.FatigueLife::new(12.625286085735748))
-  ignore(@dist.FatigueLife::new(11.925805026129837))
-  ignore(@dist.FatigueLife::new(11.628593882808989))
-  ignore(@dist.FatigueLife::new(13.574965216243235))
+  ignore(@dist.FatigueLife::new(19.053728724760756))
+  ignore(@dist.FatigueLife::new(11.660197053136951))
+  ignore(@dist.FatigueLife::new(3.8180197784176606))
+  ignore(@dist.FatigueLife::new(18.276469639099812))
+  ignore(@dist.FatigueLife::new(12.282122368446712))
+  ignore(@dist.FatigueLife::new(13.13865770486484))
 }
 
 ///|
 test "catalog: fisk parameters agree with SciPy" {
-  ignore(@dist.Fisk::new(14.124980239503152))
-  ignore(@dist.Fisk::new(9.708417437540097))
-  ignore(@dist.Fisk::new(11.15923962148327))
-  ignore(@dist.Fisk::new(7.046222351264351))
-  ignore(@dist.Fisk::new(14.66370674259145))
-  ignore(@dist.Fisk::new(5.020331906341822))
+  ignore(@dist.Fisk::new(5.321179362223381))
+  ignore(@dist.Fisk::new(16.945130343563367))
+  ignore(@dist.Fisk::new(1.5797446722915875))
+  ignore(@dist.Fisk::new(16.434079939183004))
+  ignore(@dist.Fisk::new(4.330158381988585))
+  ignore(@dist.Fisk::new(10.367441727387522))
 }
 
 ///|
@@ -400,52 +430,62 @@ test "catalog: fisk matches the high-precision oracle" {
 
 ///|
 test "catalog: foldcauchy parameters agree with SciPy" {
-  ignore(@dist.FoldedCauchy::new(5.516629320825206))
-  ignore(@dist.FoldedCauchy::new(14.208730109504426))
-  ignore(@dist.FoldedCauchy::new(16.127796792660135))
-  ignore(@dist.FoldedCauchy::new(17.06085230501111))
-  ignore(@dist.FoldedCauchy::new(14.606523900083205))
-  ignore(@dist.FoldedCauchy::new(15.796876373006054))
+  ignore(@dist.FoldedCauchy::new(10.030271166794142))
+  ignore(@dist.FoldedCauchy::new(9.469511171627271))
+  ignore(@dist.FoldedCauchy::new(12.5105690662597))
+  ignore(@dist.FoldedCauchy::new(0.19248213510252077))
+  ignore(@dist.FoldedCauchy::new(10.465275627896563))
+  ignore(@dist.FoldedCauchy::new(9.248337544002936))
 }
 
 ///|
 test "catalog: foldnorm parameters agree with SciPy" {
-  ignore(@dist.FoldedNormal::new(14.174142676697015))
-  ignore(@dist.FoldedNormal::new(15.492188935275827))
-  ignore(@dist.FoldedNormal::new(18.389976659594378))
-  ignore(@dist.FoldedNormal::new(2.7265354649261586))
-  ignore(@dist.FoldedNormal::new(16.85289250878996))
-  ignore(@dist.FoldedNormal::new(13.352928967869307))
+  ignore(@dist.FoldedNormal::new(8.934849600305776))
+  ignore(@dist.FoldedNormal::new(12.211139324198413))
+  ignore(@dist.FoldedNormal::new(13.112428602047807))
+  ignore(@dist.FoldedNormal::new(0.19591861560084967))
+  ignore(@dist.FoldedNormal::new(2.359781036948605))
+  ignore(@dist.FoldedNormal::new(8.370314482735644))
+}
+
+///|
+test "catalog: gamma parameters agree with SciPy" {
+  ignore(@dist.Gamma::new(0.2300543651304432))
+  ignore(@dist.Gamma::new(14.283512704573731))
+  ignore(@dist.Gamma::new(11.899167658421737))
+  ignore(@dist.Gamma::new(11.404262295363504))
+  ignore(@dist.Gamma::new(11.357540729560387))
+  ignore(@dist.Gamma::new(18.503804166978487))
 }
 
 ///|
 test "catalog: gausshyper parameters agree with SciPy" {
-  ignore(@dist.GaussHypergeometric::new(6.9308006095409125, 3.0680298620083546, 8.289661794124832, 14.15557205678325))
-  ignore(@dist.GaussHypergeometric::new(14.858716085168659, 18.73780134128487, -18.611036111947904, 12.482515502716254))
-  ignore(@dist.GaussHypergeometric::new(13.123358041185094, 16.371111470440233, 7.9517729942315185, 4.0996081700598745))
-  ignore(@dist.GaussHypergeometric::new(19.261027372073936, 15.492509820856132, 15.137520526123396, 12.28527837726783))
-  ignore(@dist.GaussHypergeometric::new(15.030169092125153, 14.431921116025324, 18.51054946845789, 4.038020674760295))
-  ignore(@dist.GaussHypergeometric::new(17.152863060136042, 5.584027323515482, 7.181574894745243, 15.19830927626381))
+  ignore(@dist.GaussHypergeometric::new(3.214881945101171, 13.464629700416603, 5.065350004004472, 15.301404769835724))
+  ignore(@dist.GaussHypergeometric::new(5.993833514709506, 3.475046514713942, -6.9054474523903195, 8.316380305270016))
+  ignore(@dist.GaussHypergeometric::new(9.554037985629344, 3.279456389006752, -10.91941322666679, 11.568341998256214))
+  ignore(@dist.GaussHypergeometric::new(14.353750946505116, 12.118693245211066, -10.309513438428976, 1.6028801414377836))
+  ignore(@dist.GaussHypergeometric::new(14.24961273209892, 15.652859905893365, -6.729737907003525, 6.861184626284018))
+  ignore(@dist.GaussHypergeometric::new(18.291974277749325, 10.906183588369165, -14.888553785000976, 2.4872344836227))
 }
 
 ///|
 test "catalog: genexpon parameters agree with SciPy" {
-  ignore(@dist.GeneralizedExponential::new(8.934849600305776, 12.211139324198413, 13.112428602047807))
-  ignore(@dist.GeneralizedExponential::new(0.19591861560084967, 2.359781036948605, 8.370314482735644))
-  ignore(@dist.GeneralizedExponential::new(17.51216625561259, 14.172790430675562, 1.5044442375940603))
-  ignore(@dist.GeneralizedExponential::new(6.481680425514178, 4.768401507052042, 16.099108043901882))
-  ignore(@dist.GeneralizedExponential::new(9.24464207851608, 4.8016839064063515, 14.137069187320767))
-  ignore(@dist.GeneralizedExponential::new(7.600279105188004, 6.2873227218292405, 10.288107442262508))
+  ignore(@dist.GeneralizedExponential::new(7.270350188778756, 6.024858735445737, 17.139081854706838))
+  ignore(@dist.GeneralizedExponential::new(1.661690247786889, 17.98260163133811, 18.957390560112916))
+  ignore(@dist.GeneralizedExponential::new(0.40684867436928895, 1.573754242004084, 16.626524961889125))
+  ignore(@dist.GeneralizedExponential::new(10.595114467497009, 14.512896444323921, 9.389860825785831))
+  ignore(@dist.GeneralizedExponential::new(8.01356999746777, 1.5906139496818916, 7.192957922746491))
+  ignore(@dist.GeneralizedExponential::new(17.351042571765984, 9.314501413298268, 4.898818668079348))
 }
 
 ///|
 test "catalog: genextreme parameters agree with SciPy" {
-  ignore(@dist.GeneralizedExtremeValue::new(-19.351137680725877))
-  ignore(@dist.GeneralizedExtremeValue::new(19.487682001077687))
-  ignore(@dist.GeneralizedExtremeValue::new(1.6133727045240143))
-  ignore(@dist.GeneralizedExtremeValue::new(16.522544047239066))
-  ignore(@dist.GeneralizedExtremeValue::new(-3.139643855808586))
-  ignore(@dist.GeneralizedExtremeValue::new(-17.481577566755796))
+  ignore(@dist.GeneralizedExtremeValue::new(3.282010016966165))
+  ignore(@dist.GeneralizedExtremeValue::new(9.599935196292478))
+  ignore(@dist.GeneralizedExtremeValue::new(16.75226058305679))
+  ignore(@dist.GeneralizedExtremeValue::new(-12.547253914511224))
+  ignore(@dist.GeneralizedExtremeValue::new(-18.363486188522472))
+  ignore(@dist.GeneralizedExtremeValue::new(-9.851133035005395))
 }
 
 ///|
@@ -466,70 +506,70 @@ test "catalog: genextreme matches the high-precision oracle" {
 
 ///|
 test "catalog: gengamma parameters agree with SciPy" {
-  ignore(@dist.GeneralizedGamma::new(15.732924375772303, 15.586240918167846))
-  ignore(@dist.GeneralizedGamma::new(5.064771155255778, 7.386542154258883))
-  ignore(@dist.GeneralizedGamma::new(11.052014813690299, -7.925294027916792))
-  ignore(@dist.GeneralizedGamma::new(0.36381802607992286, -2.2140924618624958))
-  ignore(@dist.GeneralizedGamma::new(5.2627385100935165, -6.232397527153889))
-  ignore(@dist.GeneralizedGamma::new(11.337044177265131, 19.672941395425497))
+  ignore(@dist.GeneralizedGamma::new(15.579732776631793, 16.037499626831476))
+  ignore(@dist.GeneralizedGamma::new(9.869716750484475, 3.472769836031823))
+  ignore(@dist.GeneralizedGamma::new(11.715542360203191, -13.412636610205375))
+  ignore(@dist.GeneralizedGamma::new(15.052464628317374, 5.465946127753352))
+  ignore(@dist.GeneralizedGamma::new(19.02110222440504, 0.13352449689620727))
+  ignore(@dist.GeneralizedGamma::new(8.745818643141934, 19.214114085315835))
 }
 
 ///|
 test "catalog: genhalflogistic parameters agree with SciPy" {
-  ignore(@dist.GeneralizedHalfLogistic::new(7.270350188778756))
-  ignore(@dist.GeneralizedHalfLogistic::new(6.024858735445737))
-  ignore(@dist.GeneralizedHalfLogistic::new(17.139081854706838))
-  ignore(@dist.GeneralizedHalfLogistic::new(1.661690247786889))
-  ignore(@dist.GeneralizedHalfLogistic::new(17.98260163133811))
-  ignore(@dist.GeneralizedHalfLogistic::new(18.957390560112916))
+  ignore(@dist.GeneralizedHalfLogistic::new(0.02586292043281757))
+  ignore(@dist.GeneralizedHalfLogistic::new(3.313546675257153))
+  ignore(@dist.GeneralizedHalfLogistic::new(0.4791000369816456))
+  ignore(@dist.GeneralizedHalfLogistic::new(4.424116664541322))
+  ignore(@dist.GeneralizedHalfLogistic::new(15.984372868638905))
+  ignore(@dist.GeneralizedHalfLogistic::new(15.72150045266655))
 }
 
 ///|
 test "catalog: genhyperbolic parameters agree with SciPy" {
-  ignore(@dist.GeneralizedHyperbolic::new(-16.845006656012114, 15.465546039724618, -5.32406756733948))
-  ignore(@dist.GeneralizedHyperbolic::new(19.373970876653928, 6.808122400301297, -0.9667888546347427))
-  ignore(@dist.GeneralizedHyperbolic::new(-19.83302778069596, 14.658507999395313, 10.831722831892876))
-  ignore(@dist.GeneralizedHyperbolic::new(10.66877730089432, 17.29556008481365, 8.83924696881489))
-  ignore(@dist.GeneralizedHyperbolic::new(-14.918389525685956, 18.692022468266753, 12.353199641109676))
-  ignore(@dist.GeneralizedHyperbolic::new(-1.248319402704766, 13.717989787194147, 10.514149113101109))
+  ignore(@dist.GeneralizedHyperbolic::new(-2.398262163348356, 11.869163614561664, 9.835074771810714))
+  ignore(@dist.GeneralizedHyperbolic::new(8.105833127737426, 14.091477326191143, -0.5203988259901493))
+  ignore(@dist.GeneralizedHyperbolic::new(-14.121341330666489, 15.929497664518566, -3.3073442354165117))
+  ignore(@dist.GeneralizedHyperbolic::new(-8.445795757961672, 14.302507198339162, 11.75345485472321))
+  ignore(@dist.GeneralizedHyperbolic::new(-18.856464088805875, 18.965291600585775, -3.6235308760775986))
+  ignore(@dist.GeneralizedHyperbolic::new(8.372410793210264, 15.312737291139147, -8.993036996043298))
   assert_true(
-    (try @dist.GeneralizedHyperbolic::new(11.151297837875553, 18.53303032121849, -19.475706564594326) catch { _ => true } noraise { _ => false }),
+    (try @dist.GeneralizedHyperbolic::new(-14.093394132062596, 4.392211801962899, 17.480452094355705) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.GeneralizedHyperbolic::new(-9.584160728768861, 6.685494455615815, 16.187915342104425) catch { _ => true } noraise { _ => false }),
+    (try @dist.GeneralizedHyperbolic::new(13.470269042230015, 18.21766179134554, 19.68132277135266) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.GeneralizedHyperbolic::new(6.491075500923046, 3.220411743710785, 9.958763104607478) catch { _ => true } noraise { _ => false }),
+    (try @dist.GeneralizedHyperbolic::new(-9.898835248953493, 0.7315214592894259, 4.921123036343534) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.GeneralizedHyperbolic::new(6.655469878177595, 5.250310189007942, 8.780881900842363) catch { _ => true } noraise { _ => false }),
+    (try @dist.GeneralizedHyperbolic::new(-14.97347023667472, 6.893793645362718, -11.48631195820084) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.GeneralizedHyperbolic::new(3.492405663646835, 10.58474745835565, -15.089564968766854) catch { _ => true } noraise { _ => false }),
+    (try @dist.GeneralizedHyperbolic::new(-0.9801591904024178, 7.306123776784508, 11.979330479076665) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.GeneralizedHyperbolic::new(-12.266377780362955, 8.435093364477027, -13.595167433517336) catch { _ => true } noraise { _ => false }),
+    (try @dist.GeneralizedHyperbolic::new(9.078023702299571, 4.077738133599411, -13.75011853416057) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: geninvgauss parameters agree with SciPy" {
-  ignore(@dist.GeneralizedInverseGaussian::new(11.159465553263587, 18.018749813415738))
-  ignore(@dist.GeneralizedInverseGaussian::new(-0.2605664990310501, 11.736384918015911))
-  ignore(@dist.GeneralizedInverseGaussian::new(3.431084720406382, 3.2936816948973124))
-  ignore(@dist.GeneralizedInverseGaussian::new(10.104929256634748, 12.732973063876676))
-  ignore(@dist.GeneralizedInverseGaussian::new(18.042204448810082, 10.066762248448104))
-  ignore(@dist.GeneralizedInverseGaussian::new(-2.5083627137161315, 19.607057042657917))
+  ignore(@dist.GeneralizedInverseGaussian::new(17.953393141887382, 16.82278332896149))
+  ignore(@dist.GeneralizedInverseGaussian::new(-9.460335889079312, 6.592028577428303))
+  ignore(@dist.GeneralizedInverseGaussian::new(4.573315197267284, 14.040297365619342))
+  ignore(@dist.GeneralizedInverseGaussian::new(-6.547035550103093, 7.749794682411977))
+  ignore(@dist.GeneralizedInverseGaussian::new(-13.559372715955075, 15.862483589099988))
+  ignore(@dist.GeneralizedInverseGaussian::new(-15.887377566217008, 5.703385169795395))
 }
 
 ///|
 test "catalog: genlogistic parameters agree with SciPy" {
-  ignore(@dist.GeneralizedLogistic::new(0.02586292043281757))
-  ignore(@dist.GeneralizedLogistic::new(3.313546675257153))
-  ignore(@dist.GeneralizedLogistic::new(0.4791000369816456))
-  ignore(@dist.GeneralizedLogistic::new(4.424116664541322))
-  ignore(@dist.GeneralizedLogistic::new(15.984372868638905))
-  ignore(@dist.GeneralizedLogistic::new(15.72150045266655))
+  ignore(@dist.GeneralizedLogistic::new(6.908004766610141))
+  ignore(@dist.GeneralizedLogistic::new(17.744621350308297))
+  ignore(@dist.GeneralizedLogistic::new(9.060940797577375))
+  ignore(@dist.GeneralizedLogistic::new(5.8447622845571985))
+  ignore(@dist.GeneralizedLogistic::new(4.235714255298806))
+  ignore(@dist.GeneralizedLogistic::new(19.242067023579686))
 }
 
 ///|
@@ -550,32 +590,32 @@ test "catalog: genlogistic matches the high-precision oracle" {
 
 ///|
 test "catalog: gennorm parameters agree with SciPy" {
-  ignore(@dist.GeneralizedNormal::new(2.9533029339687022))
-  ignore(@dist.GeneralizedNormal::new(4.392211801962899))
-  ignore(@dist.GeneralizedNormal::new(18.740226047177853))
-  ignore(@dist.GeneralizedNormal::new(8.800868918325822))
-  ignore(@dist.GeneralizedNormal::new(11.869163614561664))
-  ignore(@dist.GeneralizedNormal::new(14.917537385905357))
+  ignore(@dist.GeneralizedNormal::new(12.160716737996362))
+  ignore(@dist.GeneralizedNormal::new(6.627737240455507))
+  ignore(@dist.GeneralizedNormal::new(12.771388644622178))
+  ignore(@dist.GeneralizedNormal::new(12.193606428467884))
+  ignore(@dist.GeneralizedNormal::new(9.317780856231154))
+  ignore(@dist.GeneralizedNormal::new(18.962632831307037))
 }
 
 ///|
 test "catalog: halfgennorm parameters agree with SciPy" {
-  ignore(@dist.HalfGeneralizedNormal::new(13.093949125356975))
-  ignore(@dist.HalfGeneralizedNormal::new(3.206888110501145))
-  ignore(@dist.HalfGeneralizedNormal::new(2.33012180709264))
-  ignore(@dist.HalfGeneralizedNormal::new(12.33936393837238))
-  ignore(@dist.HalfGeneralizedNormal::new(7.4981735790278226))
-  ignore(@dist.HalfGeneralizedNormal::new(0.4712024186450714))
+  ignore(@dist.HalfGeneralizedNormal::new(7.930043138596039))
+  ignore(@dist.HalfGeneralizedNormal::new(1.242222326888378))
+  ignore(@dist.HalfGeneralizedNormal::new(7.20540839542176))
+  ignore(@dist.HalfGeneralizedNormal::new(8.69048639982008))
+  ignore(@dist.HalfGeneralizedNormal::new(9.375356958807629))
+  ignore(@dist.HalfGeneralizedNormal::new(18.305472793791562))
 }
 
 ///|
 test "catalog: genpareto parameters agree with SciPy" {
-  ignore(@dist.GeneralizedPareto::new(-8.658470966350812))
-  ignore(@dist.GeneralizedPareto::new(5.039366205556508))
-  ignore(@dist.GeneralizedPareto::new(16.78350108255958))
-  ignore(@dist.GeneralizedPareto::new(16.1364883691177))
-  ignore(@dist.GeneralizedPareto::new(-4.157947839047459))
-  ignore(@dist.GeneralizedPareto::new(-14.289306847258985))
+  ignore(@dist.GeneralizedPareto::new(8.768971180321785))
+  ignore(@dist.GeneralizedPareto::new(-8.634844197819355))
+  ignore(@dist.GeneralizedPareto::new(-17.864255637864908))
+  ignore(@dist.GeneralizedPareto::new(19.75397573085113))
+  ignore(@dist.GeneralizedPareto::new(-3.154652999300186))
+  ignore(@dist.GeneralizedPareto::new(19.199862960414386))
 }
 
 ///|
@@ -596,12 +636,12 @@ test "catalog: genpareto matches the high-precision oracle" {
 
 ///|
 test "catalog: gompertz parameters agree with SciPy" {
-  ignore(@dist.Gompertz::new(18.97669657094369))
-  ignore(@dist.Gompertz::new(16.82278332896149))
-  ignore(@dist.Gompertz::new(5.269832055460344))
-  ignore(@dist.Gompertz::new(6.592028577428303))
-  ignore(@dist.Gompertz::new(12.286657598633642))
-  ignore(@dist.Gompertz::new(14.040297365619342))
+  ignore(@dist.Gompertz::new(2.953201835928594))
+  ignore(@dist.Gompertz::new(0.6474718105696042))
+  ignore(@dist.Gompertz::new(16.181544960690225))
+  ignore(@dist.Gompertz::new(11.59639210542348))
+  ignore(@dist.Gompertz::new(19.90803438590684))
+  ignore(@dist.Gompertz::new(1.2643763314543155))
 }
 
 ///|
@@ -702,92 +742,92 @@ test "catalog: hypsecant matches the high-precision oracle" {
 
 ///|
 test "catalog: invgamma parameters agree with SciPy" {
-  ignore(@dist.InverseGamma::new(13.40712961144094))
-  ignore(@dist.InverseGamma::new(16.320186812069455))
-  ignore(@dist.InverseGamma::new(6.1122297527623))
-  ignore(@dist.InverseGamma::new(9.063994189564928))
-  ignore(@dist.InverseGamma::new(0.6091148171856897))
-  ignore(@dist.InverseGamma::new(16.577398229122863))
+  ignore(@dist.InverseGamma::new(10.46901379433846))
+  ignore(@dist.InverseGamma::new(5.148628524027914))
+  ignore(@dist.InverseGamma::new(14.266310574354439))
+  ignore(@dist.InverseGamma::new(13.70255221567361))
+  ignore(@dist.InverseGamma::new(12.965232417954013))
+  ignore(@dist.InverseGamma::new(12.023138762963486))
 }
 
 ///|
 test "catalog: invgauss parameters agree with SciPy" {
-  ignore(@dist.InverseGaussian::new(6.908004766610141))
-  ignore(@dist.InverseGaussian::new(17.744621350308297))
-  ignore(@dist.InverseGaussian::new(9.060940797577375))
-  ignore(@dist.InverseGaussian::new(5.8447622845571985))
-  ignore(@dist.InverseGaussian::new(4.235714255298806))
-  ignore(@dist.InverseGaussian::new(19.242067023579686))
+  ignore(@dist.InverseGaussian::new(2.674748985846256))
+  ignore(@dist.InverseGaussian::new(8.68054073450838))
+  ignore(@dist.InverseGaussian::new(3.0246305327812095))
+  ignore(@dist.InverseGaussian::new(17.95097234113752))
+  ignore(@dist.InverseGaussian::new(17.487841597649748))
+  ignore(@dist.InverseGaussian::new(0.7504750899741985))
 }
 
 ///|
 test "catalog: invweibull parameters agree with SciPy" {
-  ignore(@dist.InverseWeibull::new(12.160716737996362))
-  ignore(@dist.InverseWeibull::new(6.627737240455507))
-  ignore(@dist.InverseWeibull::new(12.771388644622178))
-  ignore(@dist.InverseWeibull::new(12.193606428467884))
-  ignore(@dist.InverseWeibull::new(9.317780856231154))
-  ignore(@dist.InverseWeibull::new(18.962632831307037))
+  ignore(@dist.InverseWeibull::new(8.237833165769429))
+  ignore(@dist.InverseWeibull::new(16.608575307971943))
+  ignore(@dist.InverseWeibull::new(8.242265757280236))
+  ignore(@dist.InverseWeibull::new(9.915792732352664))
+  ignore(@dist.InverseWeibull::new(6.680609191831934))
+  ignore(@dist.InverseWeibull::new(2.194437646324736))
 }
 
 ///|
 test "catalog: irwinhall parameters agree with SciPy" {
-  ignore(@dist.IrwinHall::new(9))
-  ignore(@dist.IrwinHall::new(2))
-  ignore(@dist.IrwinHall::new(8))
-  ignore(@dist.IrwinHall::new(9))
-  ignore(@dist.IrwinHall::new(10))
+  ignore(@dist.IrwinHall::new(4))
+  ignore(@dist.IrwinHall::new(7))
+  ignore(@dist.IrwinHall::new(7))
+  ignore(@dist.IrwinHall::new(18))
+  ignore(@dist.IrwinHall::new(20))
   ignore(@dist.IrwinHall::new(18))
 }
 
 ///|
 test "catalog: jf_skew_t parameters agree with SciPy" {
-  ignore(@dist.JonesFaddySkewT::new(14.384485590160892, 5.682577901090323))
-  ignore(@dist.JonesFaddySkewT::new(1.0678721810675462, 19.876987865425566))
-  ignore(@dist.JonesFaddySkewT::new(8.422673500349907, 19.599931480207193))
-  ignore(@dist.JonesFaddySkewT::new(0.33384130530512923, 10.858845534273417))
-  ignore(@dist.JonesFaddySkewT::new(0.2678397827565471, 15.912324737802408))
-  ignore(@dist.JonesFaddySkewT::new(11.636604498424823, 11.202044387006174))
+  ignore(@dist.JonesFaddySkewT::new(16.465815347061632, 13.513246878822663))
+  ignore(@dist.JonesFaddySkewT::new(8.931156263088988, 16.2997007324399))
+  ignore(@dist.JonesFaddySkewT::new(3.449852753085101, 7.150507477560797))
+  ignore(@dist.JonesFaddySkewT::new(19.521790145531778, 0.4175675538271295))
+  ignore(@dist.JonesFaddySkewT::new(10.90704907938167, 9.139302926354592))
+  ignore(@dist.JonesFaddySkewT::new(5.831394974152449, 7.28870852902856))
 }
 
 ///|
 test "catalog: johnsonsb parameters agree with SciPy" {
-  ignore(@dist.JohnsonSB::new(0.9380275886769205, 5.148628524027914))
-  ignore(@dist.JohnsonSB::new(8.532621148708877, 13.70255221567361))
-  ignore(@dist.JohnsonSB::new(5.930464835908026, 12.023138762963486))
-  ignore(@dist.JohnsonSB::new(-18.671642594145492, 4.856308949807991))
-  ignore(@dist.JohnsonSB::new(-15.08236251172443, 18.905915684987377))
-  ignore(@dist.JohnsonSB::new(4.7931436410128505, 15.91382333114208))
+  ignore(@dist.JohnsonSB::new(7.691750077612284, 16.498059298748675))
+  ignore(@dist.JohnsonSB::new(-13.20483322744959, 19.473668325078094))
+  ignore(@dist.JohnsonSB::new(-7.591318243601673, 4.141474759101282))
+  ignore(@dist.JohnsonSB::new(4.291185386225365, 6.282003279659665))
+  ignore(@dist.JohnsonSB::new(14.731801294535714, 2.2191044738679433))
+  ignore(@dist.JohnsonSB::new(-16.73032154798935, 1.5105044842605042))
 }
 
 ///|
 test "catalog: johnsonsu parameters agree with SciPy" {
-  ignore(@dist.JohnsonSU::new(-3.524333668461143, 16.608575307971943))
-  ignore(@dist.JohnsonSU::new(-3.515468485439527, 9.915792732352664))
-  ignore(@dist.JohnsonSU::new(-6.638781616336132, 2.194437646324736))
-  ignore(@dist.JohnsonSU::new(-2.763508924494282, 7.907449761180696))
-  ignore(@dist.JohnsonSU::new(16.920221816652933, 10.6834569401464))
-  ignore(@dist.JohnsonSU::new(-8.161977786580401, 4.900803877891331))
+  ignore(@dist.JohnsonSU::new(-19.474488679115247, 7.225544700575384))
+  ignore(@dist.JohnsonSU::new(6.341711753296444, 13.47775859121281))
+  ignore(@dist.JohnsonSU::new(18.51554544634196, 19.6803456538253))
+  ignore(@dist.JohnsonSU::new(-13.771662884091999, 16.401423413359268))
+  ignore(@dist.JohnsonSU::new(-10.952153330214482, 9.144667229822264))
+  ignore(@dist.JohnsonSU::new(-15.822848340960727, 3.687151971554621))
 }
 
 ///|
 test "catalog: kappa4 parameters agree with SciPy" {
-  ignore(@dist.Kappa4::new(12.931630694123264, 7.026493757645326))
-  ignore(@dist.Kappa4::new(-2.137687473822023, 12.599401464879797))
-  ignore(@dist.Kappa4::new(-13.100294493829798, -5.698985044878405))
-  ignore(@dist.Kappa4::new(19.043580291063556, -19.16486489234574))
-  ignore(@dist.Kappa4::new(1.8140981587633398, -1.721394147290816))
-  ignore(@dist.Kappa4::new(-8.337210051695102, -5.4225829419428795))
+  ignore(@dist.Kappa4::new(6.420068748979304, -2.6935366508762257))
+  ignore(@dist.Kappa4::new(2.9694193963341142, 13.576691839309618))
+  ignore(@dist.Kappa4::new(6.200102171175615, -6.24236727664362))
+  ignore(@dist.Kappa4::new(10.431918935317324, 19.933970074108473))
+  ignore(@dist.Kappa4::new(-4.6386519312006556, 4.706187196034119))
+  ignore(@dist.Kappa4::new(-16.16636303541641, 6.341484385130677))
 }
 
 ///|
 test "catalog: kappa3 parameters agree with SciPy" {
-  ignore(@dist.Kappa3::new(13.845875038806142))
-  ignore(@dist.Kappa3::new(16.498059298748675))
-  ignore(@dist.Kappa3::new(3.3975833862752047))
-  ignore(@dist.Kappa3::new(19.473668325078094))
-  ignore(@dist.Kappa3::new(6.204340878199163))
-  ignore(@dist.Kappa3::new(4.141474759101282))
+  ignore(@dist.Kappa3::new(11.818660840509752))
+  ignore(@dist.Kappa3::new(17.70550527259355))
+  ignore(@dist.Kappa3::new(18.24674756422319))
+  ignore(@dist.Kappa3::new(16.374691611317406))
+  ignore(@dist.Kappa3::new(9.481273009881582))
+  ignore(@dist.Kappa3::new(15.253626394018058))
 }
 
 ///|
@@ -808,22 +848,22 @@ test "catalog: kappa3 matches the high-precision oracle" {
 
 ///|
 test "catalog: ksone parameters agree with SciPy" {
+  ignore(@dist.KolmogorovSmirnovOne::new(19))
   ignore(@dist.KolmogorovSmirnovOne::new(17))
-  ignore(@dist.KolmogorovSmirnovOne::new(4))
-  ignore(@dist.KolmogorovSmirnovOne::new(8))
-  ignore(@dist.KolmogorovSmirnovOne::new(15))
-  ignore(@dist.KolmogorovSmirnovOne::new(6))
+  ignore(@dist.KolmogorovSmirnovOne::new(19))
+  ignore(@dist.KolmogorovSmirnovOne::new(16))
   ignore(@dist.KolmogorovSmirnovOne::new(10))
+  ignore(@dist.KolmogorovSmirnovOne::new(17))
 }
 
 ///|
 test "catalog: kstwo parameters agree with SciPy" {
-  ignore(@dist.KolmogorovSmirnovTwo::new(1))
-  ignore(@dist.KolmogorovSmirnovTwo::new(8))
-  ignore(@dist.KolmogorovSmirnovTwo::new(14))
-  ignore(@dist.KolmogorovSmirnovTwo::new(14))
+  ignore(@dist.KolmogorovSmirnovTwo::new(6))
   ignore(@dist.KolmogorovSmirnovTwo::new(19))
-  ignore(@dist.KolmogorovSmirnovTwo::new(20))
+  ignore(@dist.KolmogorovSmirnovTwo::new(6))
+  ignore(@dist.KolmogorovSmirnovTwo::new(10))
+  ignore(@dist.KolmogorovSmirnovTwo::new(17))
+  ignore(@dist.KolmogorovSmirnovTwo::new(14))
 }
 
 ///|
@@ -844,12 +884,12 @@ test "catalog: laplace matches the high-precision oracle" {
 
 ///|
 test "catalog: laplace_asymmetric parameters agree with SciPy" {
-  ignore(@dist.AsymmetricLaplace::new(18.764362956844778))
-  ignore(@dist.AsymmetricLaplace::new(19.793353597966515))
-  ignore(@dist.AsymmetricLaplace::new(9.571829856677773))
-  ignore(@dist.AsymmetricLaplace::new(8.749362268110694))
-  ignore(@dist.AsymmetricLaplace::new(13.096110569345306))
-  ignore(@dist.AsymmetricLaplace::new(18.5870284216168))
+  ignore(@dist.AsymmetricLaplace::new(11.753504248591181))
+  ignore(@dist.AsymmetricLaplace::new(2.6850774257747956))
+  ignore(@dist.AsymmetricLaplace::new(7.702346829508926))
+  ignore(@dist.AsymmetricLaplace::new(5.849343254639631))
+  ignore(@dist.AsymmetricLaplace::new(19.01110201824471))
+  ignore(@dist.AsymmetricLaplace::new(11.129252037248389))
 }
 
 ///|
@@ -870,22 +910,22 @@ test "catalog: laplace_asymmetric matches the high-precision oracle" {
 
 ///|
 test "catalog: levy_stable parameters agree with SciPy" {
-  ignore(@dist.Stable::new(1.3210034374489652, -0.13467683254381124))
-  ignore(@dist.Stable::new(1.1484709698167057, 0.6788345919654808))
-  ignore(@dist.Stable::new(1.3100051085587807, -0.31211836383218095))
-  ignore(@dist.Stable::new(1.5215959467658662, 0.9966985037054235))
-  ignore(@dist.Stable::new(0.7680674034399673, 0.23530935980170598))
-  ignore(@dist.Stable::new(0.19168184822917955, 0.3170742192565339))
+  ignore(@dist.Stable::new(0.4041187770694141, 0.7539959419523654))
+  ignore(@dist.Stable::new(0.7467670208648569, -0.7649506401832438))
+  ignore(@dist.Stable::new(0.9166704888549291, -0.33095407348367667))
+  ignore(@dist.Stable::new(0.802728197583028, 0.6109342122987953))
+  ignore(@dist.Stable::new(0.9132242762862421, 0.046432651135551284))
+  ignore(@dist.Stable::new(0.4220552918830338, -0.6423661422535958))
 }
 
 ///|
 test "catalog: loggamma parameters agree with SciPy" {
-  ignore(@dist.LogGamma::new(11.818660840509752))
-  ignore(@dist.LogGamma::new(17.70550527259355))
-  ignore(@dist.LogGamma::new(18.24674756422319))
-  ignore(@dist.LogGamma::new(16.374691611317406))
-  ignore(@dist.LogGamma::new(9.481273009881582))
-  ignore(@dist.LogGamma::new(15.253626394018058))
+  ignore(@dist.LogGamma::new(2.6093860330374086))
+  ignore(@dist.LogGamma::new(18.277139138277406))
+  ignore(@dist.LogGamma::new(11.210796447538176))
+  ignore(@dist.LogGamma::new(1.3874224478725217))
+  ignore(@dist.LogGamma::new(1.5229472831992652))
+  ignore(@dist.LogGamma::new(6.7817745612007645))
 }
 
 ///|
@@ -906,12 +946,12 @@ test "catalog: logistic matches the high-precision oracle" {
 
 ///|
 test "catalog: loglaplace parameters agree with SciPy" {
-  ignore(@dist.LogLaplace::new(19.095337339457586))
-  ignore(@dist.LogLaplace::new(16.34604510831693))
-  ignore(@dist.LogLaplace::new(18.613621941935953))
-  ignore(@dist.LogLaplace::new(16.040897522634623))
-  ignore(@dist.LogLaplace::new(9.400975013260933))
-  ignore(@dist.LogLaplace::new(16.97309298877952))
+  ignore(@dist.LogLaplace::new(5.198293876402302))
+  ignore(@dist.LogLaplace::new(8.03836261555033))
+  ignore(@dist.LogLaplace::new(2.506479836249964))
+  ignore(@dist.LogLaplace::new(18.17745195039005))
+  ignore(@dist.LogLaplace::new(5.256389578215252))
+  ignore(@dist.LogLaplace::new(9.066486642082117))
 }
 
 ///|
@@ -932,39 +972,39 @@ test "catalog: loglaplace matches the high-precision oracle" {
 
 ///|
 test "catalog: lognorm parameters agree with SciPy" {
-  ignore(@dist.LogNormal::new(5.083765669249556))
-  ignore(@dist.LogNormal::new(18.871764964480995))
-  ignore(@dist.LogNormal::new(5.109423912487571))
-  ignore(@dist.LogNormal::new(9.4120955574933))
-  ignore(@dist.LogNormal::new(17.34403059357088))
-  ignore(@dist.LogNormal::new(13.374000865396276))
+  ignore(@dist.LogNormal::new(3.1622459736644637))
+  ignore(@dist.LogNormal::new(16.378365449514053))
+  ignore(@dist.LogNormal::new(8.691102491123823))
+  ignore(@dist.LogNormal::new(3.314104342530786))
+  ignore(@dist.LogNormal::new(19.795080260239203))
+  ignore(@dist.LogNormal::new(4.665251414507106))
 }
 
 ///|
 test "catalog: loguniform parameters agree with SciPy" {
-  ignore(@dist.LogUniform::new(9.423951177236054, 13.012325097481776))
-  ignore(@dist.LogUniform::new(14.688688723501144, 16.099262405760356))
-  ignore(@dist.LogUniform::new(11.834172250585187, 18.697261450924618))
-  ignore(@dist.LogUniform::new(2.3501872614894004, 9.387855598739453))
-  ignore(@dist.LogUniform::new(2.1501468378795408, 6.436613998465952))
-  ignore(@dist.LogUniform::new(6.547778764243359, 8.757053521103014))
+  ignore(@dist.LogUniform::new(6.055941625834, 9.830151163650761))
+  ignore(@dist.LogUniform::new(15.506732167500374, 18.06702972614399))
+  ignore(@dist.LogUniform::new(1.0381304495253652, 2.5381800703196755))
+  ignore(@dist.LogUniform::new(2.1605259218233086, 3.449143081155708))
+  ignore(@dist.LogUniform::new(6.214917076950844, 18.944422703904664))
+  ignore(@dist.LogUniform::new(1.8700292884044267, 13.65020716118288))
   assert_true(
-    (try @dist.LogUniform::new(11.753504248591181, 2.6850774257747956) catch { _ => true } noraise { _ => false }),
+    (try @dist.LogUniform::new(16.17313962971197, 14.388459730121399) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.LogUniform::new(7.702346829508926, 5.849343254639631) catch { _ => true } noraise { _ => false }),
+    (try @dist.LogUniform::new(10.046888501179598, 8.726362858812806) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.LogUniform::new(19.01110201824471, 11.129252037248389) catch { _ => true } noraise { _ => false }),
+    (try @dist.LogUniform::new(10.72884177587901, 2.5590835007512602) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.LogUniform::new(13.91258532950171, 10.790976187547315) catch { _ => true } noraise { _ => false }),
+    (try @dist.LogUniform::new(9.87668051968881, 7.946333088564361) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.LogUniform::new(6.0957030870443525, 4.0590735410768914) catch { _ => true } noraise { _ => false }),
+    (try @dist.LogUniform::new(4.065402349695151, 3.8282629812056945) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.LogUniform::new(13.317987804823026, 0.29644209496453966) catch { _ => true } noraise { _ => false }),
+    (try @dist.LogUniform::new(14.606804300714105, 8.37641762336256) catch { _ => true } noraise { _ => false }),
   )
 }
 
@@ -986,12 +1026,12 @@ test "catalog: loguniform matches the high-precision oracle" {
 
 ///|
 test "catalog: lomax parameters agree with SciPy" {
-  ignore(@dist.Lomax::new(13.912195508098602))
-  ignore(@dist.Lomax::new(7.177427456773677))
-  ignore(@dist.Lomax::new(12.988307839689767))
-  ignore(@dist.Lomax::new(4.704155043897879))
-  ignore(@dist.Lomax::new(6.930307744271751))
-  ignore(@dist.Lomax::new(5.206970188921551))
+  ignore(@dist.Lomax::new(3.822855802388798))
+  ignore(@dist.Lomax::new(7.953027234072689))
+  ignore(@dist.Lomax::new(7.038916763442151))
+  ignore(@dist.Lomax::new(17.374457103502785))
+  ignore(@dist.Lomax::new(18.794827226781145))
+  ignore(@dist.Lomax::new(18.825152610863828))
 }
 
 ///|
@@ -1012,60 +1052,90 @@ test "catalog: lomax matches the high-precision oracle" {
 
 ///|
 test "catalog: mielke parameters agree with SciPy" {
-  ignore(@dist.Mielke::new(2.6093860330374086, 18.277139138277406))
-  ignore(@dist.Mielke::new(11.210796447538176, 1.3874224478725217))
-  ignore(@dist.Mielke::new(1.5229472831992652, 6.7817745612007645))
-  ignore(@dist.Mielke::new(10.58736358067522, 6.674147370576997))
-  ignore(@dist.Mielke::new(1.398724685902799, 9.996060173929774))
-  ignore(@dist.Mielke::new(8.720794313322415, 9.16570145992578))
+  ignore(@dist.Mielke::new(16.17540939526297, 8.52673744271521))
+  ignore(@dist.Mielke::new(8.247624551507354, 0.02113272663017529))
+  ignore(@dist.Mielke::new(0.08186658671378577, 9.38388500481717))
+  ignore(@dist.Mielke::new(5.600743202325191, 8.13380645274761))
+  ignore(@dist.Mielke::new(13.258743777824142, 4.891830074548819))
+  ignore(@dist.Mielke::new(5.912357131541011, 0.001842773278253329))
 }
 
 ///|
 test "catalog: nakagami parameters agree with SciPy" {
-  ignore(@dist.Nakagami::new(3.1622459736644637))
-  ignore(@dist.Nakagami::new(16.378365449514053))
-  ignore(@dist.Nakagami::new(8.691102491123823))
-  ignore(@dist.Nakagami::new(3.314104342530786))
-  ignore(@dist.Nakagami::new(19.795080260239203))
-  ignore(@dist.Nakagami::new(4.665251414507106))
+  ignore(@dist.Nakagami::new(9.836027958943973))
+  ignore(@dist.Nakagami::new(19.202687533477437))
+  ignore(@dist.Nakagami::new(13.07044813330654))
+  ignore(@dist.Nakagami::new(18.055699634710876))
+  ignore(@dist.Nakagami::new(4.904212250024466))
+  ignore(@dist.Nakagami::new(19.25095638231482))
+}
+
+///|
+test "catalog: ncf parameters agree with SciPy" {
+  ignore(@dist.NoncentralF::new(19.98210271148299, 18.934496655371245, 3.2792852798623673))
+  ignore(@dist.NoncentralF::new(11.50965838468517, 4.25494172038311, 8.418352373861964))
+  ignore(@dist.NoncentralF::new(14.181996752284181, 5.375358407888353, 5.783112770465189))
+  ignore(@dist.NoncentralF::new(3.2132599395000017, 2.57647402557013, 6.137261659494926))
+  ignore(@dist.NoncentralF::new(11.387171809093797, 9.799257515811826, 16.80380571538626))
+  ignore(@dist.NoncentralF::new(7.7505730489133695, 3.1301863844507927, 0.3698999647223755))
+}
+
+///|
+test "catalog: nct parameters agree with SciPy" {
+  ignore(@dist.NoncentralT::new(15.354557686000218, -1.321311553476363))
+  ignore(@dist.NoncentralT::new(15.025915535675168, 0.8857502087366562))
+  ignore(@dist.NoncentralT::new(9.981293636919382, -10.09629076713663))
+  ignore(@dist.NoncentralT::new(3.054412266135891, 3.4564294229250727))
+  ignore(@dist.NoncentralT::new(8.101112559451938, 9.467329094128615))
+  ignore(@dist.NoncentralT::new(2.9822793396287506, -1.3215351810703133))
+}
+
+///|
+test "catalog: ncx2 parameters agree with SciPy" {
+  ignore(@dist.NoncentralChiSquared::new(16.127656353227774, 6.454873176244855))
+  ignore(@dist.NoncentralChiSquared::new(4.648741424109321, 5.664066675993416))
+  ignore(@dist.NoncentralChiSquared::new(0.7438852602310542, 14.418480839213892))
+  ignore(@dist.NoncentralChiSquared::new(17.114864775419065, 1.057983148346806))
+  ignore(@dist.NoncentralChiSquared::new(12.154740910735558, 13.185695625972285))
+  ignore(@dist.NoncentralChiSquared::new(7.844275435545745, 13.87018816849551))
 }
 
 ///|
 test "catalog: norminvgauss parameters agree with SciPy" {
-  ignore(@dist.NormalInverseGaussian::new(16.17313962971197, 8.776919460242798))
-  ignore(@dist.NormalInverseGaussian::new(10.046888501179598, -2.5472742823743886))
-  ignore(@dist.NormalInverseGaussian::new(6.055941625834, -0.3396976726984775))
-  ignore(@dist.NormalInverseGaussian::new(9.87668051968881, -4.1073338228712775))
-  ignore(@dist.NormalInverseGaussian::new(14.606804300714105, -3.2471647532748804))
-  ignore(@dist.NormalInverseGaussian::new(8.643490962223936, 6.60950690283244))
+  ignore(@dist.NormalInverseGaussian::new(18.487769555753644, -2.78916669992665))
+  ignore(@dist.NormalInverseGaussian::new(9.3802616332767, 9.265321612915564))
+  ignore(@dist.NormalInverseGaussian::new(17.2877305753384, -0.1456340730049135))
+  ignore(@dist.NormalInverseGaussian::new(17.952018132026033, 7.199847551208045))
+  ignore(@dist.NormalInverseGaussian::new(6.775900339000729, -4.713090157149971))
+  ignore(@dist.NormalInverseGaussian::new(12.071688148113662, 9.074300078742684))
   assert_true(
-    (try @dist.NormalInverseGaussian::new(15.506732167500374, 16.13405945228798) catch { _ => true } noraise { _ => false }),
+    (try @dist.NormalInverseGaussian::new(14.276408163933645, 18.149870991961485) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NormalInverseGaussian::new(1.0381304495253652, -14.923639859360648) catch { _ => true } noraise { _ => false }),
+    (try @dist.NormalInverseGaussian::new(9.694848506438392, 12.223905301148605) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NormalInverseGaussian::new(2.1605259218233086, -13.101713837688585) catch { _ => true } noraise { _ => false }),
+    (try @dist.NormalInverseGaussian::new(14.31923043516093, -16.00234783410137) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NormalInverseGaussian::new(6.214917076950844, 17.888845407809328) catch { _ => true } noraise { _ => false }),
+    (try @dist.NormalInverseGaussian::new(12.962153961087456, -14.17283306442262) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NormalInverseGaussian::new(10.72884177587901, -14.88183299849748) catch { _ => true } noraise { _ => false }),
+    (try @dist.NormalInverseGaussian::new(1.3214710144681652, -18.87437405725006) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NormalInverseGaussian::new(4.065402349695151, -12.34347403758861) catch { _ => true } noraise { _ => false }),
+    (try @dist.NormalInverseGaussian::new(0.16034560405353115, 14.20055600234329) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: pareto parameters agree with SciPy" {
-  ignore(@dist.Pareto::new(3.822855802388798))
-  ignore(@dist.Pareto::new(7.953027234072689))
-  ignore(@dist.Pareto::new(7.038916763442151))
-  ignore(@dist.Pareto::new(17.374457103502785))
-  ignore(@dist.Pareto::new(18.794827226781145))
-  ignore(@dist.Pareto::new(18.825152610863828))
+  ignore(@dist.Pareto::new(14.398988796635193))
+  ignore(@dist.Pareto::new(17.485722321742635))
+  ignore(@dist.Pareto::new(10.076802452834233))
+  ignore(@dist.Pareto::new(6.7820298309797895))
+  ignore(@dist.Pareto::new(8.46066551489643))
+  ignore(@dist.Pareto::new(13.378847560760281))
 }
 
 ///|
@@ -1086,22 +1156,22 @@ test "catalog: pareto matches the high-precision oracle" {
 
 ///|
 test "catalog: pearson3 parameters agree with SciPy" {
-  ignore(@dist.PearsonIII::new(12.350818790525942))
-  ignore(@dist.PearsonIII::new(-2.9465251145695817))
-  ignore(@dist.PearsonIII::new(-3.5047508969852927))
-  ignore(@dist.PearsonIII::new(-19.95773454673965))
-  ignore(@dist.PearsonIII::new(-19.836266826572427))
-  ignore(@dist.PearsonIII::new(-1.23222999036566))
+  ignore(@dist.PearsonIII::new(7.076550264047384))
+  ignore(@dist.PearsonIII::new(4.531619237721571))
+  ignore(@dist.PearsonIII::new(5.440631954048854))
+  ignore(@dist.PearsonIII::new(2.6780846006559713))
+  ignore(@dist.PearsonIII::new(-19.020545689616903))
+  ignore(@dist.PearsonIII::new(-14.160729097909908))
 }
 
 ///|
 test "catalog: powerlaw parameters agree with SciPy" {
-  ignore(@dist.PowerLaw::new(9.828659319445041))
-  ignore(@dist.PowerLaw::new(15.695407407293366))
-  ignore(@dist.PowerLaw::new(13.977183883726665))
-  ignore(@dist.PowerLaw::new(13.624611341641348))
-  ignore(@dist.PowerLaw::new(19.426011872094275))
-  ignore(@dist.PowerLaw::new(14.76194794159987))
+  ignore(@dist.PowerLaw::new(17.32617058623772))
+  ignore(@dist.PowerLaw::new(2.8854182886273616))
+  ignore(@dist.PowerLaw::new(12.285475839475883))
+  ignore(@dist.PowerLaw::new(3.0420734546987194))
+  ignore(@dist.PowerLaw::new(7.455216244794112))
+  ignore(@dist.PowerLaw::new(14.430715849211559))
 }
 
 ///|
@@ -1122,22 +1192,22 @@ test "catalog: powerlaw matches the high-precision oracle" {
 
 ///|
 test "catalog: powerlognorm parameters agree with SciPy" {
-  ignore(@dist.PowerLogNormal::new(9.836027958943973, 19.202687533477437))
-  ignore(@dist.PowerLogNormal::new(13.07044813330654, 18.055699634710876))
-  ignore(@dist.PowerLogNormal::new(4.904212250024466, 19.25095638231482))
-  ignore(@dist.PowerLogNormal::new(13.706507378364384, 19.30185986347669))
-  ignore(@dist.PowerLogNormal::new(9.966215800575577, 9.74091308551396))
-  ignore(@dist.PowerLogNormal::new(13.60297618643557, 0.8250731013151258))
+  ignore(@dist.PowerLogNormal::new(1.2736595194287603, 14.61044148326163))
+  ignore(@dist.PowerLogNormal::new(6.6531383323856215, 6.824011560556505))
+  ignore(@dist.PowerLogNormal::new(1.1432823458216768, 18.847041297997045))
+  ignore(@dist.PowerLogNormal::new(19.132315622974684, 17.398882153859997))
+  ignore(@dist.PowerLogNormal::new(0.20714111738454388, 15.307331623176312))
+  ignore(@dist.PowerLogNormal::new(2.5420446805657337, 18.84234324216412))
 }
 
 ///|
 test "catalog: powernorm parameters agree with SciPy" {
-  ignore(@dist.PowerNormal::new(1.5594375735069232))
-  ignore(@dist.PowerNormal::new(12.733929507255887))
-  ignore(@dist.PowerNormal::new(8.220474522152351))
-  ignore(@dist.PowerNormal::new(5.358848289221648))
-  ignore(@dist.PowerNormal::new(13.61735593987758))
-  ignore(@dist.PowerNormal::new(18.883024980445885))
+  ignore(@dist.PowerNormal::new(15.66372567234348))
+  ignore(@dist.PowerNormal::new(6.2529724476467035))
+  ignore(@dist.PowerNormal::new(13.11265770233353))
+  ignore(@dist.PowerNormal::new(11.537878770383942))
+  ignore(@dist.PowerNormal::new(17.987681519622832))
+  ignore(@dist.PowerNormal::new(7.614355388905329))
 }
 
 ///|
@@ -1158,52 +1228,52 @@ test "catalog: rayleigh matches the high-precision oracle" {
 
 ///|
 test "catalog: rdist parameters agree with SciPy" {
-  ignore(@dist.RDist::new(11.79296843138205))
-  ignore(@dist.RDist::new(2.2447021020815594))
-  ignore(@dist.RDist::new(5.722721731031242))
-  ignore(@dist.RDist::new(5.8645810090753))
-  ignore(@dist.RDist::new(10.47753412393339))
-  ignore(@dist.RDist::new(15.170332004693698))
+  ignore(@dist.RDist::new(15.637519315837356))
+  ignore(@dist.RDist::new(0.2557921493332116))
+  ignore(@dist.RDist::new(2.8359171255487237))
+  ignore(@dist.RDist::new(13.571886497515163))
+  ignore(@dist.RDist::new(12.621722246393723))
+  ignore(@dist.RDist::new(18.440000365525083))
 }
 
 ///|
 test "catalog: recipinvgauss parameters agree with SciPy" {
-  ignore(@dist.ReciprocalInverseGaussian::new(15.354557686000218))
-  ignore(@dist.ReciprocalInverseGaussian::new(9.339344223261818))
-  ignore(@dist.ReciprocalInverseGaussian::new(15.025915535675168))
-  ignore(@dist.ReciprocalInverseGaussian::new(10.442875104368328))
-  ignore(@dist.ReciprocalInverseGaussian::new(9.981293636919382))
-  ignore(@dist.ReciprocalInverseGaussian::new(4.951854616431685))
+  ignore(@dist.ReciprocalInverseGaussian::new(7.646817921852323))
+  ignore(@dist.ReciprocalInverseGaussian::new(4.470306681221152))
+  ignore(@dist.ReciprocalInverseGaussian::new(8.85263491680524))
+  ignore(@dist.ReciprocalInverseGaussian::new(18.99757988072392))
+  ignore(@dist.ReciprocalInverseGaussian::new(9.908986439793717))
+  ignore(@dist.ReciprocalInverseGaussian::new(6.270002039029383))
 }
 
 ///|
 test "catalog: rel_breitwigner parameters agree with SciPy" {
-  ignore(@dist.RelativisticBreitWigner::new(18.11671714044927))
-  ignore(@dist.RelativisticBreitWigner::new(18.99948262259816))
-  ignore(@dist.RelativisticBreitWigner::new(16.4430336156698))
-  ignore(@dist.RelativisticBreitWigner::new(9.896371505267865))
-  ignore(@dist.RelativisticBreitWigner::new(16.117067867100896))
-  ignore(@dist.RelativisticBreitWigner::new(13.192296898104225))
+  ignore(@dist.RelativisticBreitWigner::new(5.845200381997886))
+  ignore(@dist.RelativisticBreitWigner::new(13.771068268119906))
+  ignore(@dist.RelativisticBreitWigner::new(14.471423329175302))
+  ignore(@dist.RelativisticBreitWigner::new(16.968902378644756))
+  ignore(@dist.RelativisticBreitWigner::new(12.664547723888777))
+  ignore(@dist.RelativisticBreitWigner::new(1.25441773388546))
 }
 
 ///|
 test "catalog: rice parameters agree with SciPy" {
-  ignore(@dist.Rice::new(16.127656353227774))
-  ignore(@dist.Rice::new(6.454873176244855))
-  ignore(@dist.Rice::new(4.648741424109321))
-  ignore(@dist.Rice::new(5.664066675993416))
-  ignore(@dist.Rice::new(0.7438852602310542))
-  ignore(@dist.Rice::new(14.418480839213892))
+  ignore(@dist.Rice::new(3.4751719344500898))
+  ignore(@dist.Rice::new(12.82032745166503))
+  ignore(@dist.Rice::new(6.513312015695243))
+  ignore(@dist.Rice::new(5.194210477173538))
+  ignore(@dist.Rice::new(0.27421512481935695))
+  ignore(@dist.Rice::new(14.056637025906918))
 }
 
 ///|
 test "catalog: skewcauchy parameters agree with SciPy" {
-  ignore(@dist.SkewCauchy::new(-0.7305662192644331))
-  ignore(@dist.SkewCauchy::new(-0.5897618607880986))
-  ignore(@dist.SkewCauchy::new(-0.8941468335545554))
-  ignore(@dist.SkewCauchy::new(0.25690662097679595))
-  ignore(@dist.SkewCauchy::new(-0.9555848853794741))
-  ignore(@dist.SkewCauchy::new(0.4837635531606098))
+  ignore(@dist.SkewCauchy::new(0.29793569186053903))
+  ignore(@dist.SkewCauchy::new(-0.5804977323902933))
+  ignore(@dist.SkewCauchy::new(-0.03166051060527697))
+  ignore(@dist.SkewCauchy::new(0.3394793652035756))
+  ignore(@dist.SkewCauchy::new(0.07350229889790871))
+  ignore(@dist.SkewCauchy::new(-0.5667912879875792))
 }
 
 ///|
@@ -1224,60 +1294,70 @@ test "catalog: skewcauchy matches the high-precision oracle" {
 
 ///|
 test "catalog: skewnorm parameters agree with SciPy" {
-  ignore(@dist.SkewNormal::new(16.97553911150729))
-  ignore(@dist.SkewNormal::new(-2.78916669992665))
-  ignore(@dist.SkewNormal::new(-1.239476733446601))
-  ignore(@dist.SkewNormal::new(9.265321612915564))
-  ignore(@dist.SkewNormal::new(8.55281632786729))
-  ignore(@dist.SkewNormal::new(18.149870991961485))
+  ignore(@dist.SkewNormal::new(-18.567221427961762))
+  ignore(@dist.SkewNormal::new(-15.140714046317537))
+  ignore(@dist.SkewNormal::new(-1.7544224048133437))
+  ignore(@dist.SkewNormal::new(-12.870523135506673))
+  ignore(@dist.SkewNormal::new(-13.505931442665261))
+  ignore(@dist.SkewNormal::new(10.2252981960083))
 }
 
 ///|
 test "catalog: studentized_range parameters agree with SciPy" {
-  ignore(@dist.StudentizedRange::new(6.614507005580565, 16.80527421046627))
-  ignore(@dist.StudentizedRange::new(11.129465487321678, 0.7551562632610431))
-  ignore(@dist.StudentizedRange::new(5.142696618665025, 3.6490115040054993))
-  ignore(@dist.StudentizedRange::new(9.323724429010435, 13.307961952881787))
-  ignore(@dist.StudentizedRange::new(1.3299381090424602, 8.062118628489419))
-  ignore(@dist.StudentizedRange::new(17.928665650627558, 1.8178368409130208))
+  ignore(@dist.StudentizedRange::new(18.17677115704354, 12.263940219660599))
+  ignore(@dist.StudentizedRange::new(3.173499706483905, 5.930463768002017))
+  ignore(@dist.StudentizedRange::new(12.6208713541505, 6.365619574277321))
+  ignore(@dist.StudentizedRange::new(13.87990486936966, 4.998467740719692))
+  ignore(@dist.StudentizedRange::new(12.815183308408411, 19.52865701607474))
+  ignore(@dist.StudentizedRange::new(12.236469837852535, 16.66211971389614))
+}
+
+///|
+test "catalog: t parameters agree with SciPy" {
+  ignore(@dist.StudentT::new(0.5702190508890181))
+  ignore(@dist.StudentT::new(13.874573317654368))
+  ignore(@dist.StudentT::new(6.635131227470337))
+  ignore(@dist.StudentT::new(1.5295233377447959))
+  ignore(@dist.StudentT::new(16.439036401744026))
+  ignore(@dist.StudentT::new(1.865688625142472))
 }
 
 ///|
 test "catalog: trapezoid parameters agree with SciPy" {
-  ignore(@dist.Trapezoid::new(0.024486357759577415, 0.1459817725522523))
-  ignore(@dist.Trapezoid::new(0.1104418567640405, 0.43642879651989575))
-  ignore(@dist.Trapezoid::new(0.18556333782159706, 0.5587751237791485))
-  ignore(@dist.Trapezoid::new(0.3449493772035723, 0.8436477673294241))
-  ignore(@dist.Trapezoid::new(0.33097089785308953, 0.4696126313676561))
-  ignore(@dist.Trapezoid::new(0.7533111324900448, 0.9148207539923502))
+  ignore(@dist.Trapezoid::new(0.9712977906499533, 0.9994270577363555))
+  ignore(@dist.Trapezoid::new(0.7953832158162562, 0.9581507757858393))
+  ignore(@dist.Trapezoid::new(0.057276501339622476, 0.23747903140224824))
+  ignore(@dist.Trapezoid::new(0.44801801939416697, 0.9185612971090408))
+  ignore(@dist.Trapezoid::new(0.8215140928685957, 0.8953100492371459))
+  ignore(@dist.Trapezoid::new(0.5390673431309927, 0.8626542710006584))
   assert_true(
-    (try @dist.Trapezoid::new(0.6769137566011846, 0.6132904809430393) catch { _ => true } noraise { _ => false }),
+    (try @dist.Trapezoid::new(0.9774267776545078, 0.7719156606251709) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.Trapezoid::new(0.6360157988512214, 0.5669521150163993) catch { _ => true } noraise { _ => false }),
+    (try @dist.Trapezoid::new(0.4089159503420111, 0.010849558234833245) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.Trapezoid::new(0.6381236000355697, 0.17750538275710304) catch { _ => true } noraise { _ => false }),
+    (try @dist.Trapezoid::new(0.8365581815503078, 0.6015100785500435) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.Trapezoid::new(0.9287832419237905, 0.809578746259372) catch { _ => true } noraise { _ => false }),
+    (try @dist.Trapezoid::new(0.9976254823803737, 0.36103285127950047) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.Trapezoid::new(0.8085162820906728, 0.76965863299358) catch { _ => true } noraise { _ => false }),
+    (try @dist.Trapezoid::new(0.7869715875882707, 0.5932382163469606) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.Trapezoid::new(0.3421316257335202, 0.12953182776155936) catch { _ => true } noraise { _ => false }),
+    (try @dist.Trapezoid::new(0.20779780767792055, 0.05444614211625931) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: triang parameters agree with SciPy" {
-  ignore(@dist.Triangular::new(0.06368297597143802))
-  ignore(@dist.Triangular::new(0.7305220741630815))
-  ignore(@dist.Triangular::new(0.3326569166192811))
-  ignore(@dist.Triangular::new(0.3412005780278252))
-  ignore(@dist.Triangular::new(0.05716411729108384))
-  ignore(@dist.Triangular::new(0.9423520648998522))
+  ignore(@dist.Triangular::new(0.5636981395353089))
+  ignore(@dist.Triangular::new(0.5144722647513243))
+  ignore(@dist.Triangular::new(0.049737249443061016))
+  ignore(@dist.Triangular::new(0.6517817107412952))
+  ignore(@dist.Triangular::new(0.17810528677091741))
+  ignore(@dist.Triangular::new(0.49817239446511563))
 }
 
 ///|
@@ -1298,12 +1378,12 @@ test "catalog: triang matches the high-precision oracle" {
 
 ///|
 test "catalog: truncexpon parameters agree with SciPy" {
-  ignore(@dist.TruncatedExponential::new(11.238556702866447))
-  ignore(@dist.TruncatedExponential::new(13.083000550917385))
-  ignore(@dist.TruncatedExponential::new(18.56005230232412))
-  ignore(@dist.TruncatedExponential::new(12.149541681169577))
-  ignore(@dist.TruncatedExponential::new(16.381396777187454))
-  ignore(@dist.TruncatedExponential::new(18.57266632338449))
+  ignore(@dist.TruncatedExponential::new(13.499052203516776))
+  ignore(@dist.TruncatedExponential::new(11.887252759106968))
+  ignore(@dist.TruncatedExponential::new(16.226996121226595))
+  ignore(@dist.TruncatedExponential::new(2.3898015661994543))
+  ignore(@dist.TruncatedExponential::new(1.0772869705372856))
+  ignore(@dist.TruncatedExponential::new(18.665506342412165))
 }
 
 ///|
@@ -1324,40 +1404,40 @@ test "catalog: truncexpon matches the high-precision oracle" {
 
 ///|
 test "catalog: truncnorm parameters agree with SciPy" {
-  ignore(@dist.TruncatedNormal::new(-1.4596842452407017, 13.230166574641842))
-  ignore(@dist.TruncatedNormal::new(-6.3751382229193965, 15.845811080251927))
-  ignore(@dist.TruncatedNormal::new(2.702404462766708, 12.044120972782068))
-  ignore(@dist.TruncatedNormal::new(-5.604231033502177, -0.4556921918154977))
-  ignore(@dist.TruncatedNormal::new(11.016330942283115, 16.41296527824602))
-  ignore(@dist.TruncatedNormal::new(15.62564674218784, 18.383332195464888))
+  ignore(@dist.TruncatedNormal::new(-11.774297908192635, 8.488239819526846))
+  ignore(@dist.TruncatedNormal::new(5.267576455250907, 12.785668521236843))
+  ignore(@dist.TruncatedNormal::new(-17.429609385206128, -10.769434563878995))
+  ignore(@dist.TruncatedNormal::new(0.16409389068659763, 17.81925667701354))
+  ignore(@dist.TruncatedNormal::new(0.3574388115756548, 9.51665081716449))
+  ignore(@dist.TruncatedNormal::new(-9.113791493578752, 17.702444764122504))
   assert_true(
-    (try @dist.TruncatedNormal::new(11.32745134468696, -7.494055104706593) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedNormal::new(18.818130938565126, 4.908627246142338) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedNormal::new(6.225315404667061, 3.075757540767885) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedNormal::new(1.1001448400066707, -14.44661349753078) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedNormal::new(15.975363039245664, -4.771289222189342) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedNormal::new(17.029340520156467, 1.3430341389672265) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedNormal::new(-8.032766505676733, -12.168142724714608) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedNormal::new(6.217686734601319, -19.233739650473417) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedNormal::new(15.315329379087338, 6.454864273466949) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedNormal::new(14.027079672010203, 8.375134165639452) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedNormal::new(2.3231813161909223, -2.4103720712864813) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedNormal::new(-0.821604536803445, -13.756053008414737) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: truncpareto parameters agree with SciPy" {
-  ignore(@dist.TruncatedPareto::new(-4.706364156295354, 5.246791347160094))
-  ignore(@dist.TruncatedPareto::new(-2.2947301663895203, 19.04770088668772))
-  ignore(@dist.TruncatedPareto::new(-0.18202712041256675, 6.956501937077914))
-  ignore(@dist.TruncatedPareto::new(5.953497448081684, 12.654840865643822))
-  ignore(@dist.TruncatedPareto::new(2.1370680423657262, 14.53504597530973))
-  ignore(@dist.TruncatedPareto::new(-19.208027731818355, 8.458298729729055))
+  ignore(@dist.TruncatedPareto::new(-17.77471125975163, 16.49059154637209))
+  ignore(@dist.TruncatedPareto::new(10.381643881122947, 10.95109983728849))
+  ignore(@dist.TruncatedPareto::new(13.35892686303329, 6.451719691964404))
+  ignore(@dist.TruncatedPareto::new(12.839067869273116, 18.646268316068625))
+  ignore(@dist.TruncatedPareto::new(19.579244628219953, 11.716296302217952))
+  ignore(@dist.TruncatedPareto::new(10.548975566101785, 17.79637292632688))
 }
 
 ///|
@@ -1378,40 +1458,40 @@ test "catalog: truncpareto matches the high-precision oracle" {
 
 ///|
 test "catalog: truncweibull_min parameters agree with SciPy" {
-  ignore(@dist.TruncatedWeibull::new(5.194210477173538, 0.27421512481935695, 14.056637025906918))
-  ignore(@dist.TruncatedWeibull::new(11.070396996654882, 5.377788163218897, 8.508500537385885))
-  ignore(@dist.TruncatedWeibull::new(8.246133854128086, 3.452563431782696, 19.440134847497397))
-  ignore(@dist.TruncatedWeibull::new(8.292290481207926, 7.658969558009536, 19.96301033755616))
-  ignore(@dist.TruncatedWeibull::new(16.278163667825066, 0.05690716927862827, 8.439150733239378))
-  ignore(@dist.TruncatedWeibull::new(13.094400087089518, 14.442104059000513, 16.725605626492978))
+  ignore(@dist.TruncatedWeibull::new(19.504647490276074, 10.407724866832124, 11.783854110923986))
+  ignore(@dist.TruncatedWeibull::new(19.84144955766306, 0.10641920185931575, 7.845718601559051))
+  ignore(@dist.TruncatedWeibull::new(2.2727077449002286, 16.794312672068926, 19.8466912046613))
+  ignore(@dist.TruncatedWeibull::new(13.352047545102277, 0.7052822937350189, 13.422256554854137))
+  ignore(@dist.TruncatedWeibull::new(0.5325637789587101, 6.414370026370541, 14.76478997821622))
+  ignore(@dist.TruncatedWeibull::new(3.1793962873280024, 3.9843978718273365, 16.983029132743113))
   assert_true(
-    (try @dist.TruncatedWeibull::new(3.4751719344500898, 12.82032745166503, 6.513312015695243) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedWeibull::new(14.282119954509744, 16.002109185974504, 13.218149986190133) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedWeibull::new(11.031816105414528, 18.124764327664455, 17.965201092050243) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedWeibull::new(16.519993607803432, 11.658613356706509, 3.269038502233148) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedWeibull::new(17.95802396428499, 11.55966884242293, 10.642893265554381) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedWeibull::new(6.5502219477947214, 17.325313858184895, 15.364466242677468) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedWeibull::new(15.521260290943966, 12.476351469721145, 2.704200320689887) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedWeibull::new(0.37129164399235304, 5.6192950978124, 4.010467225686318) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedWeibull::new(1.798662837700491, 14.431031355682887, 5.460107364300837) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedWeibull::new(17.61755713279952, 2.3772476068764714, 1.6880450024801141) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.TruncatedWeibull::new(14.803111836883474, 4.2534593097874795, 3.560713072116668) catch { _ => true } noraise { _ => false }),
+    (try @dist.TruncatedWeibull::new(15.599653501304331, 17.857325879071023, 4.422849775736122) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: tukeylambda parameters agree with SciPy" {
-  ignore(@dist.TukeyLambda::new(16.161623488512717))
-  ignore(@dist.TukeyLambda::new(4.527880439321198))
-  ignore(@dist.TukeyLambda::new(-15.42421114424441))
-  ignore(@dist.TukeyLambda::new(-8.139072463995966))
-  ignore(@dist.TukeyLambda::new(4.464992324527369))
-  ignore(@dist.TukeyLambda::new(-7.268760851445357))
+  ignore(@dist.TukeyLambda::new(-1.2228276094888955))
+  ignore(@dist.TukeyLambda::new(-14.708717537354183))
+  ignore(@dist.TukeyLambda::new(-11.66641518670108))
+  ignore(@dist.TukeyLambda::new(12.874581128467312))
+  ignore(@dist.TukeyLambda::new(2.7369350660093197))
+  ignore(@dist.TukeyLambda::new(12.589599836655346))
 }
 
 ///|
@@ -1432,32 +1512,32 @@ test "catalog: uniform matches the high-precision oracle" {
 
 ///|
 test "catalog: vonmises parameters agree with SciPy" {
-  ignore(@dist.VonMises::new(13.690591518987675))
-  ignore(@dist.VonMises::new(13.679902772060215))
-  ignore(@dist.VonMises::new(6.039111569296082))
-  ignore(@dist.VonMises::new(11.533411004898058))
-  ignore(@dist.VonMises::new(17.111343119838413))
-  ignore(@dist.VonMises::new(11.415222738705186))
+  ignore(@dist.VonMises::new(6.638598207481483))
+  ignore(@dist.VonMises::new(1.809051527144372))
+  ignore(@dist.VonMises::new(2.332600204021471))
+  ignore(@dist.VonMises::new(4.4461547940227275))
+  ignore(@dist.VonMises::new(2.14857227318749))
+  ignore(@dist.VonMises::new(7.02996881511681))
 }
 
 ///|
 test "catalog: vonmises_line parameters agree with SciPy" {
-  ignore(@dist.VonMisesLine::new(0.5702190508890181))
-  ignore(@dist.VonMisesLine::new(13.874573317654368))
-  ignore(@dist.VonMisesLine::new(6.635131227470337))
-  ignore(@dist.VonMisesLine::new(1.5295233377447959))
-  ignore(@dist.VonMisesLine::new(16.439036401744026))
-  ignore(@dist.VonMisesLine::new(1.865688625142472))
+  ignore(@dist.VonMisesLine::new(18.381364586711037))
+  ignore(@dist.VonMisesLine::new(10.137002485799577))
+  ignore(@dist.VonMisesLine::new(15.66265576759158))
+  ignore(@dist.VonMisesLine::new(17.1544449875151))
+  ignore(@dist.VonMisesLine::new(4.021691649608674))
+  ignore(@dist.VonMisesLine::new(11.641143074744036))
 }
 
 ///|
 test "catalog: weibull_max parameters agree with SciPy" {
-  ignore(@dist.WeibullMax::new(19.425955812999064))
-  ignore(@dist.WeibullMax::new(19.98854115472711))
-  ignore(@dist.WeibullMax::new(15.907664316325123))
-  ignore(@dist.WeibullMax::new(19.163015515716786))
-  ignore(@dist.WeibullMax::new(1.1455300267924495))
-  ignore(@dist.WeibullMax::new(4.749580628044965))
+  ignore(@dist.WeibullMax::new(16.484319963957013))
+  ignore(@dist.WeibullMax::new(4.618443983747507))
+  ignore(@dist.WeibullMax::new(0.21207034492408017))
+  ignore(@dist.WeibullMax::new(9.036402053552411))
+  ignore(@dist.WeibullMax::new(10.456255799060997))
+  ignore(@dist.WeibullMax::new(7.029495433425621))
 }
 
 ///|
@@ -1478,12 +1558,12 @@ test "catalog: weibull_max matches the high-precision oracle" {
 
 ///|
 test "catalog: weibull_min parameters agree with SciPy" {
-  ignore(@dist.Weibull::new(7.077270028989886))
-  ignore(@dist.Weibull::new(1.2361553156905725))
-  ignore(@dist.Weibull::new(4.321959871250776))
-  ignore(@dist.Weibull::new(15.048688240898208))
-  ignore(@dist.Weibull::new(5.837532671224748))
-  ignore(@dist.Weibull::new(4.925006622368027))
+  ignore(@dist.Weibull::new(17.35632447455606))
+  ignore(@dist.Weibull::new(0.03845388498309177))
+  ignore(@dist.Weibull::new(7.5635957090234545))
+  ignore(@dist.Weibull::new(5.448176721365816))
+  ignore(@dist.Weibull::new(11.583586703656943))
+  ignore(@dist.Weibull::new(5.953818616658133))
 }
 
 ///|
@@ -1504,22 +1584,22 @@ test "catalog: weibull_min matches the high-precision oracle" {
 
 ///|
 test "catalog: wrapcauchy parameters agree with SciPy" {
-  ignore(@dist.WrappedCauchy::new(0.5636981395353088))
-  ignore(@dist.WrappedCauchy::new(0.5144722647513242))
-  ignore(@dist.WrappedCauchy::new(0.04973724944306101))
-  ignore(@dist.WrappedCauchy::new(0.6517817107412951))
-  ignore(@dist.WrappedCauchy::new(0.1781052867709174))
-  ignore(@dist.WrappedCauchy::new(0.4981723944651156))
+  ignore(@dist.WrappedCauchy::new(0.4445992687206793))
+  ignore(@dist.WrappedCauchy::new(0.013689487576114543))
+  ignore(@dist.WrappedCauchy::new(0.7930544499381552))
+  ignore(@dist.WrappedCauchy::new(0.654878522335856))
+  ignore(@dist.WrappedCauchy::new(0.08961185427815697))
+  ignore(@dist.WrappedCauchy::new(0.5594475623861005))
 }
 
 ///|
 test "catalog: bernoulli parameters agree with SciPy" {
-  ignore(@dist.Bernoulli::new(0.6749526101758387))
-  ignore(@dist.Bernoulli::new(0.5943626379553484))
-  ignore(@dist.Bernoulli::new(0.8113498060613297))
-  ignore(@dist.Bernoulli::new(0.11949007830997271))
-  ignore(@dist.Bernoulli::new(0.05386434852686428))
-  ignore(@dist.Bernoulli::new(0.9332753171206082))
+  ignore(@dist.Bernoulli::new(0.7387859698935306))
+  ignore(@dist.Bernoulli::new(0.633839585593676))
+  ignore(@dist.Bernoulli::new(0.8377584732609982))
+  ignore(@dist.Bernoulli::new(0.8227572435363261))
+  ignore(@dist.Bernoulli::new(0.17115092708601365))
+  ignore(@dist.Bernoulli::new(0.136784957218529))
 }
 
 ///|
@@ -1538,32 +1618,42 @@ test "catalog: bernoulli matches the high-precision oracle" {
 
 ///|
 test "catalog: betabinom parameters agree with SciPy" {
-  ignore(@dist.BetaBinomial::new(19, 12.454313623071169, 4.112851045903683))
-  ignore(@dist.BetaBinomial::new(14, 12.633788227625454, 16.39283426061842))
-  ignore(@dist.BetaBinomial::new(1, 4.615282718060502, 10.550072420003335))
-  ignore(@dist.BetaBinomial::new(3, 18.514670260078233, 10.671517069483613))
-  ignore(@dist.BetaBinomial::new(10, 18.90962833850677, 13.10884336730066))
-  ignore(@dist.BetaBinomial::new(0, 17.0135398360051, 14.187567082819726))
+  ignore(@dist.BetaBinomial::new(6, 16.77237071941676, 0.27188011994954797))
+  ignore(@dist.BetaBinomial::new(5, 10.377017824904001, 13.510466004116736))
+  ignore(@dist.BetaBinomial::new(5, 14.295510243880479, 10.867346484242493))
+  ignore(@dist.BetaBinomial::new(15, 11.860834331081282, 12.604951301567443))
+  ignore(@dist.BetaBinomial::new(3, 9.430202025819108, 3.612695810459454))
+  ignore(@dist.BetaBinomial::new(3, 14.177258602986878, 1.7925745023752526))
 }
 
 ///|
 test "catalog: betanbinom parameters agree with SciPy" {
-  ignore(@dist.BetaNegativeBinomial::new(1, 7.081793762639689, 14.530445649285808))
-  ignore(@dist.BetaNegativeBinomial::new(5, 14.3581040018113, 3.7007355760783445))
-  ignore(@dist.BetaNegativeBinomial::new(19, 1.0797029474018771, 1.5095922860799482))
-  ignore(@dist.BetaNegativeBinomial::new(11, 17.295747254012216, 16.442384842038987))
-  ignore(@dist.BetaNegativeBinomial::new(17, 17.668179450396046, 12.896818021254479))
-  ignore(@dist.BetaNegativeBinomial::new(2, 2.817590197854425, 3.555517850915113))
+  ignore(@dist.BetaNegativeBinomial::new(8, 9.440119515614871, 0.8195762009720475))
+  ignore(@dist.BetaNegativeBinomial::new(0, 9.68984269461371, 14.115944777486717))
+  ignore(@dist.BetaNegativeBinomial::new(16, 13.997973246150915, 10.870498148139378))
+  ignore(@dist.BetaNegativeBinomial::new(19, 2.0015723091246174, 2.386092234253745))
+  ignore(@dist.BetaNegativeBinomial::new(16, 10.340186809077284, 19.39023809018182))
+  ignore(@dist.BetaNegativeBinomial::new(7, 18.5366552221812, 11.499932149363003))
+}
+
+///|
+test "catalog: binom parameters agree with SciPy" {
+  ignore(@dist.Binomial::new(2, 0.649704065535405))
+  ignore(@dist.Binomial::new(17, 0.4214180635952184))
+  ignore(@dist.Binomial::new(12, 0.4813883591574717))
+  ignore(@dist.Binomial::new(17, 0.4537342114350945))
+  ignore(@dist.Binomial::new(9, 0.19435245253625844))
+  ignore(@dist.Binomial::new(19, 0.4933819367590543))
 }
 
 ///|
 test "catalog: boltzmann parameters agree with SciPy" {
-  ignore(@dist.Boltzmann::new(15.508435468056534, 17))
-  ignore(@dist.Boltzmann::new(17.116139257197684, 20))
-  ignore(@dist.Boltzmann::new(7.143275669465126, 20))
-  ignore(@dist.Boltzmann::new(8.388410158999802, 19))
-  ignore(@dist.Boltzmann::new(14.73193095485894, 5))
-  ignore(@dist.Boltzmann::new(6.6881285186295925, 13))
+  ignore(@dist.Boltzmann::new(16.19919047591189, 3))
+  ignore(@dist.Boltzmann::new(1.9749513405616304, 18))
+  ignore(@dist.Boltzmann::new(0.7955417858738456, 9))
+  ignore(@dist.Boltzmann::new(17.43576683454647, 1))
+  ignore(@dist.Boltzmann::new(19.63106983206285, 7))
+  ignore(@dist.Boltzmann::new(8.223344581788002, 5))
 }
 
 ///|
@@ -1582,12 +1672,12 @@ test "catalog: boltzmann matches the high-precision oracle" {
 
 ///|
 test "catalog: dlaplace parameters agree with SciPy" {
-  ignore(@dist.DiscreteLaplace::new(6.638598207481483))
-  ignore(@dist.DiscreteLaplace::new(1.809051527144372))
-  ignore(@dist.DiscreteLaplace::new(2.332600204021471))
-  ignore(@dist.DiscreteLaplace::new(4.4461547940227275))
-  ignore(@dist.DiscreteLaplace::new(2.14857227318749))
-  ignore(@dist.DiscreteLaplace::new(7.02996881511681))
+  ignore(@dist.DiscreteLaplace::new(8.348235277157634))
+  ignore(@dist.DiscreteLaplace::new(1.713256838802042))
+  ignore(@dist.DiscreteLaplace::new(5.00555366796476))
+  ignore(@dist.DiscreteLaplace::new(7.327424360976151))
+  ignore(@dist.DiscreteLaplace::new(1.539366378035032))
+  ignore(@dist.DiscreteLaplace::new(10.647385848444967))
 }
 
 ///|
@@ -1606,12 +1696,12 @@ test "catalog: dlaplace matches the high-precision oracle" {
 
 ///|
 test "catalog: geom parameters agree with SciPy" {
-  ignore(@dist.Geometric::new(0.9190682293355519))
-  ignore(@dist.Geometric::new(0.5068501242899789))
-  ignore(@dist.Geometric::new(0.783132788379579))
-  ignore(@dist.Geometric::new(0.857722249375755))
-  ignore(@dist.Geometric::new(0.2010845824804337))
-  ignore(@dist.Geometric::new(0.5820571537372018))
+  ignore(@dist.Geometric::new(0.19785530708650978))
+  ignore(@dist.Geometric::new(0.8601843984856624))
+  ignore(@dist.Geometric::new(0.5219262547444836))
+  ignore(@dist.Geometric::new(0.6840186066529371))
+  ignore(@dist.Geometric::new(0.21682404532423005))
+  ignore(@dist.Geometric::new(0.5223551032974153))
 }
 
 ///|
@@ -1629,107 +1719,135 @@ test "catalog: geom matches the high-precision oracle" {
 }
 
 ///|
+test "catalog: hypergeom parameters agree with SciPy" {
+  ignore(@dist.Hypergeometric::new(10, 0, 5))
+  ignore(@dist.Hypergeometric::new(18, 6, 12))
+  ignore(@dist.Hypergeometric::new(19, 18, 9))
+  ignore(@dist.Hypergeometric::new(16, 4, 15))
+  ignore(@dist.Hypergeometric::new(4, 4, 3))
+  ignore(@dist.Hypergeometric::new(9, 8, 3))
+  assert_true(
+    (try @dist.Hypergeometric::new(18, 3, 19) catch { _ => true } noraise { _ => false }),
+  )
+  assert_true(
+    (try @dist.Hypergeometric::new(9, 17, 9) catch { _ => true } noraise { _ => false }),
+  )
+  assert_true(
+    (try @dist.Hypergeometric::new(5, 6, 0) catch { _ => true } noraise { _ => false }),
+  )
+  assert_true(
+    (try @dist.Hypergeometric::new(2, 6, 11) catch { _ => true } noraise { _ => false }),
+  )
+  assert_true(
+    (try @dist.Hypergeometric::new(7, 6, 11) catch { _ => true } noraise { _ => false }),
+  )
+  assert_true(
+    (try @dist.Hypergeometric::new(4, 16, 4) catch { _ => true } noraise { _ => false }),
+  )
+}
+
+///|
 test "catalog: nchypergeom_fisher parameters agree with SciPy" {
-  ignore(@dist.FisherNoncentralHypergeometric::new(16, 5, 0, 9.036402053552411))
-  ignore(@dist.FisherNoncentralHypergeometric::new(10, 7, 0, 10.153378836332251))
-  ignore(@dist.FisherNoncentralHypergeometric::new(17, 12, 6, 16.25730923930856))
-  ignore(@dist.FisherNoncentralHypergeometric::new(18, 13, 3, 7.645139003718217))
-  ignore(@dist.FisherNoncentralHypergeometric::new(15, 3, 3, 7.7662910771546905))
-  ignore(@dist.FisherNoncentralHypergeometric::new(8, 7, 6, 3.1343798569802184))
+  ignore(@dist.FisherNoncentralHypergeometric::new(18, 12, 2, 11.354631660754446))
+  ignore(@dist.FisherNoncentralHypergeometric::new(11, 2, 3, 6.808948383887095))
+  ignore(@dist.FisherNoncentralHypergeometric::new(8, 1, 4, 8.47570417370507))
+  ignore(@dist.FisherNoncentralHypergeometric::new(9, 2, 1, 14.327540230742423))
+  ignore(@dist.FisherNoncentralHypergeometric::new(16, 1, 6, 15.07254364130899))
+  ignore(@dist.FisherNoncentralHypergeometric::new(16, 7, 4, 14.080945613745499))
   assert_true(
-    (try @dist.FisherNoncentralHypergeometric::new(1, 12, 6, 0.5738547490560442) catch { _ => true } noraise { _ => false }),
+    (try @dist.FisherNoncentralHypergeometric::new(19, 10, 20, 0.40576936566669053) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.FisherNoncentralHypergeometric::new(9, 11, 1, 17.57228131106637) catch { _ => true } noraise { _ => false }),
+    (try @dist.FisherNoncentralHypergeometric::new(7, 12, 15, 6.3704730926693) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.FisherNoncentralHypergeometric::new(14, 7, 15, 19.633118959344202) catch { _ => true } noraise { _ => false }),
+    (try @dist.FisherNoncentralHypergeometric::new(8, 12, 20, 11.351950850805203) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.FisherNoncentralHypergeometric::new(9, 3, 15, 4.304586811510831) catch { _ => true } noraise { _ => false }),
+    (try @dist.FisherNoncentralHypergeometric::new(4, 3, 14, 19.021525633756077) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.FisherNoncentralHypergeometric::new(15, 17, 10, 14.493107400216953) catch { _ => true } noraise { _ => false }),
+    (try @dist.FisherNoncentralHypergeometric::new(11, 15, 2, 6.7166220149128115) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.FisherNoncentralHypergeometric::new(13, 6, 14, 13.017080473446988) catch { _ => true } noraise { _ => false }),
+    (try @dist.FisherNoncentralHypergeometric::new(6, 10, 13, 6.90317895772268) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: nchypergeom_wallenius parameters agree with SciPy" {
-  ignore(@dist.WalleniusNoncentralHypergeometric::new(12, 5, 11, 16.1369936711283))
-  ignore(@dist.WalleniusNoncentralHypergeometric::new(17, 7, 7, 5.975420770127469))
-  ignore(@dist.WalleniusNoncentralHypergeometric::new(19, 13, 16, 1.3687870527963586))
-  ignore(@dist.WalleniusNoncentralHypergeometric::new(19, 16, 5, 14.700014017429199))
-  ignore(@dist.WalleniusNoncentralHypergeometric::new(14, 11, 13, 1.315130424526565))
-  ignore(@dist.WalleniusNoncentralHypergeometric::new(10, 9, 6, 9.681507207885565))
+  ignore(@dist.WalleniusNoncentralHypergeometric::new(18, 6, 9, 19.058374680053024))
+  ignore(@dist.WalleniusNoncentralHypergeometric::new(19, 18, 17, 10.777201676815086))
+  ignore(@dist.WalleniusNoncentralHypergeometric::new(19, 11, 6, 10.00791055096297))
+  ignore(@dist.WalleniusNoncentralHypergeometric::new(19, 3, 19, 2.5449841024639253))
+  ignore(@dist.WalleniusNoncentralHypergeometric::new(14, 13, 4, 2.4753896386320084))
+  ignore(@dist.WalleniusNoncentralHypergeometric::new(18, 2, 15, 3.2450987425249544))
   assert_true(
-    (try @dist.WalleniusNoncentralHypergeometric::new(6, 17, 0, 4.536970151775847) catch { _ => true } noraise { _ => false }),
+    (try @dist.WalleniusNoncentralHypergeometric::new(0, 8, 3, 16.372250077130424) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.WalleniusNoncentralHypergeometric::new(10, 14, 5, 14.295510243880479) catch { _ => true } noraise { _ => false }),
+    (try @dist.WalleniusNoncentralHypergeometric::new(5, 9, 1, 11.363592915184554) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.WalleniusNoncentralHypergeometric::new(11, 15, 12, 12.604951301567443) catch { _ => true } noraise { _ => false }),
+    (try @dist.WalleniusNoncentralHypergeometric::new(7, 10, 19, 3.277818626547513) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.WalleniusNoncentralHypergeometric::new(3, 9, 4, 3.1053519437303523) catch { _ => true } noraise { _ => false }),
+    (try @dist.WalleniusNoncentralHypergeometric::new(0, 1, 18, 0.3862581646918928) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.WalleniusNoncentralHypergeometric::new(14, 2, 19, 17.692555232806512) catch { _ => true } noraise { _ => false }),
+    (try @dist.WalleniusNoncentralHypergeometric::new(8, 13, 10, 19.698130938395217) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.WalleniusNoncentralHypergeometric::new(15, 5, 20, 15.55769633812818) catch { _ => true } noraise { _ => false }),
+    (try @dist.WalleniusNoncentralHypergeometric::new(2, 16, 10, 5.548644300211098) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: logser parameters agree with SciPy" {
-  ignore(@dist.LogSeries::new(0.17903097009539337))
-  ignore(@dist.LogSeries::new(0.25671508774796126))
-  ignore(@dist.LogSeries::new(0.46635119917354584))
-  ignore(@dist.LogSeries::new(0.30339658836903194))
-  ignore(@dist.LogSeries::new(0.06469937382665947))
-  ignore(@dist.LogSeries::new(0.09179432192008996))
+  ignore(@dist.LogSeries::new(0.044290314832490685))
+  ignore(@dist.LogSeries::new(0.06772844073331807))
+  ignore(@dist.LogSeries::new(0.7926551223154564))
+  ignore(@dist.LogSeries::new(0.8735632221420425))
+  ignore(@dist.LogSeries::new(0.6649724917062415))
+  ignore(@dist.LogSeries::new(0.7188053894972857))
 }
 
 ///|
 test "catalog: nbinom parameters agree with SciPy" {
-  ignore(@dist.NegativeBinomial::new(1, 0.3709883782663803))
-  ignore(@dist.NegativeBinomial::new(3, 0.21603202854368275))
-  ignore(@dist.NegativeBinomial::new(8, 0.6041794272888861))
-  ignore(@dist.NegativeBinomial::new(14, 0.29589902955408454))
-  ignore(@dist.NegativeBinomial::new(16, 0.17965947442772368))
-  ignore(@dist.NegativeBinomial::new(12, 0.5097316614704331))
+  ignore(@dist.NegativeBinomial::new(8, 0.4160429257902454))
+  ignore(@dist.NegativeBinomial::new(8, 0.9395456035399693))
+  ignore(@dist.NegativeBinomial::new(19, 0.6267577945005385))
+  ignore(@dist.NegativeBinomial::new(16, 0.37148653427773126))
+  ignore(@dist.NegativeBinomial::new(19, 0.703443199295962))
+  ignore(@dist.NegativeBinomial::new(7, 0.5534637255125948))
   assert_true(
-    (try @dist.NegativeBinomial::new(0, 0.057345210445871264) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeBinomial::new(0, 0.25357903829973505) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeBinomial::new(0, 0.16703275554184172) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeBinomial::new(0, 0.5934130512303859) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeBinomial::new(0, 0.7802849311158019) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeBinomial::new(0, 0.03810608752381972) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeBinomial::new(0, 0.6463693930756765) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeBinomial::new(0, 0.3275353355749643) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeBinomial::new(0, 0.5883488114322153) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeBinomial::new(0, 0.8499237032715962) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeBinomial::new(0, 0.7198974401773061) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeBinomial::new(0, 0.07676311753943976) catch { _ => true } noraise { _ => false }),
   )
 }
 
 ///|
 test "catalog: planck parameters agree with SciPy" {
-  ignore(@dist.Planck::new(6.992924378185734))
-  ignore(@dist.Planck::new(2.6804698663545268))
-  ignore(@dist.Planck::new(18.6508307620632))
-  ignore(@dist.Planck::new(2.4905060083012187))
-  ignore(@dist.Planck::new(17.006828667744173))
-  ignore(@dist.Planck::new(15.911939969869875))
+  ignore(@dist.Planck::new(12.887583618165914))
+  ignore(@dist.Planck::new(2.9708648980640473))
+  ignore(@dist.Planck::new(0.4789630865498751))
+  ignore(@dist.Planck::new(3.498025072905))
+  ignore(@dist.Planck::new(10.286750465450261))
+  ignore(@dist.Planck::new(3.248798158462509))
 }
 
 ///|
@@ -1747,30 +1865,40 @@ test "catalog: planck matches the high-precision oracle" {
 }
 
 ///|
+test "catalog: poisson parameters agree with SciPy" {
+  ignore(@dist.Poisson::new(19.963333585370144))
+  ignore(@dist.Poisson::new(15.395295391777273))
+  ignore(@dist.Poisson::new(0.48824622097951353))
+  ignore(@dist.Poisson::new(10.77752516169554))
+  ignore(@dist.Poisson::new(5.848807482051404))
+  ignore(@dist.Poisson::new(18.05075952037672))
+}
+
+///|
 test "catalog: randint parameters agree with SciPy" {
-  ignore(@dist.DiscreteUniform::new(-16, 17))
-  ignore(@dist.DiscreteUniform::new(-18, -1))
-  ignore(@dist.DiscreteUniform::new(-14, 12))
-  ignore(@dist.DiscreteUniform::new(15, 19))
-  ignore(@dist.DiscreteUniform::new(5, 10))
-  ignore(@dist.DiscreteUniform::new(-14, -7))
+  ignore(@dist.DiscreteUniform::new(-8, 17))
+  ignore(@dist.DiscreteUniform::new(-6, 3))
+  ignore(@dist.DiscreteUniform::new(8, 18))
+  ignore(@dist.DiscreteUniform::new(-10, -6))
+  ignore(@dist.DiscreteUniform::new(-13, 17))
+  ignore(@dist.DiscreteUniform::new(-7, 10))
   assert_true(
-    (try @dist.DiscreteUniform::new(12, -15) catch { _ => true } noraise { _ => false }),
+    (try @dist.DiscreteUniform::new(0, -19) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.DiscreteUniform::new(15, -19) catch { _ => true } noraise { _ => false }),
+    (try @dist.DiscreteUniform::new(3, -19) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.DiscreteUniform::new(19, -6) catch { _ => true } noraise { _ => false }),
+    (try @dist.DiscreteUniform::new(4, -10) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.DiscreteUniform::new(-4, -10) catch { _ => true } noraise { _ => false }),
+    (try @dist.DiscreteUniform::new(17, -2) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.DiscreteUniform::new(1, -9) catch { _ => true } noraise { _ => false }),
+    (try @dist.DiscreteUniform::new(3, -15) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.DiscreteUniform::new(14, 12) catch { _ => true } noraise { _ => false }),
+    (try @dist.DiscreteUniform::new(12, 3) catch { _ => true } noraise { _ => false }),
   )
 }
 
@@ -1790,32 +1918,32 @@ test "catalog: randint matches the high-precision oracle" {
 
 ///|
 test "catalog: skellam parameters agree with SciPy" {
-  ignore(@dist.Skellam::new(8.348235277157634, 1.713256838802042))
-  ignore(@dist.Skellam::new(5.00555366796476, 7.327424360976151))
-  ignore(@dist.Skellam::new(1.539366378035032, 10.647385848444967))
-  ignore(@dist.Skellam::new(5.187291017503554, 2.8717112011197554))
-  ignore(@dist.Skellam::new(10.13804936479534, 10.795162831406573))
-  ignore(@dist.Skellam::new(19.10977159588168, 5.265933387906547))
+  ignore(@dist.Skellam::new(18.459051863434755, 4.981183976492238))
+  ignore(@dist.Skellam::new(5.057299670528808, 10.07878109383686))
+  ignore(@dist.Skellam::new(17.712724939116097, 4.2005434096371985))
+  ignore(@dist.Skellam::new(8.540887813412112, 5.026173200609165))
+  ignore(@dist.Skellam::new(0.5908139705755144, 14.486218546862053))
+  ignore(@dist.Skellam::new(0.06402986029598212, 15.321669556372786))
 }
 
 ///|
 test "catalog: zipf parameters agree with SciPy" {
-  ignore(@dist.Zipf::new(18.485653243498554))
-  ignore(@dist.Zipf::new(3.8459396434199613))
-  ignore(@dist.Zipf::new(18.887756979871124))
-  ignore(@dist.Zipf::new(10.719504519557113))
-  ignore(@dist.Zipf::new(1.4025893633429618))
-  ignore(@dist.Zipf::new(5.769648644867501))
+  ignore(@dist.Zipf::new(6.048077338343633))
+  ignore(@dist.Zipf::new(1.632356204605566))
+  ignore(@dist.Zipf::new(16.208846729405746))
+  ignore(@dist.Zipf::new(18.20103076762049))
+  ignore(@dist.Zipf::new(10.623122703482212))
+  ignore(@dist.Zipf::new(14.583400838546886))
 }
 
 ///|
 test "catalog: zipfian parameters agree with SciPy" {
-  ignore(@dist.Zipfian::new(14.848911729373707, 13))
-  ignore(@dist.Zipfian::new(0.47402243100600927, 14))
-  ignore(@dist.Zipfian::new(7.627117373885586, 8))
-  ignore(@dist.Zipfian::new(7.777832902829229, 10))
-  ignore(@dist.Zipfian::new(12.361545908726976, 11))
-  ignore(@dist.Zipfian::new(3.018563774224796, 18))
+  ignore(@dist.Zipfian::new(14.866574175281677, 8))
+  ignore(@dist.Zipfian::new(6.2051936190189565, 16))
+  ignore(@dist.Zipfian::new(14.12983217912419, 12))
+  ignore(@dist.Zipfian::new(8.419526905491646, 16))
+  ignore(@dist.Zipfian::new(16.214926013554035, 18))
+  ignore(@dist.Zipfian::new(12.827967948008126, 12))
 }
 
 ///|
@@ -1834,38 +1962,38 @@ test "catalog: zipfian matches the high-precision oracle" {
 
 ///|
 test "catalog: yulesimon parameters agree with SciPy" {
-  ignore(@dist.YuleSimon::new(19.407124325279316))
-  ignore(@dist.YuleSimon::new(10.16448845173441))
-  ignore(@dist.YuleSimon::new(19.798091614499786))
-  ignore(@dist.YuleSimon::new(0.40576936566669053))
-  ignore(@dist.YuleSimon::new(7.059343945728349))
-  ignore(@dist.YuleSimon::new(12.495721245651739))
+  ignore(@dist.YuleSimon::new(10.274059520419378))
+  ignore(@dist.YuleSimon::new(3.160494824438471))
+  ignore(@dist.YuleSimon::new(5.9956440116793726))
+  ignore(@dist.YuleSimon::new(5.169654487705664))
+  ignore(@dist.YuleSimon::new(13.434063109344219))
+  ignore(@dist.YuleSimon::new(11.781297702715923))
 }
 
 ///|
 test "catalog: nhypergeom parameters agree with SciPy" {
-  ignore(@dist.NegativeHypergeometric::new(18, 5, 1))
-  ignore(@dist.NegativeHypergeometric::new(19, 10, 1))
-  ignore(@dist.NegativeHypergeometric::new(18, 1, 1))
-  ignore(@dist.NegativeHypergeometric::new(15, 8, 7))
-  ignore(@dist.NegativeHypergeometric::new(14, 4, 2))
-  ignore(@dist.NegativeHypergeometric::new(5, 0, 4))
+  ignore(@dist.NegativeHypergeometric::new(11, 5, 0))
+  ignore(@dist.NegativeHypergeometric::new(15, 2, 9))
+  ignore(@dist.NegativeHypergeometric::new(11, 0, 4))
+  ignore(@dist.NegativeHypergeometric::new(16, 7, 6))
+  ignore(@dist.NegativeHypergeometric::new(18, 8, 9))
+  ignore(@dist.NegativeHypergeometric::new(12, 3, 4))
   assert_true(
-    (try @dist.NegativeHypergeometric::new(6, 5, 5) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeHypergeometric::new(6, 5, 18) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeHypergeometric::new(14, 15, 4) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeHypergeometric::new(3, 2, 10) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeHypergeometric::new(18, 14, 15) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeHypergeometric::new(10, 17, 6) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeHypergeometric::new(3, 18, 1) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeHypergeometric::new(1, 2, 17) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeHypergeometric::new(19, 3, 17) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeHypergeometric::new(5, 9, 3) catch { _ => true } noraise { _ => false }),
   )
   assert_true(
-    (try @dist.NegativeHypergeometric::new(13, 13, 1) catch { _ => true } noraise { _ => false }),
+    (try @dist.NegativeHypergeometric::new(5, 6, 12) catch { _ => true } noraise { _ => false }),
   )
 }

@@ -73,7 +73,7 @@ test "binomial characteristic function" {
 
 ///|
 test "normal characteristic and moment generating functions" {
-  let d = @dist.Normal::new(mu=1.5, sigma=2.0)
+  let d = @dist.Normal::new(loc=1.5, scale=2.0)
   let (re, im) = @dist.Characteristic::cf(d, 0.4)
   // |φ(t)| = exp(-σ²t²/2), arg φ(t) = μt.
   assert_true(close(@math.hypot(re, im), @math.exp(-0.5 * 4.0 * 0.16), 1.0e-15))

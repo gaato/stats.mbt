@@ -168,39 +168,26 @@ pub(open) trait Score {
 // ---------------------------------------------------------------------------
 
 ///|
-pub fn Normal::family() -> Family[Normal] {
-  {
-    name: "normal",
-    specs: [
-      { name: "mu", constraint: Real },
-      { name: "sigma", constraint: Positive },
-    ],
-    make: p => Normal::new(mu=p[0], sigma=p[1]),
-    params: d => [d.mu, d.sigma],
-  }
-}
-
-///|
-/// η = (μ/σ², -1/(2σ²)), T(x) = (x, x²), A = μ²/(2σ²) + ln σ,
-/// h(x) = -ln(2π)/2.
+/// With μ = loc, σ = scale: η = (μ/σ², -1/(2σ²)), T(x) = (x, x²),
+/// A = μ²/(2σ²) + ln σ, h(x) = -ln(2π)/2.
 pub fn Normal::exp_family() -> ExpFamily[Normal] {
   {
     family: Normal::family(),
     natural_dim: 2,
     natural: d => {
-      let v = d.sigma * d.sigma
-      [d.mu / v, -0.5 / v]
+      let v = d.scale * d.scale
+      [d.loc / v, -0.5 / v]
     },
     sufficient: x => [x, x * x],
-    log_partition: d => d.mu * d.mu / (2.0 * d.sigma * d.sigma) +
-      @math.ln(d.sigma),
+    log_partition: d => d.loc * d.loc / (2.0 * d.scale * d.scale) +
+      @math.ln(d.scale),
     log_base: _ => -0.5 * @math.ln(2.0 * @math.PI),
     from_mean_sufficient: m => {
       let variance = m[1] - m[0] * m[0]
       if !(variance > 0.0) {
         raise OutsideSupport(value=variance)
       }
-      Normal::new(mu=m[0], sigma=variance.sqrt()) catch {
+      Normal::new(loc=m[0], scale=variance.sqrt()) catch {
         _ => raise OutsideSupport(value=variance)
       }
     },
@@ -219,65 +206,15 @@ pub fn Normal::known_variance_prior(sigma : Double) -> Conjugate[Normal, Normal]
       for x in data {
         s = s + x
       }
-      let p0 = 1.0 / (prior.sigma * prior.sigma)
+      let p0 = 1.0 / (prior.scale * prior.scale)
       let pd = n / (sigma * sigma)
       let post_var = 1.0 / (p0 + pd)
       Normal::new(
-        mu=post_var * (p0 * prior.mu + s / (sigma * sigma)),
-        sigma=post_var.sqrt(),
+        loc=post_var * (p0 * prior.loc + s / (sigma * sigma)),
+        scale=post_var.sqrt(),
       )
     },
-    likelihood: theta => Normal::new(mu=theta[0], sigma~),
-  }
-}
-
-///|
-pub fn StudentT::family() -> Family[StudentT] {
-  {
-    name: "student t",
-    specs: [{ name: "df", constraint: Positive }],
-    make: p => StudentT::new(p[0]),
-    params: d => [d.df],
-  }
-}
-
-///|
-/// Gamma parameterised by shape and rate.
-pub fn Gamma::family_rate() -> Family[Gamma] {
-  {
-    name: "gamma (shape, rate)",
-    specs: [
-      { name: "shape", constraint: Positive },
-      { name: "rate", constraint: Positive },
-    ],
-    make: p => Gamma::with_rate(p[0], p[1]),
-    params: d => [d.shape, d.rate],
-  }
-}
-
-///|
-/// The same distributions parameterised by shape and scale: a different
-/// family value, so a fit reports parameters in the convention asked for.
-pub fn Gamma::family_scale() -> Family[Gamma] {
-  {
-    name: "gamma (shape, scale)",
-    specs: [
-      { name: "shape", constraint: Positive },
-      { name: "scale", constraint: Positive },
-    ],
-    make: p => Gamma::with_scale(p[0], p[1]),
-    params: d => [d.shape, 1.0 / d.rate],
-  }
-}
-
-///|
-/// The binomial with a fixed number of trials; only p is free.
-pub fn Binomial::family(n~ : Int) -> Family[Binomial] {
-  {
-    name: "binomial (n = \{n})",
-    specs: [{ name: "p", constraint: UnitInterval }],
-    make: p => Binomial::new(n, p[0]),
-    params: d => [d.p],
+    likelihood: theta => Normal::new(loc=theta[0], scale=sigma),
   }
 }
 

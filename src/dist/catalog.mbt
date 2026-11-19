@@ -163,6 +163,50 @@ pub impl Sample for Argus with sample(self, rng) {
 pub impl Univariate for Argus
 
 ///|
+/// `scipy.stats.beta` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
+
+pub struct Beta {
+  priv a : Double
+  priv b : Double
+}
+
+///|
+pub fn Beta::new(a : Double, b : Double) -> Beta raise ParamError {
+  if !(a > 5.0e-324) {
+    raise InvalidParam(name="a", value=a, reason="must be in (5e-324, inf)")
+  }
+  if !(b > 5.0e-324) {
+    raise InvalidParam(name="b", value=b, reason="must be in (5e-324, inf)")
+  }
+  { a, b }
+}
+
+///|
+pub fn Beta::family() -> Family[Beta] {
+  {
+    name: "beta",
+    specs: [{ name: "a", constraint: Positive }, { name: "b", constraint: Positive }],
+    make: p => Beta::new(p[0], p[1]),
+    params: d => [d.a, d.b],
+  }
+}
+
+///|
+pub impl Density for Beta with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for Beta with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for Beta
+
+///|
 /// `scipy.stats.betaprime` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
 
 pub struct BetaPrime {
@@ -408,6 +452,52 @@ pub impl Sample for Chi with sample(self, rng) {
 
 ///|
 pub impl Univariate for Chi
+
+///|
+/// `scipy.stats.chi2` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
+
+pub struct ChiSquared {
+  priv df : Double
+}
+
+///|
+pub fn ChiSquared::new(df : Double) -> ChiSquared raise ParamError {
+  if !(df > 5.0e-324) {
+    raise InvalidParam(name="df", value=df, reason="must be in (5e-324, inf)")
+  }
+  { df, }
+}
+
+///|
+pub fn ChiSquared::family() -> Family[ChiSquared] {
+  {
+    name: "chi2",
+    specs: [{ name: "df", constraint: Positive }],
+    make: p => ChiSquared::new(p[0]),
+    params: d => [d.df],
+  }
+}
+
+///|
+pub impl Density for ChiSquared with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for ChiSquared with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for ChiSquared with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for ChiSquared
 
 ///|
 /// `scipy.stats.cosine` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
@@ -868,6 +958,56 @@ pub impl Sample for ExponentiatedWeibull with sample(self, rng) {
 pub impl Univariate for ExponentiatedWeibull
 
 ///|
+/// `scipy.stats.f` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
+
+pub struct FisherF {
+  priv dfn : Double
+  priv dfd : Double
+}
+
+///|
+pub fn FisherF::new(dfn : Double, dfd : Double) -> FisherF raise ParamError {
+  if !(dfn > 5.0e-324) {
+    raise InvalidParam(name="dfn", value=dfn, reason="must be in (5e-324, inf)")
+  }
+  if !(dfd > 5.0e-324) {
+    raise InvalidParam(name="dfd", value=dfd, reason="must be in (5e-324, inf)")
+  }
+  { dfn, dfd }
+}
+
+///|
+pub fn FisherF::family() -> Family[FisherF] {
+  {
+    name: "f",
+    specs: [{ name: "dfn", constraint: Positive }, { name: "dfd", constraint: Positive }],
+    make: p => FisherF::new(p[0], p[1]),
+    params: d => [d.dfn, d.dfd],
+  }
+}
+
+///|
+pub impl Density for FisherF with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for FisherF with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for FisherF with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for FisherF
+
+///|
 /// `scipy.stats.fatiguelife` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
 
 pub struct FatigueLife {
@@ -1056,6 +1196,56 @@ pub impl Sample for FoldedNormal with sample(self, rng) {
 
 ///|
 pub impl Univariate for FoldedNormal
+
+///|
+/// `scipy.stats.gamma` with scale as its own parameters.
+
+pub struct Gamma {
+  priv a : Double
+  priv scale : Double
+}
+
+///|
+pub fn Gamma::new(a : Double, scale? : Double = 1.0) -> Gamma raise ParamError {
+  if !(a > 5.0e-324) {
+    raise InvalidParam(name="a", value=a, reason="must be in (5e-324, inf)")
+  }
+  if !(scale > 0.0 && !scale.is_inf()) {
+    raise InvalidParam(name="scale", value=scale, reason="must be in (0, inf)")
+  }
+  { a, scale }
+}
+
+///|
+pub fn Gamma::family() -> Family[Gamma] {
+  {
+    name: "gamma",
+    specs: [{ name: "a", constraint: Positive }, { name: "scale", constraint: Positive }],
+    make: p => Gamma::new(p[0], scale=p[1]),
+    params: d => [d.a, d.scale],
+  }
+}
+
+///|
+pub impl Density for Gamma with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for Gamma with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for Gamma with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for Gamma
 
 ///|
 /// `scipy.stats.gausshyper` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
@@ -3211,6 +3401,198 @@ pub impl Sample for Nakagami with sample(self, rng) {
 pub impl Univariate for Nakagami
 
 ///|
+/// `scipy.stats.ncf` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
+
+pub struct NoncentralF {
+  priv dfn : Double
+  priv dfd : Double
+  priv nc : Double
+}
+
+///|
+pub fn NoncentralF::new(dfn : Double, dfd : Double, nc : Double) -> NoncentralF raise ParamError {
+  if !(dfn > 5.0e-324) {
+    raise InvalidParam(name="dfn", value=dfn, reason="must be in (5e-324, inf)")
+  }
+  if !(dfd > 5.0e-324) {
+    raise InvalidParam(name="dfd", value=dfd, reason="must be in (5e-324, inf)")
+  }
+  if !(nc >= 0.0) {
+    raise InvalidParam(name="nc", value=nc, reason="must be in [0.0, inf)")
+  }
+  { dfn, dfd, nc }
+}
+
+///|
+pub fn NoncentralF::family() -> Family[NoncentralF] {
+  {
+    name: "ncf",
+    specs: [{ name: "dfn", constraint: Positive }, { name: "dfd", constraint: Positive }, { name: "nc", constraint: Positive }],
+    make: p => NoncentralF::new(p[0], p[1], p[2]),
+    params: d => [d.dfn, d.dfd, d.nc],
+  }
+}
+
+///|
+pub impl Density for NoncentralF with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for NoncentralF with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for NoncentralF with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for NoncentralF
+
+///|
+/// `scipy.stats.nct` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
+
+pub struct NoncentralT {
+  priv df : Double
+  priv nc : Double
+}
+
+///|
+pub fn NoncentralT::new(df : Double, nc : Double) -> NoncentralT raise ParamError {
+  if !(df > 5.0e-324) {
+    raise InvalidParam(name="df", value=df, reason="must be in (5e-324, inf)")
+  }
+  if !(!nc.is_nan()) {
+    raise InvalidParam(name="nc", value=nc, reason="must be in not NaN")
+  }
+  { df, nc }
+}
+
+///|
+pub fn NoncentralT::family() -> Family[NoncentralT] {
+  {
+    name: "nct",
+    specs: [{ name: "df", constraint: Positive }, { name: "nc", constraint: Real }],
+    make: p => NoncentralT::new(p[0], p[1]),
+    params: d => [d.df, d.nc],
+  }
+}
+
+///|
+pub impl Density for NoncentralT with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for NoncentralT with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for NoncentralT with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for NoncentralT
+
+///|
+/// `scipy.stats.ncx2` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
+
+pub struct NoncentralChiSquared {
+  priv df : Double
+  priv nc : Double
+}
+
+///|
+pub fn NoncentralChiSquared::new(df : Double, nc : Double) -> NoncentralChiSquared raise ParamError {
+  if !(df > 5.0e-324) {
+    raise InvalidParam(name="df", value=df, reason="must be in (5e-324, inf)")
+  }
+  if !(nc >= 0.0) {
+    raise InvalidParam(name="nc", value=nc, reason="must be in [0.0, inf)")
+  }
+  { df, nc }
+}
+
+///|
+pub fn NoncentralChiSquared::family() -> Family[NoncentralChiSquared] {
+  {
+    name: "ncx2",
+    specs: [{ name: "df", constraint: Positive }, { name: "nc", constraint: Positive }],
+    make: p => NoncentralChiSquared::new(p[0], p[1]),
+    params: d => [d.df, d.nc],
+  }
+}
+
+///|
+pub impl Density for NoncentralChiSquared with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for NoncentralChiSquared with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for NoncentralChiSquared with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for NoncentralChiSquared
+
+///|
+/// `scipy.stats.norm` with loc and scale as its own parameters.
+
+pub struct Normal {
+  priv loc : Double
+  priv scale : Double
+}
+
+///|
+pub fn Normal::new(loc? : Double = 0.0, scale? : Double = 1.0) -> Normal raise ParamError {
+  if !(!loc.is_nan() && !loc.is_inf()) {
+    raise InvalidParam(name="loc", value=loc, reason="must be finite")
+  }
+  if !(scale > 0.0 && !scale.is_inf()) {
+    raise InvalidParam(name="scale", value=scale, reason="must be in (0, inf)")
+  }
+  { loc, scale }
+}
+
+///|
+pub fn Normal::family() -> Family[Normal] {
+  {
+    name: "norm",
+    specs: [{ name: "loc", constraint: Real }, { name: "scale", constraint: Positive }],
+    make: p => Normal::new(loc=p[0], scale=p[1]),
+    params: d => [d.loc, d.scale],
+  }
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for Normal with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for Normal
+
+///|
 /// `scipy.stats.norminvgauss` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
 /// Parameters: need |b| < a.
 
@@ -3923,6 +4305,58 @@ pub impl Sample for StudentizedRange with sample(self, rng) {
 
 ///|
 pub impl Univariate for StudentizedRange
+
+///|
+/// `scipy.stats.t` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
+
+pub struct StudentT {
+  priv df : Double
+}
+
+///|
+pub fn StudentT::new(df : Double) -> StudentT raise ParamError {
+  if !(df > 5.0e-324) {
+    raise InvalidParam(name="df", value=df, reason="must be in (5e-324, inf)")
+  }
+  { df, }
+}
+
+///|
+pub fn StudentT::family() -> Family[StudentT] {
+  {
+    name: "t",
+    specs: [{ name: "df", constraint: Positive }],
+    make: p => StudentT::new(p[0]),
+    params: d => [d.df],
+  }
+}
+
+///|
+pub impl Density for StudentT with pdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Cdf for StudentT with cdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for StudentT with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl Sample for StudentT with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for StudentT
 
 ///|
 /// `scipy.stats.trapezoid` in standard form (loc 0, scale 1); wrap in `Affine` for location and scale.
@@ -4796,6 +5230,69 @@ pub impl Sample for BetaNegativeBinomial with sample(self, rng) {
 pub impl Univariate for BetaNegativeBinomial
 
 ///|
+/// `scipy.stats.binom` in standard form (loc 0).
+
+pub struct Binomial {
+  priv n : Int
+  priv p : Double
+}
+
+///|
+pub fn Binomial::new(n : Int, p : Double) -> Binomial raise ParamError {
+  if !(n >= 0) {
+    raise InvalidParam(name="n", value=n.to_double(), reason="must be in [0.0, inf)")
+  }
+  if !(p >= 0.0 && p <= 1.0) {
+    raise InvalidParam(name="p", value=p, reason="must be in [0.0, 1.0]")
+  }
+  { n, p }
+}
+
+///|
+pub fn Binomial::family(n~ : Int) -> Family[Binomial] {
+  {
+    name: "binom",
+    specs: [{ name: "p", constraint: UnitInterval }],
+    make: p => Binomial::new(n, p[0]),
+    params: d => [d.p],
+  }
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl SampleInt for Binomial with sample_int(self, rng) {
+  IntQuantile::quantile_int(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Cdf for Binomial with cdf(self, x) {
+  IntCdf::cdf_int(self, @math.floor(x).to_int())
+}
+
+///|
+pub impl Cdf for Binomial with sf(self, x) {
+  IntCdf::sf_int(self, @math.floor(x).to_int())
+}
+
+///|
+pub impl Cdf for Binomial with sf_at_least(self, x) {
+  IntCdf::sf_int(self, @math.ceil(x).to_int() - 1)
+}
+
+///|
+pub impl Quantile for Binomial with quantile(self, p) {
+  IntQuantile::quantile_int(self, p).to_double()
+}
+
+///|
+pub impl Sample for Binomial with sample(self, rng) {
+  SampleInt::sample_int(self, rng).to_double()
+}
+
+///|
+pub impl Univariate for Binomial
+
+///|
 /// `scipy.stats.boltzmann` in standard form (loc 0).
 /// Parameters: need n > 0.
 
@@ -4979,6 +5476,89 @@ pub impl Sample for Geometric with sample(self, rng) {
 
 ///|
 pub impl Univariate for Geometric
+
+///|
+/// `scipy.stats.hypergeom` in standard form (loc 0).
+/// Parameters: need successes, draws <= population.
+
+pub struct Hypergeometric {
+  priv population : Int
+  priv successes : Int
+  priv draws : Int
+}
+
+///|
+pub fn Hypergeometric::new(population : Int, successes : Int, draws : Int) -> Hypergeometric raise ParamError {
+  if !(population >= 0) {
+    raise InvalidParam(name="population", value=population.to_double(), reason="must be in [0.0, inf)")
+  }
+  if !(successes >= 0) {
+    raise InvalidParam(name="successes", value=successes.to_double(), reason="must be in [0.0, inf)")
+  }
+  if !(draws >= 0) {
+    raise InvalidParam(name="draws", value=draws.to_double(), reason="must be in [0.0, inf)")
+  }
+  if !(successes <= population && draws <= population) {
+    raise InvalidParam(name="successes", value=successes.to_double(), reason="need successes, draws <= population")
+  }
+  { population, successes, draws }
+}
+
+///|
+pub fn Hypergeometric::family(population~ : Int, successes~ : Int, draws~ : Int) -> Family[Hypergeometric] {
+  {
+    name: "hypergeom",
+    specs: [],
+    make: _ => Hypergeometric::new(population, successes, draws),
+    params: _ => [],
+  }
+}
+
+///|
+pub impl IntCdf for Hypergeometric with cdf_int(self, k) {
+  ignore((self, k))
+  ...
+}
+
+///|
+pub impl IntQuantile for Hypergeometric with quantile_int(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl SampleInt for Hypergeometric with sample_int(self, rng) {
+  IntQuantile::quantile_int(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Cdf for Hypergeometric with cdf(self, x) {
+  IntCdf::cdf_int(self, @math.floor(x).to_int())
+}
+
+///|
+pub impl Cdf for Hypergeometric with sf(self, x) {
+  IntCdf::sf_int(self, @math.floor(x).to_int())
+}
+
+///|
+pub impl Cdf for Hypergeometric with sf_at_least(self, x) {
+  IntCdf::sf_int(self, @math.ceil(x).to_int() - 1)
+}
+
+///|
+pub impl Quantile for Hypergeometric with quantile(self, p) {
+  IntQuantile::quantile_int(self, p).to_double()
+}
+
+///|
+pub impl Sample for Hypergeometric with sample(self, rng) {
+  SampleInt::sample_int(self, rng).to_double()
+}
+
+///|
+pub impl Univariate for Hypergeometric
 
 ///|
 /// `scipy.stats.nchypergeom_fisher` in standard form (loc 0).
@@ -5386,6 +5966,77 @@ pub impl Sample for Planck with sample(self, rng) {
 
 ///|
 pub impl Univariate for Planck
+
+///|
+/// `scipy.stats.poisson` in standard form (loc 0).
+
+pub struct Poisson {
+  priv mu : Double
+}
+
+///|
+pub fn Poisson::new(mu : Double) -> Poisson raise ParamError {
+  if !(mu >= 0.0) {
+    raise InvalidParam(name="mu", value=mu, reason="must be in [0.0, inf)")
+  }
+  { mu, }
+}
+
+///|
+pub fn Poisson::family() -> Family[Poisson] {
+  {
+    name: "poisson",
+    specs: [{ name: "mu", constraint: Positive }],
+    make: p => Poisson::new(p[0]),
+    params: d => [d.mu],
+  }
+}
+
+///|
+pub impl Mass for Poisson with pmf(self, k) {
+  ignore((self, k))
+  ...
+}
+
+///|
+pub impl IntQuantile for Poisson with quantile_int(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Inversion of the quantile function.
+pub impl SampleInt for Poisson with sample_int(self, rng) {
+  IntQuantile::quantile_int(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Cdf for Poisson with cdf(self, x) {
+  IntCdf::cdf_int(self, @math.floor(x).to_int())
+}
+
+///|
+pub impl Cdf for Poisson with sf(self, x) {
+  IntCdf::sf_int(self, @math.floor(x).to_int())
+}
+
+///|
+pub impl Cdf for Poisson with sf_at_least(self, x) {
+  IntCdf::sf_int(self, @math.ceil(x).to_int() - 1)
+}
+
+///|
+pub impl Quantile for Poisson with quantile(self, p) {
+  IntQuantile::quantile_int(self, p).to_double()
+}
+
+///|
+pub impl Sample for Poisson with sample(self, rng) {
+  SampleInt::sample_int(self, rng).to_double()
+}
+
+///|
+pub impl Univariate for Poisson
 
 ///|
 /// `scipy.stats.randint` in standard form (loc 0).

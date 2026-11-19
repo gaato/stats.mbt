@@ -26,7 +26,7 @@ test "a family rebuilds its members from parameters" {
   assert_eq((fam.params)(d), [1.5, 2.0])
   // gamma by rate and by scale are different parameterisations of the
   // same distributions
-  let g = (@dist.Gamma::family_scale().make)([3.0, 0.5])
+  let g = (@dist.Gamma::family().make)([3.0, 0.5])
   assert_eq((@dist.Gamma::family_rate().params)(g), [3.0, 2.0])
   // fixed hyperparameters live in the family value
   let b = @dist.Binomial::family(n=10)
@@ -36,7 +36,7 @@ test "a family rebuilds its members from parameters" {
 
 ///|
 test "normal density in closed form" {
-  let d = @dist.Normal::new(mu=1.0, sigma=2.0)
+  let d = @dist.Normal::new(loc=1.0, scale=2.0)
   assert_true(near(@dist.Density::pdf(d, 1.0), 0.19947114020071635, 1.0e-15))
   // the log density stays finite where the density underflows
   assert_true(@dist.Density::pdf(d, 1.0e3) == 0.0)
@@ -45,7 +45,7 @@ test "normal density in closed form" {
 
 ///|
 test "normal-normal conjugate update" {
-  let prior = @dist.Normal::new(mu=0.0, sigma=1.0)
+  let prior = @dist.Normal::new(loc=0.0, scale=1.0)
   let c = @dist.Normal::known_variance_prior(1.0)
   let post = (c.update)(prior, [2.0, 2.0])
   // precision 1 + 2 = 3, mean (0 + 4) / 3
