@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/describe"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct MeanVar {
+  // private fields
+}
+pub fn MeanVar::count(Self) -> Int64
+pub fn MeanVar::mean(Self) -> Double?
+pub fn MeanVar::merge(Self, Self) -> Self
+pub fn MeanVar::push(Self, Double) -> Self
+pub fn MeanVar::variance(Self, ddof~ : Int32) -> Double?
+pub impl Accumulator for MeanVar
+
+// Type aliases
+
+// Traits
+pub(open) trait Accumulator {
+  fn empty() -> Self
+  fn push(Self, Double) -> Self
+  fn merge(Self, Self) -> Self
+}

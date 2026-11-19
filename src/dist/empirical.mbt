@@ -1,0 +1,138 @@
+///|
+/// The two test cases for the capability traits besides the parametric
+/// families: a distribution built from data, and one built from a table of
+/// probabilities (for example an exact rank-test null distribution obtained
+/// by polynomial multiplication or FFT convolution).
+
+///|
+/// The nine sample quantile definitions of Hyndman and Fan (1996). R's
+/// default is `Type7`. The choice is made when the distribution is built,
+/// so `Quantile::quantile` keeps one signature for every distribution.
+#derive(Eq, Debug)
+pub(all) enum QuantileMethod {
+  Type1
+  Type2
+  Type3
+  Type4
+  Type5
+  Type6
+  Type7
+  Type8
+  Type9
+}
+
+///|
+pub struct Empirical {
+  priv sorted : FixedArray[Double]
+  priv quantile_method : QuantileMethod
+}
+
+///|
+/// Rejects empty data and NaN instead of dropping them silently.
+pub fn Empirical::new(
+  data : ArrayView[Double],
+  quantile_method~ : QuantileMethod,
+) -> Empirical raise ParamError {
+  if data.length() == 0 {
+    raise InvalidParam(name="data", value=0.0, reason="must not be empty")
+  }
+  for x in data {
+    if x.is_nan() {
+      raise InvalidParam(name="data", value=x, reason="contains NaN")
+    }
+  }
+  let sorted = FixedArray::from_iter(data.iter())
+  sorted.sort()
+  { sorted, quantile_method }
+}
+
+///|
+pub impl Cdf for Empirical with cdf(self, x) {
+  ignore((self, x))
+  ...
+}
+
+///|
+pub impl Quantile for Empirical with quantile(self, p) {
+  ignore((self, p))
+  ...
+}
+
+///|
+/// Bootstrap resampling is sampling from the empirical distribution.
+pub impl SampleContinuous for Empirical with sample(self, rng) {
+  ignore((self, rng))
+  ...
+}
+
+///|
+pub impl Moments for Empirical with mean(self) {
+  ignore(self)
+  ...
+}
+
+///|
+pub impl Moments for Empirical with variance(self) {
+  ignore(self)
+  ...
+}
+
+///|
+/// Probabilities on the integers `offset ..< offset + probs.length()`.
+/// Both prefix and suffix sums are kept, so `sf` far in the upper tail
+/// is a sum of small terms, not 1 minus a number close to 1.
+pub struct FiniteDiscrete {
+  priv offset : Int
+  priv probs : FixedArray[Double]
+  priv lower : FixedArray[Double]
+  priv upper : FixedArray[Double]
+}
+
+///|
+pub fn FiniteDiscrete::new(
+  offset : Int,
+  probs : ArrayView[Double],
+) -> FiniteDiscrete raise ParamError {
+  ignore((offset, probs))
+  ...
+}
+
+///|
+pub impl Mass for FiniteDiscrete with pmf(self, k) {
+  let i = k - self.offset
+  if i < 0 || i >= self.probs.length() {
+    0.0
+  } else {
+    self.probs[i]
+  }
+}
+
+///|
+pub impl DiscreteCdf for FiniteDiscrete with cdf(self, k) {
+  let i = k - self.offset
+  if i < 0 {
+    0.0
+  } else if i >= self.probs.length() {
+    1.0
+  } else {
+    self.lower[i]
+  }
+}
+
+///|
+pub impl DiscreteCdf for FiniteDiscrete with sf(self, k) {
+  let i = k - self.offset
+  if i < 0 {
+    1.0
+  } else if i >= self.probs.length() {
+    0.0
+  } else {
+    self.upper[i]
+  }
+}
+
+///|
+pub impl DiscreteQuantile for FiniteDiscrete with quantile(self, p) {
+  ignore((self, p))
+  ...
+}

@@ -1,0 +1,59 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/infer"
+
+import {
+  "gaato/stats/dist",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn welch_t_test(ArrayView[Double], ArrayView[Double], alternative? : Alternative, normality~ : Assumed[Normality]) -> TestResult raise @dist.ParamError
+
+// Errors
+
+// Types and methods
+#derive(Eq, @debug.Debug)
+pub(all) enum Alternative {
+  TwoSided
+  Less
+  Greater
+}
+
+pub struct Assumed[A] {
+  // private fields
+}
+pub fn[A] Assumed::postulate() -> Self[A]
+
+pub(all) enum EqualVariance {
+}
+
+pub struct Estimate {
+  value : Double
+  se : Double?
+  interval : Interval?
+  n : Int64
+  procedure : String
+}
+
+pub struct Interval {
+  lo : Double
+  hi : Double
+  level : Double
+  procedure : String
+}
+
+pub(all) enum Normality {
+}
+
+pub struct TestResult {
+  statistic : Double
+  p_value : Double
+  log_p_value : Double
+  df : Double?
+  alternative : Alternative
+  procedure : String
+}
+
+// Type aliases
+
+// Traits

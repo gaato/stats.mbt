@@ -1,0 +1,29 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/special"
+
+// Values
+pub fn betainc(Double, Double, Double) -> Double
+
+pub fn betaincc(Double, Double, Double) -> Double
+
+pub fn betaincinv(Double, Double, Double) -> Double
+
+pub fn gammainc(Double, Double) -> Double
+
+pub fn gammaincc(Double, Double) -> Double
+
+pub fn lgamma(Double) -> Double
+
+pub fn log_ndtr(Double) -> Double
+
+pub fn ndtr(Double) -> Double
+
+pub fn ndtri(Double) -> Double
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
