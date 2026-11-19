@@ -4,7 +4,7 @@
 test "merge agrees with a single pass" {
   let xs = [1.0e9 + 4.0, 1.0e9 + 7.0, 1.0e9 + 13.0, 1.0e9 + 16.0]
   let ys = [2.0, 3.0, 5.0, 7.0, 11.0]
-  let empty : MeanVar = Accumulator::empty()
+  let empty : @describe.MeanVar = @describe.Accumulator::empty()
   let one_pass = (xs + ys).fold(init=empty, (acc, x) => acc.push(x))
   let left = xs.fold(init=empty, (acc, x) => acc.push(x))
   let right = ys.fold(init=empty, (acc, x) => acc.push(x))

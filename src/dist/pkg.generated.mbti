@@ -9,17 +9,57 @@ import {
 
 // Errors
 #derive(@debug.Debug)
+pub(all) suberror FitError {
+  TooFewPoints(needed~ : Int32, got~ : Int32)
+  OutsideSupport(value~ : Double)
+  NotConverged(iterations~ : Int32)
+}
+
+#derive(@debug.Debug)
 pub(all) suberror ParamError {
   InvalidParam(name~ : String, value~ : Double, reason~ : String)
 }
 
 // Types and methods
+pub struct Affine[D] {
+  // private fields
+}
+pub fn[D] Affine::new(D, loc~ : Double, scale~ : Double) -> Self[D] raise ParamError
+pub impl[D : Cdf] Cdf for Affine[D]
+pub impl[D : Density] Density for Affine[D]
+pub impl[D : Quantile] Quantile for Affine[D]
+pub impl[D : Sample] Sample for Affine[D]
+
 pub struct Binomial {
   // private fields
 }
 pub fn Binomial::new(Int32, Double) -> Self raise ParamError
-pub impl DiscreteCdf for Binomial
+pub impl Cdf for Binomial
+pub impl Characteristic for Binomial
+pub impl IntCdf for Binomial
+pub impl IntQuantile for Binomial
 pub impl Mass for Binomial
+pub impl Moments for Binomial
+pub impl Quantile for Binomial
+pub impl Sample for Binomial
+pub impl SampleInt for Binomial
+pub impl Univariate for Binomial
+
+pub struct Cantor {
+}
+pub fn Cantor::new() -> Self
+pub impl Cdf for Cantor
+pub impl Characteristic for Cantor
+pub impl Moments for Cantor
+pub impl Quantile for Cantor
+pub impl Sample for Cantor
+pub impl Univariate for Cantor
+
+pub struct Censored[D] {
+  // private fields
+}
+pub fn[D] Censored::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
+pub impl[D : Cdf] Cdf for Censored[D]
 
 pub struct Empirical {
   // private fields
@@ -28,14 +68,16 @@ pub fn Empirical::new(ArrayView[Double], quantile_method~ : QuantileMethod) -> S
 pub impl Cdf for Empirical
 pub impl Moments for Empirical
 pub impl Quantile for Empirical
-pub impl SampleContinuous for Empirical
+pub impl Sample for Empirical
+pub impl Univariate for Empirical
 
 pub struct FiniteDiscrete {
   // private fields
 }
 pub fn FiniteDiscrete::new(Int32, ArrayView[Double]) -> Self raise ParamError
-pub impl DiscreteCdf for FiniteDiscrete
-pub impl DiscreteQuantile for FiniteDiscrete
+pub impl Cdf for FiniteDiscrete
+pub impl IntCdf for FiniteDiscrete
+pub impl IntQuantile for FiniteDiscrete
 pub impl Mass for FiniteDiscrete
 
 pub struct Gamma {
@@ -44,15 +86,40 @@ pub struct Gamma {
 pub fn Gamma::with_rate(Double, Double) -> Self raise ParamError
 pub fn Gamma::with_scale(Double, Double) -> Self raise ParamError
 pub impl Cdf for Gamma
+pub impl Mgf for Gamma
+
+pub struct Mixture {
+  // private fields
+}
+pub fn Mixture::new(ArrayView[Double], Array[&Univariate]) -> Self raise ParamError
+pub impl Cdf for Mixture
+pub impl Quantile for Mixture
+pub impl Sample for Mixture
+pub impl Univariate for Mixture
 
 pub struct Normal {
   // private fields
 }
 pub fn Normal::new(mu? : Double, sigma? : Double) -> Self raise ParamError
 pub impl Cdf for Normal
+pub impl Characteristic for Normal
 pub impl Density for Normal
+pub impl Fit for Normal
+pub impl Mgf for Normal
 pub impl Moments for Normal
 pub impl Quantile for Normal
+pub impl Sample for Normal
+pub impl Univariate for Normal
+
+pub struct PointMass {
+  // private fields
+}
+pub fn PointMass::new(Double) -> Self raise ParamError
+pub impl Cdf for PointMass
+pub impl Moments for PointMass
+pub impl Quantile for PointMass
+pub impl Sample for PointMass
+pub impl Univariate for PointMass
 
 #derive(Eq, @debug.Debug)
 pub(all) enum QuantileMethod {
@@ -72,8 +139,18 @@ pub struct StudentT {
 }
 pub fn StudentT::new(Double) -> Self raise ParamError
 pub impl Cdf for StudentT
+pub impl Characteristic for StudentT
+pub impl Density for StudentT
 pub impl Moments for StudentT
 pub impl Quantile for StudentT
+pub impl Sample for StudentT
+pub impl Univariate for StudentT
+
+pub struct Truncated[D] {
+  // private fields
+}
+pub fn[D : Cdf] Truncated::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
+pub impl[D : Cdf] Cdf for Truncated[D]
 
 // Type aliases
 
@@ -85,23 +162,40 @@ pub(open) trait Cdf {
   fn logsf(Self, Double) -> Double = _
 }
 
+pub(open) trait Characteristic {
+  fn cf(Self, Double) -> (Double, Double)
+}
+
 pub(open) trait Density {
   fn pdf(Self, Double) -> Double
   fn logpdf(Self, Double) -> Double = _
 }
 
-pub(open) trait DiscreteCdf {
-  fn cdf(Self, Int32) -> Double
-  fn sf(Self, Int32) -> Double = _
+pub(open) trait Entropy {
+  fn entropy(Self) -> Double
 }
 
-pub(open) trait DiscreteQuantile {
-  fn quantile(Self, Double) -> Int32
+pub(open) trait Fit {
+  fn fit(ArrayView[Double]) -> Self raise FitError
+}
+
+pub(open) trait IntCdf {
+  fn cdf_int(Self, Int32) -> Double
+  fn sf_int(Self, Int32) -> Double = _
+}
+
+pub(open) trait IntQuantile {
+  fn quantile_int(Self, Double) -> Int32
 }
 
 pub(open) trait Mass {
   fn pmf(Self, Int32) -> Double
   fn logpmf(Self, Int32) -> Double = _
+}
+
+pub(open) trait Mgf {
+  fn mgf(Self, Double) -> Double?
+  fn cgf(Self, Double) -> Double? = _
 }
 
 pub(open) trait Moments {
@@ -118,10 +212,18 @@ pub(open) trait RandomSource {
   fn next_u64(Self) -> UInt64
 }
 
-pub(open) trait SampleContinuous {
+pub(open) trait Sample {
   fn sample(Self, &RandomSource) -> Double
 }
 
-pub(open) trait SampleDiscrete {
-  fn sample(Self, &RandomSource) -> Int32
+pub(open) trait SampleInt {
+  fn sample_int(Self, &RandomSource) -> Int32
+}
+
+pub(open) trait Shape {
+  fn skewness(Self) -> Double?
+  fn excess_kurtosis(Self) -> Double?
+}
+
+pub(open) trait Univariate : Cdf + Quantile + Sample {
 }

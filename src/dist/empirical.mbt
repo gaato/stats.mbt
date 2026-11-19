@@ -60,7 +60,7 @@ pub impl Quantile for Empirical with quantile(self, p) {
 
 ///|
 /// Bootstrap resampling is sampling from the empirical distribution.
-pub impl SampleContinuous for Empirical with sample(self, rng) {
+pub impl Sample for Empirical with sample(self, rng) {
   ignore((self, rng))
   ...
 }
@@ -108,7 +108,7 @@ pub impl Mass for FiniteDiscrete with pmf(self, k) {
 }
 
 ///|
-pub impl DiscreteCdf for FiniteDiscrete with cdf(self, k) {
+pub impl IntCdf for FiniteDiscrete with cdf_int(self, k) {
   let i = k - self.offset
   if i < 0 {
     0.0
@@ -120,7 +120,7 @@ pub impl DiscreteCdf for FiniteDiscrete with cdf(self, k) {
 }
 
 ///|
-pub impl DiscreteCdf for FiniteDiscrete with sf(self, k) {
+pub impl IntCdf for FiniteDiscrete with sf_int(self, k) {
   let i = k - self.offset
   if i < 0 {
     1.0
@@ -132,7 +132,21 @@ pub impl DiscreteCdf for FiniteDiscrete with sf(self, k) {
 }
 
 ///|
-pub impl DiscreteQuantile for FiniteDiscrete with quantile(self, p) {
+pub impl IntQuantile for FiniteDiscrete with quantile_int(self, p) {
   ignore((self, p))
   ...
+}
+
+///|
+pub impl Univariate for Empirical
+
+///|
+/// On the real line the distribution function is the step function.
+pub impl Cdf for FiniteDiscrete with cdf(self, x) {
+  IntCdf::cdf_int(self, @math.floor(x).to_int())
+}
+
+///|
+pub impl Cdf for FiniteDiscrete with sf(self, x) {
+  IntCdf::sf_int(self, @math.floor(x).to_int())
 }

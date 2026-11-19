@@ -1,0 +1,82 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/multi"
+
+import {
+  "gaato/stats/dist",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Dirichlet {
+  // private fields
+}
+pub fn Dirichlet::new(ArrayView[Double]) -> Self raise @dist.ParamError
+pub impl Dimension for Dirichlet
+pub impl MvDensity for Dirichlet
+pub impl MvSample for Dirichlet
+
+pub struct GaussianCopula {
+  // private fields
+}
+pub fn GaussianCopula::new(ArrayView[Double]) -> Self raise @dist.ParamError
+pub impl Copula for GaussianCopula
+pub impl Dimension for GaussianCopula
+
+pub struct Joint[C] {
+  // private fields
+}
+pub fn[C : Copula] Joint::new(C, Array[&@dist.Univariate]) -> Self[C] raise @dist.ParamError
+pub impl[C : Copula] Dimension for Joint[C]
+pub impl[C : Copula] MvSample for Joint[C]
+
+pub struct Multinomial {
+  // private fields
+}
+pub fn Multinomial::new(Int32, ArrayView[Double]) -> Self raise @dist.ParamError
+pub impl Dimension for Multinomial
+pub impl MvMass for Multinomial
+
+pub struct MvNormal {
+  // private fields
+}
+pub fn MvNormal::new(ArrayView[Double], ArrayView[Double]) -> Self raise @dist.ParamError
+pub impl Dimension for MvNormal
+pub impl MvDensity for MvNormal
+pub impl MvMoments for MvNormal
+pub impl MvSample for MvNormal
+
+// Type aliases
+
+// Traits
+pub(open) trait Copula : Dimension {
+  fn copula_cdf(Self, ArrayView[Double]) -> Double
+  fn sample_uniform_into(Self, &@dist.RandomSource, FixedArray[Double]) -> Unit
+}
+
+pub(open) trait Dimension {
+  fn dim(Self) -> Int32
+}
+
+pub(open) trait Marginal : Dimension {
+  fn marginal(Self, Int32) -> &@dist.Univariate
+}
+
+pub(open) trait MvDensity : Dimension {
+  fn logpdf(Self, ArrayView[Double]) -> Double
+}
+
+pub(open) trait MvMass : Dimension {
+  fn logpmf(Self, ArrayView[Int32]) -> Double
+}
+
+pub(open) trait MvMoments : Dimension {
+  fn mean_into(Self, FixedArray[Double]) -> Bool
+  fn covariance_into(Self, FixedArray[Double]) -> Bool
+}
+
+pub(open) trait MvSample : Dimension {
+  fn sample_into(Self, &@dist.RandomSource, FixedArray[Double]) -> Unit
+}

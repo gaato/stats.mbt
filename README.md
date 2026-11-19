@@ -30,9 +30,13 @@ backend; most bodies are still unimplemented, and nothing is published yet.
 | Package | Contents |
 |---|---|
 | `special` | Incomplete beta and gamma functions, normal tail functions |
-| `dist` | Capability traits, families, empirical and finite discrete distributions |
+| `dist` | Capability traits, families, empirical and finite discrete distributions, mixtures, transforms, a singular distribution |
+| `multi` | Multivariate distributions and copulas |
 | `describe` | Mergeable accumulators |
 | `infer` | Test results, intervals, estimates |
+
+[DESIGN.md](DESIGN.md) maps every concept to its type and status,
+including the ones not yet typed.
 
 ## License
 
