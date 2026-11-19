@@ -18,6 +18,10 @@ pub(all) enum Constraint {
   Positive
   UnitInterval
   Interval(lo~ : Double, hi~ : Double)
+  /// x > bound.
+  Above(Double)
+  /// x < bound.
+  Below(Double)
 }
 
 ///|
@@ -27,6 +31,8 @@ pub fn Constraint::contains(self : Constraint, x : Double) -> Bool {
     Positive => x > 0.0 && !x.is_inf()
     UnitInterval => x > 0.0 && x < 1.0
     Interval(lo~, hi~) => x > lo && x < hi
+    Above(lo) => x > lo && !x.is_inf()
+    Below(hi) => x < hi && !x.is_inf()
   }
 }
 
@@ -41,6 +47,8 @@ pub fn Constraint::to_unconstrained(self : Constraint, x : Double) -> Double {
       let u = (x - lo) / (hi - lo)
       @math.ln(u / (1.0 - u))
     }
+    Above(lo) => @math.ln(x - lo)
+    Below(hi) => @math.ln(hi - x)
   }
 }
 
@@ -51,6 +59,8 @@ pub fn Constraint::from_unconstrained(self : Constraint, y : Double) -> Double {
     Positive => @math.exp(y)
     UnitInterval => 1.0 / (1.0 + @math.exp(-y))
     Interval(lo~, hi~) => lo + (hi - lo) / (1.0 + @math.exp(-y))
+    Above(lo) => lo + @math.exp(y)
+    Below(hi) => hi - @math.exp(y)
   }
 }
 

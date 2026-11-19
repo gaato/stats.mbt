@@ -35,12 +35,118 @@ pub impl[D : Density] Density for Affine[D]
 pub impl[D : Quantile] Quantile for Affine[D]
 pub impl[D : Sample] Sample for Affine[D]
 
+pub struct Alpha {
+  // private fields
+}
+pub fn Alpha::family() -> Family[Self]
+pub fn Alpha::new(Double) -> Self raise ParamError
+pub impl Cdf for Alpha
+pub impl Density for Alpha
+pub impl Quantile for Alpha
+pub impl Sample for Alpha
+pub impl Univariate for Alpha
+
+pub struct Anglit {
+}
+pub fn Anglit::family() -> Family[Self]
+pub fn Anglit::new() -> Self
+pub impl Cdf for Anglit
+pub impl Density for Anglit
+pub impl Quantile for Anglit
+pub impl Sample for Anglit
+pub impl Univariate for Anglit
+
+pub struct Arcsine {
+}
+pub fn Arcsine::family() -> Family[Self]
+pub fn Arcsine::new() -> Self
+pub impl Cdf for Arcsine
+pub impl Density for Arcsine
+pub impl Quantile for Arcsine
+pub impl Sample for Arcsine
+pub impl Univariate for Arcsine
+
+pub struct Argus {
+  // private fields
+}
+pub fn Argus::family() -> Family[Self]
+pub fn Argus::new(Double) -> Self raise ParamError
+pub impl Cdf for Argus
+pub impl Density for Argus
+pub impl Quantile for Argus
+pub impl Sample for Argus
+pub impl Univariate for Argus
+
+pub struct AsymmetricLaplace {
+  // private fields
+}
+pub fn AsymmetricLaplace::family() -> Family[Self]
+pub fn AsymmetricLaplace::new(Double) -> Self raise ParamError
+pub impl Cdf for AsymmetricLaplace
+pub impl Density for AsymmetricLaplace
+pub impl Quantile for AsymmetricLaplace
+pub impl Sample for AsymmetricLaplace
+pub impl Univariate for AsymmetricLaplace
+
+pub struct Bernoulli {
+  // private fields
+}
+pub fn Bernoulli::family() -> Family[Self]
+pub fn Bernoulli::new(Double) -> Self raise ParamError
+pub impl Cdf for Bernoulli
+pub impl IntCdf for Bernoulli
+pub impl IntQuantile for Bernoulli
+pub impl Mass for Bernoulli
+pub impl Quantile for Bernoulli
+pub impl Sample for Bernoulli
+pub impl SampleInt for Bernoulli
+pub impl Univariate for Bernoulli
+
 pub struct Beta {
   // private fields
 }
 pub fn Beta::new(Double, Double) -> Self raise ParamError
 pub impl Cdf for Beta
 pub impl Quantile for Beta
+
+pub struct BetaBinomial {
+  // private fields
+}
+pub fn BetaBinomial::family(n~ : Int32) -> Family[Self]
+pub fn BetaBinomial::new(Int32, Double, Double) -> Self raise ParamError
+pub impl Cdf for BetaBinomial
+pub impl IntCdf for BetaBinomial
+pub impl IntQuantile for BetaBinomial
+pub impl Mass for BetaBinomial
+pub impl Quantile for BetaBinomial
+pub impl Sample for BetaBinomial
+pub impl SampleInt for BetaBinomial
+pub impl Univariate for BetaBinomial
+
+pub struct BetaNegativeBinomial {
+  // private fields
+}
+pub fn BetaNegativeBinomial::family(n~ : Int32) -> Family[Self]
+pub fn BetaNegativeBinomial::new(Int32, Double, Double) -> Self raise ParamError
+pub impl Cdf for BetaNegativeBinomial
+pub impl IntCdf for BetaNegativeBinomial
+pub impl IntQuantile for BetaNegativeBinomial
+pub impl Mass for BetaNegativeBinomial
+pub impl Quantile for BetaNegativeBinomial
+pub impl Sample for BetaNegativeBinomial
+pub impl SampleInt for BetaNegativeBinomial
+pub impl Univariate for BetaNegativeBinomial
+
+pub struct BetaPrime {
+  // private fields
+}
+pub fn BetaPrime::family() -> Family[Self]
+pub fn BetaPrime::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for BetaPrime
+pub impl Density for BetaPrime
+pub impl Quantile for BetaPrime
+pub impl Sample for BetaPrime
+pub impl Univariate for BetaPrime
 
 pub struct Binomial {
   // private fields
@@ -59,6 +165,53 @@ pub impl Sample for Binomial
 pub impl SampleInt for Binomial
 pub impl Univariate for Binomial
 
+pub struct Boltzmann {
+  // private fields
+}
+pub fn Boltzmann::family(n~ : Int32) -> Family[Self]
+pub fn Boltzmann::new(Double, Int32) -> Self raise ParamError
+pub impl Cdf for Boltzmann
+pub impl IntCdf for Boltzmann
+pub impl IntQuantile for Boltzmann
+pub impl Mass for Boltzmann
+pub impl Quantile for Boltzmann
+pub impl Sample for Boltzmann
+pub impl SampleInt for Boltzmann
+pub impl Univariate for Boltzmann
+
+pub struct Bradford {
+  // private fields
+}
+pub fn Bradford::family() -> Family[Self]
+pub fn Bradford::new(Double) -> Self raise ParamError
+pub impl Cdf for Bradford
+pub impl Density for Bradford
+pub impl Quantile for Bradford
+pub impl Sample for Bradford
+pub impl Univariate for Bradford
+
+pub struct Burr {
+  // private fields
+}
+pub fn Burr::family() -> Family[Self]
+pub fn Burr::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Burr
+pub impl Density for Burr
+pub impl Quantile for Burr
+pub impl Sample for Burr
+pub impl Univariate for Burr
+
+pub struct Burr12 {
+  // private fields
+}
+pub fn Burr12::family() -> Family[Self]
+pub fn Burr12::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Burr12
+pub impl Density for Burr12
+pub impl Quantile for Burr12
+pub impl Sample for Burr12
+pub impl Univariate for Burr12
+
 pub struct Cantor {
 }
 pub fn Cantor::new() -> Self
@@ -69,11 +222,32 @@ pub impl Quantile for Cantor
 pub impl Sample for Cantor
 pub impl Univariate for Cantor
 
+pub struct Cauchy {
+}
+pub fn Cauchy::family() -> Family[Self]
+pub fn Cauchy::new() -> Self
+pub impl Cdf for Cauchy
+pub impl Density for Cauchy
+pub impl Quantile for Cauchy
+pub impl Sample for Cauchy
+pub impl Univariate for Cauchy
+
 pub struct Censored[D] {
   // private fields
 }
 pub fn[D] Censored::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
 pub impl[D : Cdf] Cdf for Censored[D]
+
+pub struct Chi {
+  // private fields
+}
+pub fn Chi::family() -> Family[Self]
+pub fn Chi::new(Double) -> Self raise ParamError
+pub impl Cdf for Chi
+pub impl Density for Chi
+pub impl Quantile for Chi
+pub impl Sample for Chi
+pub impl Univariate for Chi
 
 pub struct ChiSquared {
   // private fields
@@ -93,10 +267,94 @@ pub(all) enum Constraint {
   Positive
   UnitInterval
   Interval(lo~ : Double, hi~ : Double)
+  Above(Double)
+  Below(Double)
 }
 pub fn Constraint::contains(Self, Double) -> Bool
 pub fn Constraint::from_unconstrained(Self, Double) -> Double
 pub fn Constraint::to_unconstrained(Self, Double) -> Double
+
+pub struct Cosine {
+}
+pub fn Cosine::family() -> Family[Self]
+pub fn Cosine::new() -> Self
+pub impl Cdf for Cosine
+pub impl Density for Cosine
+pub impl Quantile for Cosine
+pub impl Sample for Cosine
+pub impl Univariate for Cosine
+
+pub struct CrystalBall {
+  // private fields
+}
+pub fn CrystalBall::family() -> Family[Self]
+pub fn CrystalBall::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for CrystalBall
+pub impl Density for CrystalBall
+pub impl Quantile for CrystalBall
+pub impl Sample for CrystalBall
+pub impl Univariate for CrystalBall
+
+pub struct DiscreteLaplace {
+  // private fields
+}
+pub fn DiscreteLaplace::family() -> Family[Self]
+pub fn DiscreteLaplace::new(Double) -> Self raise ParamError
+pub impl Cdf for DiscreteLaplace
+pub impl IntCdf for DiscreteLaplace
+pub impl IntQuantile for DiscreteLaplace
+pub impl Mass for DiscreteLaplace
+pub impl Quantile for DiscreteLaplace
+pub impl Sample for DiscreteLaplace
+pub impl SampleInt for DiscreteLaplace
+pub impl Univariate for DiscreteLaplace
+
+pub struct DiscreteUniform {
+  // private fields
+}
+pub fn DiscreteUniform::family(low~ : Int32, high~ : Int32) -> Family[Self]
+pub fn DiscreteUniform::new(Int32, Int32) -> Self raise ParamError
+pub impl Cdf for DiscreteUniform
+pub impl IntCdf for DiscreteUniform
+pub impl IntQuantile for DiscreteUniform
+pub impl Mass for DiscreteUniform
+pub impl Quantile for DiscreteUniform
+pub impl Sample for DiscreteUniform
+pub impl SampleInt for DiscreteUniform
+pub impl Univariate for DiscreteUniform
+
+pub struct DoubleGamma {
+  // private fields
+}
+pub fn DoubleGamma::family() -> Family[Self]
+pub fn DoubleGamma::new(Double) -> Self raise ParamError
+pub impl Cdf for DoubleGamma
+pub impl Density for DoubleGamma
+pub impl Quantile for DoubleGamma
+pub impl Sample for DoubleGamma
+pub impl Univariate for DoubleGamma
+
+pub struct DoubleParetoLognormal {
+  // private fields
+}
+pub fn DoubleParetoLognormal::family() -> Family[Self]
+pub fn DoubleParetoLognormal::new(Double, Double, Double, Double) -> Self raise ParamError
+pub impl Cdf for DoubleParetoLognormal
+pub impl Density for DoubleParetoLognormal
+pub impl Quantile for DoubleParetoLognormal
+pub impl Sample for DoubleParetoLognormal
+pub impl Univariate for DoubleParetoLognormal
+
+pub struct DoubleWeibull {
+  // private fields
+}
+pub fn DoubleWeibull::family() -> Family[Self]
+pub fn DoubleWeibull::new(Double) -> Self raise ParamError
+pub impl Cdf for DoubleWeibull
+pub impl Density for DoubleWeibull
+pub impl Quantile for DoubleWeibull
+pub impl Sample for DoubleWeibull
+pub impl Univariate for DoubleWeibull
 
 pub struct Empirical {
   // private fields
@@ -108,6 +366,17 @@ pub impl Quantile for Empirical
 pub impl Sample for Empirical
 pub impl Univariate for Empirical
 
+pub struct Erlang {
+  // private fields
+}
+pub fn Erlang::family(a~ : Int32) -> Family[Self]
+pub fn Erlang::new(Int32) -> Self raise ParamError
+pub impl Cdf for Erlang
+pub impl Density for Erlang
+pub impl Quantile for Erlang
+pub impl Sample for Erlang
+pub impl Univariate for Erlang
+
 pub struct ExpFamily[D] {
   family : Family[D]
   natural_dim : Int32
@@ -118,6 +387,49 @@ pub struct ExpFamily[D] {
   from_mean_sufficient : (ArrayView[Double]) -> D raise FitError
 }
 
+pub struct Exponential {
+}
+pub fn Exponential::family() -> Family[Self]
+pub fn Exponential::new() -> Self
+pub impl Cdf for Exponential
+pub impl Density for Exponential
+pub impl Quantile for Exponential
+pub impl Sample for Exponential
+pub impl Univariate for Exponential
+
+pub struct ExponentialPower {
+  // private fields
+}
+pub fn ExponentialPower::family() -> Family[Self]
+pub fn ExponentialPower::new(Double) -> Self raise ParamError
+pub impl Cdf for ExponentialPower
+pub impl Density for ExponentialPower
+pub impl Quantile for ExponentialPower
+pub impl Sample for ExponentialPower
+pub impl Univariate for ExponentialPower
+
+pub struct ExponentiallyModifiedNormal {
+  // private fields
+}
+pub fn ExponentiallyModifiedNormal::family() -> Family[Self]
+pub fn ExponentiallyModifiedNormal::new(Double) -> Self raise ParamError
+pub impl Cdf for ExponentiallyModifiedNormal
+pub impl Density for ExponentiallyModifiedNormal
+pub impl Quantile for ExponentiallyModifiedNormal
+pub impl Sample for ExponentiallyModifiedNormal
+pub impl Univariate for ExponentiallyModifiedNormal
+
+pub struct ExponentiatedWeibull {
+  // private fields
+}
+pub fn ExponentiatedWeibull::family() -> Family[Self]
+pub fn ExponentiatedWeibull::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for ExponentiatedWeibull
+pub impl Density for ExponentiatedWeibull
+pub impl Quantile for ExponentiatedWeibull
+pub impl Sample for ExponentiatedWeibull
+pub impl Univariate for ExponentiatedWeibull
+
 pub struct Family[D] {
   name : String
   specs : Array[ParamSpec]
@@ -126,6 +438,17 @@ pub struct Family[D] {
 }
 pub fn[D] Family::dim(Self[D]) -> Int32
 pub fn[D] Family::from_unconstrained(Self[D], ArrayView[Double]) -> D raise ParamError
+
+pub struct FatigueLife {
+  // private fields
+}
+pub fn FatigueLife::family() -> Family[Self]
+pub fn FatigueLife::new(Double) -> Self raise ParamError
+pub impl Cdf for FatigueLife
+pub impl Density for FatigueLife
+pub impl Quantile for FatigueLife
+pub impl Sample for FatigueLife
+pub impl Univariate for FatigueLife
 
 pub struct FiniteDiscrete {
   // private fields
@@ -142,6 +465,53 @@ pub struct FisherF {
 pub fn FisherF::new(Double, Double) -> Self raise ParamError
 pub impl Cdf for FisherF
 
+pub struct FisherNoncentralHypergeometric {
+  // private fields
+}
+pub fn FisherNoncentralHypergeometric::family(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Family[Self]
+pub fn FisherNoncentralHypergeometric::new(Int32, Int32, Int32, Double) -> Self raise ParamError
+pub impl Cdf for FisherNoncentralHypergeometric
+pub impl IntCdf for FisherNoncentralHypergeometric
+pub impl IntQuantile for FisherNoncentralHypergeometric
+pub impl Mass for FisherNoncentralHypergeometric
+pub impl Quantile for FisherNoncentralHypergeometric
+pub impl Sample for FisherNoncentralHypergeometric
+pub impl SampleInt for FisherNoncentralHypergeometric
+pub impl Univariate for FisherNoncentralHypergeometric
+
+pub struct Fisk {
+  // private fields
+}
+pub fn Fisk::family() -> Family[Self]
+pub fn Fisk::new(Double) -> Self raise ParamError
+pub impl Cdf for Fisk
+pub impl Density for Fisk
+pub impl Quantile for Fisk
+pub impl Sample for Fisk
+pub impl Univariate for Fisk
+
+pub struct FoldedCauchy {
+  // private fields
+}
+pub fn FoldedCauchy::family() -> Family[Self]
+pub fn FoldedCauchy::new(Double) -> Self raise ParamError
+pub impl Cdf for FoldedCauchy
+pub impl Density for FoldedCauchy
+pub impl Quantile for FoldedCauchy
+pub impl Sample for FoldedCauchy
+pub impl Univariate for FoldedCauchy
+
+pub struct FoldedNormal {
+  // private fields
+}
+pub fn FoldedNormal::family() -> Family[Self]
+pub fn FoldedNormal::new(Double) -> Self raise ParamError
+pub impl Cdf for FoldedNormal
+pub impl Density for FoldedNormal
+pub impl Quantile for FoldedNormal
+pub impl Sample for FoldedNormal
+pub impl Univariate for FoldedNormal
+
 pub struct Gamma {
   // private fields
 }
@@ -152,11 +522,498 @@ pub fn Gamma::with_scale(Double, Double) -> Self raise ParamError
 pub impl Cdf for Gamma
 pub impl Mgf for Gamma
 
+pub struct GaussHypergeometric {
+  // private fields
+}
+pub fn GaussHypergeometric::family() -> Family[Self]
+pub fn GaussHypergeometric::new(Double, Double, Double, Double) -> Self raise ParamError
+pub impl Cdf for GaussHypergeometric
+pub impl Density for GaussHypergeometric
+pub impl Quantile for GaussHypergeometric
+pub impl Sample for GaussHypergeometric
+pub impl Univariate for GaussHypergeometric
+
+pub struct GeneralizedExponential {
+  // private fields
+}
+pub fn GeneralizedExponential::family() -> Family[Self]
+pub fn GeneralizedExponential::new(Double, Double, Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedExponential
+pub impl Density for GeneralizedExponential
+pub impl Quantile for GeneralizedExponential
+pub impl Sample for GeneralizedExponential
+pub impl Univariate for GeneralizedExponential
+
+pub struct GeneralizedExtremeValue {
+  // private fields
+}
+pub fn GeneralizedExtremeValue::family() -> Family[Self]
+pub fn GeneralizedExtremeValue::new(Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedExtremeValue
+pub impl Density for GeneralizedExtremeValue
+pub impl Quantile for GeneralizedExtremeValue
+pub impl Sample for GeneralizedExtremeValue
+pub impl Univariate for GeneralizedExtremeValue
+
+pub struct GeneralizedGamma {
+  // private fields
+}
+pub fn GeneralizedGamma::family() -> Family[Self]
+pub fn GeneralizedGamma::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedGamma
+pub impl Density for GeneralizedGamma
+pub impl Quantile for GeneralizedGamma
+pub impl Sample for GeneralizedGamma
+pub impl Univariate for GeneralizedGamma
+
+pub struct GeneralizedHalfLogistic {
+  // private fields
+}
+pub fn GeneralizedHalfLogistic::family() -> Family[Self]
+pub fn GeneralizedHalfLogistic::new(Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedHalfLogistic
+pub impl Density for GeneralizedHalfLogistic
+pub impl Quantile for GeneralizedHalfLogistic
+pub impl Sample for GeneralizedHalfLogistic
+pub impl Univariate for GeneralizedHalfLogistic
+
+pub struct GeneralizedHyperbolic {
+  // private fields
+}
+pub fn GeneralizedHyperbolic::family() -> Family[Self]
+pub fn GeneralizedHyperbolic::new(Double, Double, Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedHyperbolic
+pub impl Density for GeneralizedHyperbolic
+pub impl Quantile for GeneralizedHyperbolic
+pub impl Sample for GeneralizedHyperbolic
+pub impl Univariate for GeneralizedHyperbolic
+
+pub struct GeneralizedInverseGaussian {
+  // private fields
+}
+pub fn GeneralizedInverseGaussian::family() -> Family[Self]
+pub fn GeneralizedInverseGaussian::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedInverseGaussian
+pub impl Density for GeneralizedInverseGaussian
+pub impl Quantile for GeneralizedInverseGaussian
+pub impl Sample for GeneralizedInverseGaussian
+pub impl Univariate for GeneralizedInverseGaussian
+
+pub struct GeneralizedLogistic {
+  // private fields
+}
+pub fn GeneralizedLogistic::family() -> Family[Self]
+pub fn GeneralizedLogistic::new(Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedLogistic
+pub impl Density for GeneralizedLogistic
+pub impl Quantile for GeneralizedLogistic
+pub impl Sample for GeneralizedLogistic
+pub impl Univariate for GeneralizedLogistic
+
+pub struct GeneralizedNormal {
+  // private fields
+}
+pub fn GeneralizedNormal::family() -> Family[Self]
+pub fn GeneralizedNormal::new(Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedNormal
+pub impl Density for GeneralizedNormal
+pub impl Quantile for GeneralizedNormal
+pub impl Sample for GeneralizedNormal
+pub impl Univariate for GeneralizedNormal
+
+pub struct GeneralizedPareto {
+  // private fields
+}
+pub fn GeneralizedPareto::family() -> Family[Self]
+pub fn GeneralizedPareto::new(Double) -> Self raise ParamError
+pub impl Cdf for GeneralizedPareto
+pub impl Density for GeneralizedPareto
+pub impl Quantile for GeneralizedPareto
+pub impl Sample for GeneralizedPareto
+pub impl Univariate for GeneralizedPareto
+
+pub struct Geometric {
+  // private fields
+}
+pub fn Geometric::family() -> Family[Self]
+pub fn Geometric::new(Double) -> Self raise ParamError
+pub impl Cdf for Geometric
+pub impl IntCdf for Geometric
+pub impl IntQuantile for Geometric
+pub impl Mass for Geometric
+pub impl Quantile for Geometric
+pub impl Sample for Geometric
+pub impl SampleInt for Geometric
+pub impl Univariate for Geometric
+
+pub struct Gibrat {
+}
+pub fn Gibrat::family() -> Family[Self]
+pub fn Gibrat::new() -> Self
+pub impl Cdf for Gibrat
+pub impl Density for Gibrat
+pub impl Quantile for Gibrat
+pub impl Sample for Gibrat
+pub impl Univariate for Gibrat
+
+pub struct Gompertz {
+  // private fields
+}
+pub fn Gompertz::family() -> Family[Self]
+pub fn Gompertz::new(Double) -> Self raise ParamError
+pub impl Cdf for Gompertz
+pub impl Density for Gompertz
+pub impl Quantile for Gompertz
+pub impl Sample for Gompertz
+pub impl Univariate for Gompertz
+
+pub struct GumbelLeft {
+}
+pub fn GumbelLeft::family() -> Family[Self]
+pub fn GumbelLeft::new() -> Self
+pub impl Cdf for GumbelLeft
+pub impl Density for GumbelLeft
+pub impl Quantile for GumbelLeft
+pub impl Sample for GumbelLeft
+pub impl Univariate for GumbelLeft
+
+pub struct GumbelRight {
+}
+pub fn GumbelRight::family() -> Family[Self]
+pub fn GumbelRight::new() -> Self
+pub impl Cdf for GumbelRight
+pub impl Density for GumbelRight
+pub impl Quantile for GumbelRight
+pub impl Sample for GumbelRight
+pub impl Univariate for GumbelRight
+
+pub struct HalfCauchy {
+}
+pub fn HalfCauchy::family() -> Family[Self]
+pub fn HalfCauchy::new() -> Self
+pub impl Cdf for HalfCauchy
+pub impl Density for HalfCauchy
+pub impl Quantile for HalfCauchy
+pub impl Sample for HalfCauchy
+pub impl Univariate for HalfCauchy
+
+pub struct HalfGeneralizedNormal {
+  // private fields
+}
+pub fn HalfGeneralizedNormal::family() -> Family[Self]
+pub fn HalfGeneralizedNormal::new(Double) -> Self raise ParamError
+pub impl Cdf for HalfGeneralizedNormal
+pub impl Density for HalfGeneralizedNormal
+pub impl Quantile for HalfGeneralizedNormal
+pub impl Sample for HalfGeneralizedNormal
+pub impl Univariate for HalfGeneralizedNormal
+
+pub struct HalfLogistic {
+}
+pub fn HalfLogistic::family() -> Family[Self]
+pub fn HalfLogistic::new() -> Self
+pub impl Cdf for HalfLogistic
+pub impl Density for HalfLogistic
+pub impl Quantile for HalfLogistic
+pub impl Sample for HalfLogistic
+pub impl Univariate for HalfLogistic
+
+pub struct HalfNormal {
+}
+pub fn HalfNormal::family() -> Family[Self]
+pub fn HalfNormal::new() -> Self
+pub impl Cdf for HalfNormal
+pub impl Density for HalfNormal
+pub impl Quantile for HalfNormal
+pub impl Sample for HalfNormal
+pub impl Univariate for HalfNormal
+
+pub struct HyperbolicSecant {
+}
+pub fn HyperbolicSecant::family() -> Family[Self]
+pub fn HyperbolicSecant::new() -> Self
+pub impl Cdf for HyperbolicSecant
+pub impl Density for HyperbolicSecant
+pub impl Quantile for HyperbolicSecant
+pub impl Sample for HyperbolicSecant
+pub impl Univariate for HyperbolicSecant
+
 pub struct Hypergeometric {
   // private fields
 }
 pub fn Hypergeometric::new(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Self raise ParamError
 pub impl Mass for Hypergeometric
+
+pub struct InverseGamma {
+  // private fields
+}
+pub fn InverseGamma::family() -> Family[Self]
+pub fn InverseGamma::new(Double) -> Self raise ParamError
+pub impl Cdf for InverseGamma
+pub impl Density for InverseGamma
+pub impl Quantile for InverseGamma
+pub impl Sample for InverseGamma
+pub impl Univariate for InverseGamma
+
+pub struct InverseGaussian {
+  // private fields
+}
+pub fn InverseGaussian::family() -> Family[Self]
+pub fn InverseGaussian::new(Double) -> Self raise ParamError
+pub impl Cdf for InverseGaussian
+pub impl Density for InverseGaussian
+pub impl Quantile for InverseGaussian
+pub impl Sample for InverseGaussian
+pub impl Univariate for InverseGaussian
+
+pub struct InverseWeibull {
+  // private fields
+}
+pub fn InverseWeibull::family() -> Family[Self]
+pub fn InverseWeibull::new(Double) -> Self raise ParamError
+pub impl Cdf for InverseWeibull
+pub impl Density for InverseWeibull
+pub impl Quantile for InverseWeibull
+pub impl Sample for InverseWeibull
+pub impl Univariate for InverseWeibull
+
+pub struct IrwinHall {
+  // private fields
+}
+pub fn IrwinHall::family(n~ : Int32) -> Family[Self]
+pub fn IrwinHall::new(Int32) -> Self raise ParamError
+pub impl Cdf for IrwinHall
+pub impl Density for IrwinHall
+pub impl Quantile for IrwinHall
+pub impl Sample for IrwinHall
+pub impl Univariate for IrwinHall
+
+pub struct JohnsonSB {
+  // private fields
+}
+pub fn JohnsonSB::family() -> Family[Self]
+pub fn JohnsonSB::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for JohnsonSB
+pub impl Density for JohnsonSB
+pub impl Quantile for JohnsonSB
+pub impl Sample for JohnsonSB
+pub impl Univariate for JohnsonSB
+
+pub struct JohnsonSU {
+  // private fields
+}
+pub fn JohnsonSU::family() -> Family[Self]
+pub fn JohnsonSU::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for JohnsonSU
+pub impl Density for JohnsonSU
+pub impl Quantile for JohnsonSU
+pub impl Sample for JohnsonSU
+pub impl Univariate for JohnsonSU
+
+pub struct JonesFaddySkewT {
+  // private fields
+}
+pub fn JonesFaddySkewT::family() -> Family[Self]
+pub fn JonesFaddySkewT::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for JonesFaddySkewT
+pub impl Density for JonesFaddySkewT
+pub impl Quantile for JonesFaddySkewT
+pub impl Sample for JonesFaddySkewT
+pub impl Univariate for JonesFaddySkewT
+
+pub struct Kappa3 {
+  // private fields
+}
+pub fn Kappa3::family() -> Family[Self]
+pub fn Kappa3::new(Double) -> Self raise ParamError
+pub impl Cdf for Kappa3
+pub impl Density for Kappa3
+pub impl Quantile for Kappa3
+pub impl Sample for Kappa3
+pub impl Univariate for Kappa3
+
+pub struct Kappa4 {
+  // private fields
+}
+pub fn Kappa4::family() -> Family[Self]
+pub fn Kappa4::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Kappa4
+pub impl Density for Kappa4
+pub impl Quantile for Kappa4
+pub impl Sample for Kappa4
+pub impl Univariate for Kappa4
+
+pub struct Kolmogorov {
+}
+pub fn Kolmogorov::family() -> Family[Self]
+pub fn Kolmogorov::new() -> Self
+pub impl Cdf for Kolmogorov
+pub impl Density for Kolmogorov
+pub impl Quantile for Kolmogorov
+pub impl Sample for Kolmogorov
+pub impl Univariate for Kolmogorov
+
+pub struct KolmogorovSmirnovOne {
+  // private fields
+}
+pub fn KolmogorovSmirnovOne::family(n~ : Int32) -> Family[Self]
+pub fn KolmogorovSmirnovOne::new(Int32) -> Self raise ParamError
+pub impl Cdf for KolmogorovSmirnovOne
+pub impl Density for KolmogorovSmirnovOne
+pub impl Quantile for KolmogorovSmirnovOne
+pub impl Sample for KolmogorovSmirnovOne
+pub impl Univariate for KolmogorovSmirnovOne
+
+pub struct KolmogorovSmirnovTwo {
+  // private fields
+}
+pub fn KolmogorovSmirnovTwo::family(n~ : Int32) -> Family[Self]
+pub fn KolmogorovSmirnovTwo::new(Int32) -> Self raise ParamError
+pub impl Cdf for KolmogorovSmirnovTwo
+pub impl Density for KolmogorovSmirnovTwo
+pub impl Quantile for KolmogorovSmirnovTwo
+pub impl Sample for KolmogorovSmirnovTwo
+pub impl Univariate for KolmogorovSmirnovTwo
+
+pub struct Landau {
+}
+pub fn Landau::family() -> Family[Self]
+pub fn Landau::new() -> Self
+pub impl Cdf for Landau
+pub impl Density for Landau
+pub impl Quantile for Landau
+pub impl Sample for Landau
+pub impl Univariate for Landau
+
+pub struct Laplace {
+}
+pub fn Laplace::family() -> Family[Self]
+pub fn Laplace::new() -> Self
+pub impl Cdf for Laplace
+pub impl Density for Laplace
+pub impl Quantile for Laplace
+pub impl Sample for Laplace
+pub impl Univariate for Laplace
+
+pub struct Levy {
+}
+pub fn Levy::family() -> Family[Self]
+pub fn Levy::new() -> Self
+pub impl Cdf for Levy
+pub impl Density for Levy
+pub impl Quantile for Levy
+pub impl Sample for Levy
+pub impl Univariate for Levy
+
+pub struct LevyLeft {
+}
+pub fn LevyLeft::family() -> Family[Self]
+pub fn LevyLeft::new() -> Self
+pub impl Cdf for LevyLeft
+pub impl Density for LevyLeft
+pub impl Quantile for LevyLeft
+pub impl Sample for LevyLeft
+pub impl Univariate for LevyLeft
+
+pub struct LogGamma {
+  // private fields
+}
+pub fn LogGamma::family() -> Family[Self]
+pub fn LogGamma::new(Double) -> Self raise ParamError
+pub impl Cdf for LogGamma
+pub impl Density for LogGamma
+pub impl Quantile for LogGamma
+pub impl Sample for LogGamma
+pub impl Univariate for LogGamma
+
+pub struct LogLaplace {
+  // private fields
+}
+pub fn LogLaplace::family() -> Family[Self]
+pub fn LogLaplace::new(Double) -> Self raise ParamError
+pub impl Cdf for LogLaplace
+pub impl Density for LogLaplace
+pub impl Quantile for LogLaplace
+pub impl Sample for LogLaplace
+pub impl Univariate for LogLaplace
+
+pub struct LogNormal {
+  // private fields
+}
+pub fn LogNormal::family() -> Family[Self]
+pub fn LogNormal::new(Double) -> Self raise ParamError
+pub impl Cdf for LogNormal
+pub impl Density for LogNormal
+pub impl Quantile for LogNormal
+pub impl Sample for LogNormal
+pub impl Univariate for LogNormal
+
+pub struct LogSeries {
+  // private fields
+}
+pub fn LogSeries::family() -> Family[Self]
+pub fn LogSeries::new(Double) -> Self raise ParamError
+pub impl Cdf for LogSeries
+pub impl IntCdf for LogSeries
+pub impl IntQuantile for LogSeries
+pub impl Mass for LogSeries
+pub impl Quantile for LogSeries
+pub impl Sample for LogSeries
+pub impl SampleInt for LogSeries
+pub impl Univariate for LogSeries
+
+pub struct LogUniform {
+  // private fields
+}
+pub fn LogUniform::family() -> Family[Self]
+pub fn LogUniform::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for LogUniform
+pub impl Density for LogUniform
+pub impl Quantile for LogUniform
+pub impl Sample for LogUniform
+pub impl Univariate for LogUniform
+
+pub struct Logistic {
+}
+pub fn Logistic::family() -> Family[Self]
+pub fn Logistic::new() -> Self
+pub impl Cdf for Logistic
+pub impl Density for Logistic
+pub impl Quantile for Logistic
+pub impl Sample for Logistic
+pub impl Univariate for Logistic
+
+pub struct Lomax {
+  // private fields
+}
+pub fn Lomax::family() -> Family[Self]
+pub fn Lomax::new(Double) -> Self raise ParamError
+pub impl Cdf for Lomax
+pub impl Density for Lomax
+pub impl Quantile for Lomax
+pub impl Sample for Lomax
+pub impl Univariate for Lomax
+
+pub struct Maxwell {
+}
+pub fn Maxwell::family() -> Family[Self]
+pub fn Maxwell::new() -> Self
+pub impl Cdf for Maxwell
+pub impl Density for Maxwell
+pub impl Quantile for Maxwell
+pub impl Sample for Maxwell
+pub impl Univariate for Maxwell
+
+pub struct Mielke {
+  // private fields
+}
+pub fn Mielke::family() -> Family[Self]
+pub fn Mielke::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Mielke
+pub impl Density for Mielke
+pub impl Quantile for Mielke
+pub impl Sample for Mielke
+pub impl Univariate for Mielke
 
 pub struct Mixture {
   // private fields
@@ -166,6 +1023,55 @@ pub impl Cdf for Mixture
 pub impl Quantile for Mixture
 pub impl Sample for Mixture
 pub impl Univariate for Mixture
+
+pub struct Moyal {
+}
+pub fn Moyal::family() -> Family[Self]
+pub fn Moyal::new() -> Self
+pub impl Cdf for Moyal
+pub impl Density for Moyal
+pub impl Quantile for Moyal
+pub impl Sample for Moyal
+pub impl Univariate for Moyal
+
+pub struct Nakagami {
+  // private fields
+}
+pub fn Nakagami::family() -> Family[Self]
+pub fn Nakagami::new(Double) -> Self raise ParamError
+pub impl Cdf for Nakagami
+pub impl Density for Nakagami
+pub impl Quantile for Nakagami
+pub impl Sample for Nakagami
+pub impl Univariate for Nakagami
+
+pub struct NegativeBinomial {
+  // private fields
+}
+pub fn NegativeBinomial::family(n~ : Int32) -> Family[Self]
+pub fn NegativeBinomial::new(Int32, Double) -> Self raise ParamError
+pub impl Cdf for NegativeBinomial
+pub impl IntCdf for NegativeBinomial
+pub impl IntQuantile for NegativeBinomial
+pub impl Mass for NegativeBinomial
+pub impl Quantile for NegativeBinomial
+pub impl Sample for NegativeBinomial
+pub impl SampleInt for NegativeBinomial
+pub impl Univariate for NegativeBinomial
+
+pub struct NegativeHypergeometric {
+  // private fields
+}
+pub fn NegativeHypergeometric::family(population~ : Int32, successes~ : Int32, failures~ : Int32) -> Family[Self]
+pub fn NegativeHypergeometric::new(Int32, Int32, Int32) -> Self raise ParamError
+pub impl Cdf for NegativeHypergeometric
+pub impl IntCdf for NegativeHypergeometric
+pub impl IntQuantile for NegativeHypergeometric
+pub impl Mass for NegativeHypergeometric
+pub impl Quantile for NegativeHypergeometric
+pub impl Sample for NegativeHypergeometric
+pub impl SampleInt for NegativeHypergeometric
+pub impl Univariate for NegativeHypergeometric
 
 pub struct NoncentralChiSquared {
   // private fields
@@ -202,10 +1108,57 @@ pub impl Quantile for Normal
 pub impl Sample for Normal
 pub impl Univariate for Normal
 
+pub struct NormalInverseGaussian {
+  // private fields
+}
+pub fn NormalInverseGaussian::family() -> Family[Self]
+pub fn NormalInverseGaussian::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for NormalInverseGaussian
+pub impl Density for NormalInverseGaussian
+pub impl Quantile for NormalInverseGaussian
+pub impl Sample for NormalInverseGaussian
+pub impl Univariate for NormalInverseGaussian
+
 pub struct ParamSpec {
   name : String
   constraint : Constraint
 }
+
+pub struct Pareto {
+  // private fields
+}
+pub fn Pareto::family() -> Family[Self]
+pub fn Pareto::new(Double) -> Self raise ParamError
+pub impl Cdf for Pareto
+pub impl Density for Pareto
+pub impl Quantile for Pareto
+pub impl Sample for Pareto
+pub impl Univariate for Pareto
+
+pub struct PearsonIII {
+  // private fields
+}
+pub fn PearsonIII::family() -> Family[Self]
+pub fn PearsonIII::new(Double) -> Self raise ParamError
+pub impl Cdf for PearsonIII
+pub impl Density for PearsonIII
+pub impl Quantile for PearsonIII
+pub impl Sample for PearsonIII
+pub impl Univariate for PearsonIII
+
+pub struct Planck {
+  // private fields
+}
+pub fn Planck::family() -> Family[Self]
+pub fn Planck::new(Double) -> Self raise ParamError
+pub impl Cdf for Planck
+pub impl IntCdf for Planck
+pub impl IntQuantile for Planck
+pub impl Mass for Planck
+pub impl Quantile for Planck
+pub impl Sample for Planck
+pub impl SampleInt for Planck
+pub impl Univariate for Planck
 
 pub struct PointMass {
   // private fields
@@ -223,6 +1176,150 @@ pub struct Poisson {
 pub fn Poisson::new(Double) -> Self raise ParamError
 pub impl IntCdf for Poisson
 
+pub struct PowerLaw {
+  // private fields
+}
+pub fn PowerLaw::family() -> Family[Self]
+pub fn PowerLaw::new(Double) -> Self raise ParamError
+pub impl Cdf for PowerLaw
+pub impl Density for PowerLaw
+pub impl Quantile for PowerLaw
+pub impl Sample for PowerLaw
+pub impl Univariate for PowerLaw
+
+pub struct PowerLogNormal {
+  // private fields
+}
+pub fn PowerLogNormal::family() -> Family[Self]
+pub fn PowerLogNormal::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for PowerLogNormal
+pub impl Density for PowerLogNormal
+pub impl Quantile for PowerLogNormal
+pub impl Sample for PowerLogNormal
+pub impl Univariate for PowerLogNormal
+
+pub struct PowerNormal {
+  // private fields
+}
+pub fn PowerNormal::family() -> Family[Self]
+pub fn PowerNormal::new(Double) -> Self raise ParamError
+pub impl Cdf for PowerNormal
+pub impl Density for PowerNormal
+pub impl Quantile for PowerNormal
+pub impl Sample for PowerNormal
+pub impl Univariate for PowerNormal
+
+pub struct RDist {
+  // private fields
+}
+pub fn RDist::family() -> Family[Self]
+pub fn RDist::new(Double) -> Self raise ParamError
+pub impl Cdf for RDist
+pub impl Density for RDist
+pub impl Quantile for RDist
+pub impl Sample for RDist
+pub impl Univariate for RDist
+
+pub struct Rayleigh {
+}
+pub fn Rayleigh::family() -> Family[Self]
+pub fn Rayleigh::new() -> Self
+pub impl Cdf for Rayleigh
+pub impl Density for Rayleigh
+pub impl Quantile for Rayleigh
+pub impl Sample for Rayleigh
+pub impl Univariate for Rayleigh
+
+pub struct ReciprocalInverseGaussian {
+  // private fields
+}
+pub fn ReciprocalInverseGaussian::family() -> Family[Self]
+pub fn ReciprocalInverseGaussian::new(Double) -> Self raise ParamError
+pub impl Cdf for ReciprocalInverseGaussian
+pub impl Density for ReciprocalInverseGaussian
+pub impl Quantile for ReciprocalInverseGaussian
+pub impl Sample for ReciprocalInverseGaussian
+pub impl Univariate for ReciprocalInverseGaussian
+
+pub struct RelativisticBreitWigner {
+  // private fields
+}
+pub fn RelativisticBreitWigner::family() -> Family[Self]
+pub fn RelativisticBreitWigner::new(Double) -> Self raise ParamError
+pub impl Cdf for RelativisticBreitWigner
+pub impl Density for RelativisticBreitWigner
+pub impl Quantile for RelativisticBreitWigner
+pub impl Sample for RelativisticBreitWigner
+pub impl Univariate for RelativisticBreitWigner
+
+pub struct Rice {
+  // private fields
+}
+pub fn Rice::family() -> Family[Self]
+pub fn Rice::new(Double) -> Self raise ParamError
+pub impl Cdf for Rice
+pub impl Density for Rice
+pub impl Quantile for Rice
+pub impl Sample for Rice
+pub impl Univariate for Rice
+
+pub struct Semicircular {
+}
+pub fn Semicircular::family() -> Family[Self]
+pub fn Semicircular::new() -> Self
+pub impl Cdf for Semicircular
+pub impl Density for Semicircular
+pub impl Quantile for Semicircular
+pub impl Sample for Semicircular
+pub impl Univariate for Semicircular
+
+pub struct Skellam {
+  // private fields
+}
+pub fn Skellam::family() -> Family[Self]
+pub fn Skellam::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Skellam
+pub impl IntCdf for Skellam
+pub impl IntQuantile for Skellam
+pub impl Mass for Skellam
+pub impl Quantile for Skellam
+pub impl Sample for Skellam
+pub impl SampleInt for Skellam
+pub impl Univariate for Skellam
+
+pub struct SkewCauchy {
+  // private fields
+}
+pub fn SkewCauchy::family() -> Family[Self]
+pub fn SkewCauchy::new(Double) -> Self raise ParamError
+pub impl Cdf for SkewCauchy
+pub impl Density for SkewCauchy
+pub impl Quantile for SkewCauchy
+pub impl Sample for SkewCauchy
+pub impl Univariate for SkewCauchy
+
+pub struct SkewNormal {
+  // private fields
+}
+pub fn SkewNormal::family() -> Family[Self]
+pub fn SkewNormal::new(Double) -> Self raise ParamError
+pub impl Cdf for SkewNormal
+pub impl Density for SkewNormal
+pub impl Quantile for SkewNormal
+pub impl Sample for SkewNormal
+pub impl Univariate for SkewNormal
+
+pub struct Stable {
+  // private fields
+}
+pub fn Stable::family() -> Family[Self]
+pub fn Stable::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Stable
+pub impl Density for Stable
+pub impl Quantile for Stable
+pub impl Sample for Stable
+pub impl Univariate for Stable
+
 pub struct StudentT {
   // private fields
 }
@@ -236,11 +1333,230 @@ pub impl Quantile for StudentT
 pub impl Sample for StudentT
 pub impl Univariate for StudentT
 
+pub struct StudentizedRange {
+  // private fields
+}
+pub fn StudentizedRange::family() -> Family[Self]
+pub fn StudentizedRange::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for StudentizedRange
+pub impl Density for StudentizedRange
+pub impl Quantile for StudentizedRange
+pub impl Sample for StudentizedRange
+pub impl Univariate for StudentizedRange
+
+pub struct Trapezoid {
+  // private fields
+}
+pub fn Trapezoid::family() -> Family[Self]
+pub fn Trapezoid::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for Trapezoid
+pub impl Density for Trapezoid
+pub impl Quantile for Trapezoid
+pub impl Sample for Trapezoid
+pub impl Univariate for Trapezoid
+
+pub struct Triangular {
+  // private fields
+}
+pub fn Triangular::family() -> Family[Self]
+pub fn Triangular::new(Double) -> Self raise ParamError
+pub impl Cdf for Triangular
+pub impl Density for Triangular
+pub impl Quantile for Triangular
+pub impl Sample for Triangular
+pub impl Univariate for Triangular
+
 pub struct Truncated[D] {
   // private fields
 }
 pub fn[D : Cdf] Truncated::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
 pub impl[D : Cdf] Cdf for Truncated[D]
+
+pub struct TruncatedExponential {
+  // private fields
+}
+pub fn TruncatedExponential::family() -> Family[Self]
+pub fn TruncatedExponential::new(Double) -> Self raise ParamError
+pub impl Cdf for TruncatedExponential
+pub impl Density for TruncatedExponential
+pub impl Quantile for TruncatedExponential
+pub impl Sample for TruncatedExponential
+pub impl Univariate for TruncatedExponential
+
+pub struct TruncatedNormal {
+  // private fields
+}
+pub fn TruncatedNormal::family() -> Family[Self]
+pub fn TruncatedNormal::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for TruncatedNormal
+pub impl Density for TruncatedNormal
+pub impl Quantile for TruncatedNormal
+pub impl Sample for TruncatedNormal
+pub impl Univariate for TruncatedNormal
+
+pub struct TruncatedPareto {
+  // private fields
+}
+pub fn TruncatedPareto::family() -> Family[Self]
+pub fn TruncatedPareto::new(Double, Double) -> Self raise ParamError
+pub impl Cdf for TruncatedPareto
+pub impl Density for TruncatedPareto
+pub impl Quantile for TruncatedPareto
+pub impl Sample for TruncatedPareto
+pub impl Univariate for TruncatedPareto
+
+pub struct TruncatedWeibull {
+  // private fields
+}
+pub fn TruncatedWeibull::family() -> Family[Self]
+pub fn TruncatedWeibull::new(Double, Double, Double) -> Self raise ParamError
+pub impl Cdf for TruncatedWeibull
+pub impl Density for TruncatedWeibull
+pub impl Quantile for TruncatedWeibull
+pub impl Sample for TruncatedWeibull
+pub impl Univariate for TruncatedWeibull
+
+pub struct TukeyLambda {
+  // private fields
+}
+pub fn TukeyLambda::family() -> Family[Self]
+pub fn TukeyLambda::new(Double) -> Self raise ParamError
+pub impl Cdf for TukeyLambda
+pub impl Density for TukeyLambda
+pub impl Quantile for TukeyLambda
+pub impl Sample for TukeyLambda
+pub impl Univariate for TukeyLambda
+
+pub struct Uniform {
+}
+pub fn Uniform::family() -> Family[Self]
+pub fn Uniform::new() -> Self
+pub impl Cdf for Uniform
+pub impl Density for Uniform
+pub impl Quantile for Uniform
+pub impl Sample for Uniform
+pub impl Univariate for Uniform
+
+pub struct VonMises {
+  // private fields
+}
+pub fn VonMises::family() -> Family[Self]
+pub fn VonMises::new(Double) -> Self raise ParamError
+pub impl Cdf for VonMises
+pub impl Density for VonMises
+pub impl Quantile for VonMises
+pub impl Sample for VonMises
+pub impl Univariate for VonMises
+
+pub struct VonMisesLine {
+  // private fields
+}
+pub fn VonMisesLine::family() -> Family[Self]
+pub fn VonMisesLine::new(Double) -> Self raise ParamError
+pub impl Cdf for VonMisesLine
+pub impl Density for VonMisesLine
+pub impl Quantile for VonMisesLine
+pub impl Sample for VonMisesLine
+pub impl Univariate for VonMisesLine
+
+pub struct Wald {
+}
+pub fn Wald::family() -> Family[Self]
+pub fn Wald::new() -> Self
+pub impl Cdf for Wald
+pub impl Density for Wald
+pub impl Quantile for Wald
+pub impl Sample for Wald
+pub impl Univariate for Wald
+
+pub struct WalleniusNoncentralHypergeometric {
+  // private fields
+}
+pub fn WalleniusNoncentralHypergeometric::family(population~ : Int32, successes~ : Int32, draws~ : Int32) -> Family[Self]
+pub fn WalleniusNoncentralHypergeometric::new(Int32, Int32, Int32, Double) -> Self raise ParamError
+pub impl Cdf for WalleniusNoncentralHypergeometric
+pub impl IntCdf for WalleniusNoncentralHypergeometric
+pub impl IntQuantile for WalleniusNoncentralHypergeometric
+pub impl Mass for WalleniusNoncentralHypergeometric
+pub impl Quantile for WalleniusNoncentralHypergeometric
+pub impl Sample for WalleniusNoncentralHypergeometric
+pub impl SampleInt for WalleniusNoncentralHypergeometric
+pub impl Univariate for WalleniusNoncentralHypergeometric
+
+pub struct Weibull {
+  // private fields
+}
+pub fn Weibull::family() -> Family[Self]
+pub fn Weibull::new(Double) -> Self raise ParamError
+pub impl Cdf for Weibull
+pub impl Density for Weibull
+pub impl Quantile for Weibull
+pub impl Sample for Weibull
+pub impl Univariate for Weibull
+
+pub struct WeibullMax {
+  // private fields
+}
+pub fn WeibullMax::family() -> Family[Self]
+pub fn WeibullMax::new(Double) -> Self raise ParamError
+pub impl Cdf for WeibullMax
+pub impl Density for WeibullMax
+pub impl Quantile for WeibullMax
+pub impl Sample for WeibullMax
+pub impl Univariate for WeibullMax
+
+pub struct WrappedCauchy {
+  // private fields
+}
+pub fn WrappedCauchy::family() -> Family[Self]
+pub fn WrappedCauchy::new(Double) -> Self raise ParamError
+pub impl Cdf for WrappedCauchy
+pub impl Density for WrappedCauchy
+pub impl Quantile for WrappedCauchy
+pub impl Sample for WrappedCauchy
+pub impl Univariate for WrappedCauchy
+
+pub struct YuleSimon {
+  // private fields
+}
+pub fn YuleSimon::family() -> Family[Self]
+pub fn YuleSimon::new(Double) -> Self raise ParamError
+pub impl Cdf for YuleSimon
+pub impl IntCdf for YuleSimon
+pub impl IntQuantile for YuleSimon
+pub impl Mass for YuleSimon
+pub impl Quantile for YuleSimon
+pub impl Sample for YuleSimon
+pub impl SampleInt for YuleSimon
+pub impl Univariate for YuleSimon
+
+pub struct Zipf {
+  // private fields
+}
+pub fn Zipf::family() -> Family[Self]
+pub fn Zipf::new(Double) -> Self raise ParamError
+pub impl Cdf for Zipf
+pub impl IntCdf for Zipf
+pub impl IntQuantile for Zipf
+pub impl Mass for Zipf
+pub impl Quantile for Zipf
+pub impl Sample for Zipf
+pub impl SampleInt for Zipf
+pub impl Univariate for Zipf
+
+pub struct Zipfian {
+  // private fields
+}
+pub fn Zipfian::family(n~ : Int32) -> Family[Self]
+pub fn Zipfian::new(Double, Int32) -> Self raise ParamError
+pub impl Cdf for Zipfian
+pub impl IntCdf for Zipfian
+pub impl IntQuantile for Zipfian
+pub impl Mass for Zipfian
+pub impl Quantile for Zipfian
+pub impl Sample for Zipfian
+pub impl SampleInt for Zipfian
+pub impl Univariate for Zipfian
 
 // Type aliases
 
