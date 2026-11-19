@@ -1,15 +1,30 @@
 ///|
-/// Survival analysis on `SurvivalRecord`s (time, event, entry).
+/// Survival analysis on `SurvivalRecord`s (time, event, entry). Failures
+/// are `@regress.ModelError`, shared by every model layer.
 
 ///|
 /// A step-function estimate of the survival curve with its pointwise
-/// standard errors.
+/// standard errors (Greenwood).
+#derive(Eq, Debug)
 pub struct SurvivalCurve {
   times : FixedArray[Double]
   survival : FixedArray[Double]
   se : FixedArray[Double]
-  at_risk : FixedArray[Int32]
-  events : FixedArray[Int32]
+  at_risk : FixedArray[Int64]
+  events : FixedArray[Int64]
+}
+
+///|
+/// A step-function estimate of the cumulative hazard with its pointwise
+/// standard errors. A different quantity from survival, so a different
+/// type: S = exp(-H) only for a continuous distribution.
+#derive(Eq, Debug)
+pub struct HazardCurve {
+  times : FixedArray[Double]
+  cumulative_hazard : FixedArray[Double]
+  se : FixedArray[Double]
+  at_risk : FixedArray[Int64]
+  events : FixedArray[Int64]
 }
 
 ///|
@@ -23,24 +38,30 @@ pub(all) enum CurveInterval {
 
 ///|
 /// Kaplan–Meier with Greenwood standard errors; delayed entry respected.
-pub fn kaplan_meier(records : ArrayView[@data.SurvivalRecord]) -> SurvivalCurve {
+pub fn kaplan_meier(
+  records : ArrayView[@data.SurvivalRecord],
+) -> SurvivalCurve raise @regress.ModelError {
   ignore(records)
   ...
 }
 
 ///|
-pub fn SurvivalCurve::interval(
+/// One pointwise interval per time of the curve, each with its level and
+/// procedure.
+pub fn SurvivalCurve::intervals(
   self : SurvivalCurve,
-  level : Double,
+  level~ : Double,
   how : CurveInterval,
-) -> (FixedArray[Double], FixedArray[Double]) {
+) -> Array[@infer.Interval] raise @regress.ModelError {
   ignore((self, level, how))
   ...
 }
 
 ///|
 /// Nelson–Aalen cumulative hazard.
-pub fn nelson_aalen(records : ArrayView[@data.SurvivalRecord]) -> SurvivalCurve {
+pub fn nelson_aalen(
+  records : ArrayView[@data.SurvivalRecord],
+) -> HazardCurve raise @regress.ModelError {
   ignore(records)
   ...
 }
@@ -50,7 +71,7 @@ pub fn nelson_aalen(records : ArrayView[@data.SurvivalRecord]) -> SurvivalCurve 
 /// exp(-x/2), the bug found on mooncakes).
 pub fn log_rank(
   groups : ArrayView[ArrayView[@data.SurvivalRecord]],
-) -> @infer.TestResult {
+) -> @infer.TestResult raise @regress.ModelError {
   ignore(groups)
   ...
 }
@@ -63,22 +84,32 @@ pub(all) enum Ties {
 }
 
 ///|
+#derive(Eq, Debug)
 pub struct CoxFit {
+  names : Array[String]
   coef : FixedArray[Double]
   se : FixedArray[Double]
+  covariance : @data.DataMatrix
   hazard_ratio : FixedArray[Double]
   loglik : Double
+  /// The cumulative baseline hazard at covariates 0 (Breslow's estimator).
+  baseline : HazardCurve
+  iterations : Int32
   converged : Bool
 }
 
 ///|
-/// Cox proportional hazards by partial likelihood.
+/// Cox proportional hazards by partial likelihood. `covariates` has one
+/// row per record.
 pub fn cox(
   records : ArrayView[@data.SurvivalRecord],
   covariates : @data.DataMatrix,
   ties : Ties,
 ) -> CoxFit raise @regress.ModelError {
-  ignore((records, covariates, ties))
+  if covariates.rows != records.length() {
+    raise LengthMismatch(expected=records.length(), got=covariates.rows)
+  }
+  ignore(ties)
   ...
 }
 

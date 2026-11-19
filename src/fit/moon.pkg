@@ -1,4 +1,5 @@
 import {
+  "gaato/stats/data",
   "gaato/stats/dist",
   "moonbitlang/core/math",
 }

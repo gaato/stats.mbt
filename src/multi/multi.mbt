@@ -2,11 +2,11 @@
 /// Distributions on R^d and on Z^d. The univariate distribution function
 /// is not the central description here (the joint CDF is rarely what
 /// anyone wants), so the common capabilities are the dimension, a density
-/// or mass, sampling and the first two moments. Vectors are passed as
-/// views and written into caller-provided buffers, so sampling a million
-/// points allocates nothing per point. Matrices are row-major
-/// `FixedArray[Double]` of size d * d until the dense linear algebra
-/// module provides a matrix type.
+/// or mass, sampling and the first two moments. Moments come back as
+/// values, like the univariate `Moments`; sampling can also write into a
+/// caller's buffer, so that a million points need no allocation per point.
+/// Matrices are `@data.DataMatrix` until a dense linear algebra module
+/// provides a matrix type.
 
 ///|
 pub(open) trait Dimension {
@@ -20,21 +20,30 @@ pub(open) trait MvDensity: Dimension {
 
 ///|
 pub(open) trait MvMass: Dimension {
-  fn logpmf(Self, ArrayView[Int32]) -> Double
+  fn logpmf(Self, ArrayView[Int64]) -> Double
 }
 
 ///|
-/// Writes one draw into `out`, which must have length `dim`.
+/// One draw. `sample_into` writes it into `out`, which must have length
+/// `dim`; `sample` allocates the vector.
 pub(open) trait MvSample: Dimension {
   fn sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+  fn sample(Self, &@num.RandomSource) -> FixedArray[Double] = _
 }
 
 ///|
-/// Writes the mean vector (length d) and the covariance matrix (d * d,
-/// row-major) into caller buffers. `false` when a moment does not exist.
+impl MvSample with fn sample(self, rng) {
+  let out = FixedArray::make(self.dim(), 0.0)
+  self.sample_into(rng, out)
+  out
+}
+
+///|
+/// The mean vector (length d) and the covariance matrix (d × d); `None`
+/// when the moment does not exist, as for the univariate `Moments`.
 pub(open) trait MvMoments: Dimension {
-  fn mean_into(Self, FixedArray[Double]) -> Bool
-  fn covariance_into(Self, FixedArray[Double]) -> Bool
+  fn mean(Self) -> FixedArray[Double]?
+  fn covariance(Self) -> @data.DataMatrix?
 }
 
 ///|
@@ -58,14 +67,14 @@ pub struct MvNormal {
 ///|
 pub fn MvNormal::new(
   mean : ArrayView[Double],
-  covariance : ArrayView[Double],
+  covariance : @data.DataMatrix,
 ) -> MvNormal raise @dist.ParamError {
   let d = mean.length()
-  if covariance.length() != d * d {
+  if covariance.rows != d || covariance.cols != d {
     raise @dist.InvalidParam(
       name="covariance",
-      value=covariance.length().to_double(),
-      reason="must be d * d, row-major",
+      value=covariance.rows.to_double(),
+      reason="must be d x d for a mean of length d",
     )
   }
   ...
@@ -89,16 +98,14 @@ pub impl MvSample for MvNormal with fn sample_into(self, rng, out) {
 }
 
 ///|
-pub impl MvMoments for MvNormal with fn mean_into(self, out) {
-  for i in 0..<self.d {
-    out[i] = self.mean[i]
-  }
-  true
+pub impl MvMoments for MvNormal with fn mean(self) {
+  Some(self.mean.copy())
 }
 
 ///|
-pub impl MvMoments for MvNormal with fn covariance_into(self, out) {
-  ignore((self, out))
+/// L Lᵀ from the stored Cholesky factor.
+pub impl MvMoments for MvNormal with fn covariance(self) {
+  ignore(self)
   ...
 }
 
@@ -140,13 +147,13 @@ pub impl MvSample for Dirichlet with fn sample_into(self, rng, out) {
 ///|
 /// Counts of n trials over d categories.
 pub struct Multinomial {
-  priv n : Int32
+  priv n : Int64
   priv p : FixedArray[Double]
 }
 
 ///|
 pub fn Multinomial::new(
-  n : Int32,
+  n : Int64,
   p : ArrayView[Double],
 ) -> Multinomial raise @dist.ParamError {
   if n < 0 {
@@ -188,7 +195,7 @@ pub struct GaussianCopula {
 
 ///|
 pub fn GaussianCopula::new(
-  correlation : ArrayView[Double],
+  correlation : @data.DataMatrix,
 ) -> GaussianCopula raise @dist.ParamError {
   ignore(correlation)
   ...
@@ -247,3 +254,42 @@ pub impl[C : Copula] MvSample for Joint[C] with fn sample_into(self, rng, out) {
     out[i] = @dist.Quantile::quantile(m, out[i])
   }
 }
+
+///|
+pub extend MvNormal with Dimension::{dim}
+
+///|
+pub extend MvNormal with MvDensity::{logpdf}
+
+///|
+pub extend MvNormal with MvSample::{sample_into, sample}
+
+///|
+pub extend MvNormal with MvMoments::{mean, covariance}
+
+///|
+pub extend Dirichlet with Dimension::{dim}
+
+///|
+pub extend Dirichlet with MvDensity::{logpdf}
+
+///|
+pub extend Dirichlet with MvSample::{sample_into, sample}
+
+///|
+pub extend Multinomial with Dimension::{dim}
+
+///|
+pub extend Multinomial with MvMass::{logpmf}
+
+///|
+pub extend GaussianCopula with Dimension::{dim}
+
+///|
+pub extend GaussianCopula with Copula::{copula_cdf, sample_uniform_into}
+
+///|
+pub extend Joint with Dimension::{dim}
+
+///|
+pub extend Joint with MvSample::{sample_into, sample}

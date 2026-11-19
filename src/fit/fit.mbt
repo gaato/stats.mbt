@@ -5,15 +5,17 @@
 /// asymptotic covariance when it is available.
 
 ///|
+#derive(Debug)
 pub struct MleResult[D] {
   dist : D
   loglik : Double
   /// Free parameters of the family.
   k : Int32
-  n : Int32
-  /// k * k, row-major, on the family's own parameter scale; `None` when
-  /// the information matrix is singular or was not computed.
-  covariance : FixedArray[Double]?
+  /// Observations.
+  n : Int64
+  /// k × k, on the family's own parameter scale; `None` when the
+  /// information matrix is singular or was not computed.
+  covariance : @data.DataMatrix?
   converged : Bool
   iterations : Int32
   family : String
@@ -62,7 +64,7 @@ pub fn[D : @dist.Density] fit_exp_family(
       mean[j] = mean[j] + t[j]
     }
   }
-  let n = data.length()
+  let n = data.length().to_int64()
   for j in 0..<ef.natural_dim {
     mean[j] = mean[j] / n.to_double()
   }
@@ -95,6 +97,7 @@ pub fn[D : @dist.Density + @dist.Score] fit_mle(
 ///|
 /// Pick among fitted candidates by AIC. The candidates may come from
 /// different families, so they are passed as already-fitted summaries.
+#derive(Eq, Debug)
 pub(all) struct Candidate {
   family : String
   aic : Double

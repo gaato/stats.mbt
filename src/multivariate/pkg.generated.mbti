@@ -4,39 +4,47 @@ package "gaato/stats/multivariate"
 import {
   "gaato/stats/data",
   "gaato/stats/num",
+  "gaato/stats/regress",
   "moonbitlang/core/debug",
 }
 
 // Values
-pub fn cca(@data.DataMatrix, @data.DataMatrix) -> FixedArray[Double]
+pub fn cca(@data.DataMatrix, @data.DataMatrix) -> FixedArray[Double] raise @regress.ModelError
 
-pub fn correspondence(@data.Table, Int32) -> (@data.DataMatrix, @data.DataMatrix)
+pub fn correspondence(@data.Table, dims~ : Int32) -> Correspondence raise @regress.ModelError
 
-pub fn discriminant(@data.DataMatrix, ArrayView[Int32], Discriminant) -> Classifier
+pub fn discriminant(@data.DataMatrix, ArrayView[Int32], Discriminant) -> Classifier raise @regress.ModelError
 
-pub fn factor_analysis(@data.DataMatrix, Int32, Rotation) -> FactorFit
+pub fn factor_analysis(@data.DataMatrix, factors~ : Int32, Rotation) -> FactorFit raise @regress.ModelError
 
-pub fn hierarchical(@data.DataMatrix, Linkage) -> Dendrogram
+pub fn hierarchical(@data.DataMatrix, Linkage) -> Dendrogram raise @regress.ModelError
 
-pub fn kmeans(@data.DataMatrix, Int32, rng~ : &@num.RandomSource) -> KMeans
+pub fn kmeans(@data.DataMatrix, k~ : Int32, rng~ : &@num.RandomSource) -> KMeans raise @regress.ModelError
 
-pub fn mds(@data.DataMatrix, Int32) -> @data.DataMatrix
+pub fn mds(@data.DataMatrix, dims~ : Int32) -> @data.DataMatrix raise @regress.ModelError
 
-pub fn pca(@data.DataMatrix, Scaling) -> Pca
+pub fn pca(@data.DataMatrix, Scaling) -> Pca raise @regress.ModelError
 
-pub fn roc(ArrayView[Double], ArrayView[Bool]) -> Roc
+pub fn roc(ArrayView[Double], ArrayView[Bool]) -> Roc raise @regress.ModelError
 
 // Errors
 
 // Types and methods
 pub struct Classifier {
   classes : Int32
-  predict : (@data.DataMatrix) -> @data.DataMatrix
+  predict : (@data.DataMatrix) -> @data.DataMatrix raise @regress.ModelError
 }
 
+#derive(Eq, @debug.Debug)
+pub struct Correspondence {
+  row_coordinates : @data.DataMatrix
+  col_coordinates : @data.DataMatrix
+  inertia : FixedArray[Double]
+}
+
+#derive(Eq, @debug.Debug)
 pub struct Dendrogram {
-  merges : FixedArray[(Int32, Int32)]
-  heights : FixedArray[Double]
+  merges : Array[Merge]
 }
 
 #derive(Eq, @debug.Debug)
@@ -45,18 +53,22 @@ pub(all) enum Discriminant {
   Quadratic
 }
 
+#derive(Eq, @debug.Debug)
 pub struct FactorFit {
   loadings : @data.DataMatrix
   uniqueness : FixedArray[Double]
   loglik : Double
+  iterations : Int32
   converged : Bool
 }
 
+#derive(Eq, @debug.Debug)
 pub struct KMeans {
   centers : @data.DataMatrix
   labels : FixedArray[Int32]
   within_ss : FixedArray[Double]
   iterations : Int32
+  converged : Bool
 }
 
 #derive(Eq, @debug.Debug)
@@ -67,6 +79,14 @@ pub(all) enum Linkage {
   Ward
 }
 
+#derive(Eq, @debug.Debug)
+pub struct Merge {
+  first : Int32
+  second : Int32
+  height : Double
+}
+
+#derive(Eq, @debug.Debug)
 pub struct Pca {
   loadings : @data.DataMatrix
   scores : @data.DataMatrix
@@ -74,6 +94,7 @@ pub struct Pca {
   explained : FixedArray[Double]
 }
 
+#derive(Eq, @debug.Debug)
 pub struct Roc {
   false_positive : FixedArray[Double]
   true_positive : FixedArray[Double]
@@ -83,7 +104,7 @@ pub struct Roc {
 
 #derive(Eq, @debug.Debug)
 pub(all) enum Rotation {
-  None
+  Unrotated
   Varimax
   Promax(power~ : Double)
 }

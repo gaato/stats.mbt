@@ -15,20 +15,25 @@ pub fn cox(ArrayView[@data.SurvivalRecord], @data.DataMatrix, Ties) -> CoxFit ra
 
 pub fn[D : @dist.Density + @dist.Cdf] fit_censored(@dist.Family[D], ArrayView[@data.Observation], start~ : ArrayView[Double]) -> @fit.MleResult[D] raise @dist.FitError
 
-pub fn kaplan_meier(ArrayView[@data.SurvivalRecord]) -> SurvivalCurve
+pub fn kaplan_meier(ArrayView[@data.SurvivalRecord]) -> SurvivalCurve raise @regress.ModelError
 
-pub fn log_rank(ArrayView[ArrayView[@data.SurvivalRecord]]) -> @infer.TestResult
+pub fn log_rank(ArrayView[ArrayView[@data.SurvivalRecord]]) -> @infer.TestResult raise @regress.ModelError
 
-pub fn nelson_aalen(ArrayView[@data.SurvivalRecord]) -> SurvivalCurve
+pub fn nelson_aalen(ArrayView[@data.SurvivalRecord]) -> HazardCurve raise @regress.ModelError
 
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub struct CoxFit {
+  names : Array[String]
   coef : FixedArray[Double]
   se : FixedArray[Double]
+  covariance : @data.DataMatrix
   hazard_ratio : FixedArray[Double]
   loglik : Double
+  baseline : HazardCurve
+  iterations : Int32
   converged : Bool
 }
 
@@ -39,14 +44,24 @@ pub(all) enum CurveInterval {
   Log
 }
 
+#derive(Eq, @debug.Debug)
+pub struct HazardCurve {
+  times : FixedArray[Double]
+  cumulative_hazard : FixedArray[Double]
+  se : FixedArray[Double]
+  at_risk : FixedArray[Int64]
+  events : FixedArray[Int64]
+}
+
+#derive(Eq, @debug.Debug)
 pub struct SurvivalCurve {
   times : FixedArray[Double]
   survival : FixedArray[Double]
   se : FixedArray[Double]
-  at_risk : FixedArray[Int32]
-  events : FixedArray[Int32]
+  at_risk : FixedArray[Int64]
+  events : FixedArray[Int64]
 }
-pub fn SurvivalCurve::interval(Self, Double, CurveInterval) -> (FixedArray[Double], FixedArray[Double])
+pub fn SurvivalCurve::intervals(Self, level~ : Double, CurveInterval) -> Array[@infer.Interval] raise @regress.ModelError
 
 #derive(Eq, @debug.Debug)
 pub(all) enum Ties {

@@ -9,28 +9,33 @@ import {
 }
 
 // Values
-pub fn cross_validate(ArrayView[Double], Design, (ArrayView[Double], Design) -> LinearFit raise ModelError, folds~ : Int32, rng~ : &@num.RandomSource) -> @infer.Estimate raise ModelError
+pub fn cross_validate(ArrayView[Double], Design, (ArrayView[Double], Design, Design) -> FixedArray[Double] raise ModelError, folds~ : Int32, rng~ : &@num.RandomSource) -> @infer.Estimate raise ModelError
 
-pub fn glm(ArrayView[Double], Design, GlmFamily, Link, max_iterations? : Int32) -> GlmFit raise ModelError
+pub fn glm(GlmResponse, Design, GlmFamily, Link, max_iterations? : Int32) -> GlmFit raise ModelError
 
 pub fn gls(ArrayView[Double], Design, @data.DataMatrix) -> LinearFit raise ModelError
 
-pub fn nonlinear_least_squares(ArrayView[Double], ArrayView[Double], (Double, ArrayView[Double]) -> Double, (Double, ArrayView[Double], FixedArray[Double]) -> Unit, ArrayView[Double]) -> LinearFit raise ModelError
+pub fn nonlinear_least_squares(ArrayView[Double], ArrayView[Double], model~ : (Double, ArrayView[Double]) -> Double, gradient~ : (Double, ArrayView[Double]) -> FixedArray[Double], start~ : ArrayView[Double]) -> NonlinearFit raise ModelError
 
 pub fn ols(ArrayView[Double], Design) -> LinearFit raise ModelError
 
-pub fn penalized(ArrayView[Double], Design, Penalty) -> LinearFit raise ModelError
+pub fn penalized(ArrayView[Double], Design, Penalty) -> PenalizedFit raise ModelError
 
 // Errors
 #derive(@debug.Debug)
 pub(all) suberror ModelError {
   TooFewObservations(needed~ : Int32, got~ : Int32)
+  LengthMismatch(expected~ : Int32, got~ : Int32)
+  ContainsNaN(index~ : Int32)
+  InvalidArgument(name~ : String, reason~ : String)
+  Singular
   NotConverged(iterations~ : Int32)
   Separation
   BadResponse(index~ : Int32, value~ : Double)
 }
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub struct AnovaRow {
   source : String
   df : Double
@@ -40,6 +45,7 @@ pub struct AnovaRow {
   p_value : Double?
 }
 
+#derive(@debug.Debug)
 pub struct Design {
   x : @data.DataMatrix
   intercept : Bool
@@ -47,6 +53,7 @@ pub struct Design {
   weights : @data.Weights?
   names : Array[String]
 }
+pub fn Design::new(@data.DataMatrix, intercept~ : Bool, offset? : ArrayView[Double], weights? : @data.Weights, names? : Array[String]) -> Self raise ModelError
 
 #derive(Eq, @debug.Debug)
 pub(all) enum GlmFamily {
@@ -58,12 +65,16 @@ pub(all) enum GlmFamily {
   NegativeBinomial(theta~ : Double)
 }
 
+#derive(Eq, @debug.Debug)
 pub struct GlmFit {
+  names : Array[String]
   coef : FixedArray[Double]
   se : FixedArray[Double]
-  covariance : FixedArray[Double]
+  covariance : @data.DataMatrix
+  fitted : FixedArray[Double]
   deviance : Double
   null_deviance : Double
+  df_residual : Int32
   dispersion : Double
   loglik : Double
   aic : Double
@@ -74,6 +85,12 @@ pub struct GlmFit {
   pearson_residuals : FixedArray[Double]
 }
 
+pub(all) enum GlmResponse {
+  Values(ArrayView[Double])
+  Counts(successes~ : ArrayView[Int64], trials~ : ArrayView[Int64])
+}
+
+#derive(Eq, @debug.Debug)
 pub struct LinearDiagnostics {
   leverage : FixedArray[Double]
   cooks_distance : FixedArray[Double]
@@ -83,10 +100,12 @@ pub struct LinearDiagnostics {
   condition_number : Double
 }
 
+#derive(Eq, @debug.Debug)
 pub struct LinearFit {
+  names : Array[String]
   coef : FixedArray[Double]
   se : FixedArray[Double]
-  covariance : FixedArray[Double]
+  covariance : @data.DataMatrix
   fitted : FixedArray[Double]
   residuals : FixedArray[Double]
   sigma : Double
@@ -111,6 +130,32 @@ pub(all) enum Link {
   Inverse
   InverseSquare
   Sqrt
+}
+
+#derive(Eq, @debug.Debug)
+pub struct NonlinearFit {
+  params : FixedArray[Double]
+  se : FixedArray[Double]
+  covariance : @data.DataMatrix
+  fitted : FixedArray[Double]
+  residuals : FixedArray[Double]
+  rss : Double
+  sigma : Double
+  df_residual : Int32
+  iterations : Int32
+  converged : Bool
+}
+
+#derive(Eq, @debug.Debug)
+pub struct PenalizedFit {
+  names : Array[String]
+  coef : FixedArray[Double]
+  fitted : FixedArray[Double]
+  residuals : FixedArray[Double]
+  penalty : Penalty
+  df : Double
+  iterations : Int32
+  converged : Bool
 }
 
 #derive(Eq, @debug.Debug)

@@ -2,7 +2,9 @@
 package "gaato/stats/fit"
 
 import {
+  "gaato/stats/data",
   "gaato/stats/dist",
+  "moonbitlang/core/debug",
 }
 
 // Values
@@ -15,6 +17,7 @@ pub fn[D : @dist.Density + @dist.Score] fit_mle(@dist.Family[D], ArrayView[Doubl
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub(all) struct Candidate {
   family : String
   aic : Double
@@ -22,12 +25,13 @@ pub(all) struct Candidate {
   k : Int32
 }
 
+#derive(@debug.Debug)
 pub struct MleResult[D] {
   dist : D
   loglik : Double
   k : Int32
-  n : Int32
-  covariance : FixedArray[Double]?
+  n : Int64
+  covariance : @data.DataMatrix?
   converged : Bool
   iterations : Int32
   family : String

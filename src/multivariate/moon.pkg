@@ -1,4 +1,5 @@
 import {
   "gaato/stats/data",
   "gaato/stats/num",
+  "gaato/stats/regress",
 }

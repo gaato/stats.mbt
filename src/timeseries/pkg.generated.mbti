@@ -9,34 +9,40 @@ import {
 }
 
 // Values
-pub fn acf(@data.TimeSeries, Int32) -> FixedArray[Double]
+pub fn acf(ArrayView[Double], max_lag~ : Int32) -> FixedArray[Double] raise @regress.ModelError
 
-pub fn adf_test(@data.TimeSeries, Int32) -> @infer.TestResult
+pub fn adf_test(ArrayView[Double], lags~ : Int32) -> @infer.TestResult raise @regress.ModelError
 
 pub fn arima(@data.TimeSeries, ArimaOrder) -> ArimaFit raise @regress.ModelError
 
-pub fn kalman_filter(StateSpace, ArrayView[Double]) -> (@data.DataMatrix, Double)
+pub fn kalman_filter(StateSpace, ArrayView[Double]) -> KalmanResult raise @regress.ModelError
 
-pub fn ljung_box(ArrayView[Double], Int32, fitted_params~ : Int32) -> @infer.TestResult
+pub fn ljung_box(ArrayView[Double], lags~ : Int32, fitted_params~ : Int32) -> @infer.TestResult raise @regress.ModelError
 
-pub fn pacf(@data.TimeSeries, Int32) -> FixedArray[Double]
+pub fn pacf(ArrayView[Double], max_lag~ : Int32) -> FixedArray[Double] raise @regress.ModelError
 
-pub fn periodogram(@data.TimeSeries, Taper) -> Spectrum
+pub fn periodogram(@data.TimeSeries, Taper) -> Spectrum raise @regress.ModelError
 
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub struct ArimaFit {
   order : ArimaOrder
   ar : FixedArray[Double]
   ma : FixedArray[Double]
+  seasonal_ar : FixedArray[Double]
+  seasonal_ma : FixedArray[Double]
+  intercept : Double?
+  se : FixedArray[Double]
   sigma2 : Double
   loglik : Double
   aic : Double
   residuals : FixedArray[Double]
 }
-pub fn ArimaFit::forecast(Self, Int32, Double) -> (FixedArray[Double], Array[@infer.Interval])
+pub fn ArimaFit::forecast(Self, steps~ : Int32, level~ : Double) -> Forecast raise @regress.ModelError
 
+#derive(Eq, @debug.Debug)
 pub struct ArimaOrder {
   p : Int32
   d : Int32
@@ -46,12 +52,28 @@ pub struct ArimaOrder {
   seasonal_q : Int32
   period : Int32
 }
+pub fn ArimaOrder::new(p~ : Int32, d~ : Int32, q~ : Int32, seasonal_p? : Int32, seasonal_d? : Int32, seasonal_q? : Int32, period? : Int32) -> Self raise @regress.ModelError
 
+#derive(Eq, @debug.Debug)
+pub struct Forecast {
+  mean : FixedArray[Double]
+  intervals : Array[@infer.Interval]
+}
+
+#derive(Eq, @debug.Debug)
+pub struct KalmanResult {
+  states : @data.DataMatrix
+  prediction_variance : FixedArray[Double]
+  loglik : Double
+}
+
+#derive(Eq, @debug.Debug)
 pub struct Spectrum {
   frequencies : FixedArray[Double]
   power : FixedArray[Double]
 }
 
+#derive(Eq, @debug.Debug)
 pub struct StateSpace {
   transition : @data.DataMatrix
   selection : @data.DataMatrix
@@ -59,10 +81,11 @@ pub struct StateSpace {
   state_noise : @data.DataMatrix
   observation_noise : Double
 }
+pub fn StateSpace::new(transition~ : @data.DataMatrix, selection~ : @data.DataMatrix, observation~ : @data.DataMatrix, state_noise~ : @data.DataMatrix, observation_noise~ : Double) -> Self raise @regress.ModelError
 
 #derive(Eq, @debug.Debug)
 pub(all) enum Taper {
-  None
+  Rectangular
   Hann
   CosineBell(Double)
 }

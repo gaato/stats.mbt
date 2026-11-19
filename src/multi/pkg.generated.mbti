@@ -2,6 +2,7 @@
 package "gaato/stats/multi"
 
 import {
+  "gaato/stats/data",
   "gaato/stats/dist",
   "gaato/stats/num",
 }
@@ -14,7 +15,11 @@ import {
 pub struct Dirichlet {
   // private fields
 }
+pub fn Dirichlet::dim(Self) -> Int32
+pub fn Dirichlet::logpdf(Self, ArrayView[Double]) -> Double
 pub fn Dirichlet::new(ArrayView[Double]) -> Self raise @dist.ParamError
+pub fn Dirichlet::sample(Self, &@num.RandomSource) -> FixedArray[Double]
+pub fn Dirichlet::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
 pub impl Dimension for Dirichlet
 pub impl MvDensity for Dirichlet
 pub impl MvSample for Dirichlet
@@ -22,28 +27,42 @@ pub impl MvSample for Dirichlet
 pub struct GaussianCopula {
   // private fields
 }
-pub fn GaussianCopula::new(ArrayView[Double]) -> Self raise @dist.ParamError
+pub fn GaussianCopula::copula_cdf(Self, ArrayView[Double]) -> Double
+pub fn GaussianCopula::dim(Self) -> Int32
+pub fn GaussianCopula::new(@data.DataMatrix) -> Self raise @dist.ParamError
+pub fn GaussianCopula::sample_uniform_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
 pub impl Copula for GaussianCopula
 pub impl Dimension for GaussianCopula
 
 pub struct Joint[C] {
   // private fields
 }
+pub fn[C : Copula] Joint::dim(Self[C]) -> Int32
 pub fn[C : Copula] Joint::new(C, Array[&@dist.Univariate]) -> Self[C] raise @dist.ParamError
+pub fn[C : Copula] Joint::sample(Self[C], &@num.RandomSource) -> FixedArray[Double]
+pub fn[C : Copula] Joint::sample_into(Self[C], &@num.RandomSource, FixedArray[Double]) -> Unit
 pub impl[C : Copula] Dimension for Joint[C]
 pub impl[C : Copula] MvSample for Joint[C]
 
 pub struct Multinomial {
   // private fields
 }
-pub fn Multinomial::new(Int32, ArrayView[Double]) -> Self raise @dist.ParamError
+pub fn Multinomial::dim(Self) -> Int32
+pub fn Multinomial::logpmf(Self, ArrayView[Int64]) -> Double
+pub fn Multinomial::new(Int64, ArrayView[Double]) -> Self raise @dist.ParamError
 pub impl Dimension for Multinomial
 pub impl MvMass for Multinomial
 
 pub struct MvNormal {
   // private fields
 }
-pub fn MvNormal::new(ArrayView[Double], ArrayView[Double]) -> Self raise @dist.ParamError
+pub fn MvNormal::covariance(Self) -> @data.DataMatrix?
+pub fn MvNormal::dim(Self) -> Int32
+pub fn MvNormal::logpdf(Self, ArrayView[Double]) -> Double
+pub fn MvNormal::mean(Self) -> FixedArray[Double]?
+pub fn MvNormal::new(ArrayView[Double], @data.DataMatrix) -> Self raise @dist.ParamError
+pub fn MvNormal::sample(Self, &@num.RandomSource) -> FixedArray[Double]
+pub fn MvNormal::sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
 pub impl Dimension for MvNormal
 pub impl MvDensity for MvNormal
 pub impl MvMoments for MvNormal
@@ -70,14 +89,15 @@ pub(open) trait MvDensity : Dimension {
 }
 
 pub(open) trait MvMass : Dimension {
-  fn logpmf(Self, ArrayView[Int32]) -> Double
+  fn logpmf(Self, ArrayView[Int64]) -> Double
 }
 
 pub(open) trait MvMoments : Dimension {
-  fn mean_into(Self, FixedArray[Double]) -> Bool
-  fn covariance_into(Self, FixedArray[Double]) -> Bool
+  fn mean(Self) -> FixedArray[Double]?
+  fn covariance(Self) -> @data.DataMatrix?
 }
 
 pub(open) trait MvSample : Dimension {
   fn sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
+  fn sample(Self, &@num.RandomSource) -> FixedArray[Double] = _
 }
