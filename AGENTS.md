@@ -22,7 +22,6 @@
 - A path not implemented yet raises `Unsupported` or is a typed `...` body,
   never a silent approximation. When one lands, update its row in
   `DESIGN.md`.
-- Do not publish to mooncakes.io or push without the user's request.
 
 ## Checks
 
