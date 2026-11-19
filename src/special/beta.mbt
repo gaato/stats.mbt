@@ -58,8 +58,11 @@ fn ibeta_cf(a : Double, b : Double, x : Double, y : Double) -> Double {
       }
       (d, 1.0)
     },
-    max_terms=100000,
+    max_terms=term_limit(a + b),
   )
+  if r.status != Converged {
+    return 0.0 / 0.0
+  }
   beta_prefix(a, b, x, y) / (a * r.value)
 }
 

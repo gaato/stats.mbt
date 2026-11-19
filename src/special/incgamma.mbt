@@ -9,6 +9,25 @@
 /// remainder, where ln(1+t) - t has its own cancellation-free series.
 
 ///|
+/// How many terms a series or continued fraction with a parameter of size
+/// `a` may take before it is given up. Next to the transition x ≈ a the
+/// terms of both decay like exp(-n²/2a), so about 9√a of them are needed
+/// to reach 1e-17; the limit allows twice that. It stops growing at 5e7
+/// (a near 6e12): beyond that the answer is a uniform asymptotic expansion,
+/// not more terms, and until one is written the functions return NaN there
+/// rather than the partial sum.
+fn term_limit(a : Double) -> Int32 {
+  let need = 20.0 * a.sqrt() + 1000.0
+  if need > 5.0e7 {
+    50000000
+  } else if need > 100000.0 {
+    need.to_int()
+  } else {
+    100000
+  }
+}
+
+///|
 /// ln(1 + t) - t, accurate for small |t|.
 fn log1pmx(t : Double) -> Double {
   if t.abs() < 0.5 {
@@ -55,15 +74,17 @@ fn igam_series(a : Double, x : Double) -> Double {
   let mut term = 1.0
   let mut sum = 1.0
   let mut n = 0
-  while n < 100000 {
+  let limit = term_limit(a)
+  while n < limit {
     n = n + 1
     term = term * x / (a + n.to_double())
     sum = sum + term
     if term <= 1.0e-17 * sum {
-      break
+      return gamma_prefix(a, x) / a * sum
     }
   }
-  gamma_prefix(a, x) / a * sum
+  // not converged: a partial sum is not an answer
+  0.0 / 0.0
 }
 
 ///|
@@ -75,8 +96,11 @@ fn igamc_cf(a : Double, x : Double) -> Double {
       let nd = n.to_double()
       (-nd * (nd - a), x + 2.0 * nd + 1.0 - a)
     },
-    max_terms=100000,
+    max_terms=term_limit(a),
   )
+  if r.status != Converged {
+    return 0.0 / 0.0
+  }
   gamma_prefix(a, x) / r.value
 }
 
