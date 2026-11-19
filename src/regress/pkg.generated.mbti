@@ -22,6 +22,7 @@ pub fn ols(ArrayView[Double], Design) -> LinearFit raise ModelError
 pub fn penalized(ArrayView[Double], Design, Penalty) -> PenalizedFit raise ModelError
 
 // Errors
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) suberror ModelError {
   TooFewObservations(needed~ : Int32, got~ : Int32)
@@ -55,6 +56,7 @@ pub struct Design {
 }
 pub fn Design::new(@data.DataMatrix, intercept~ : Bool, offset? : ArrayView[Double], weights? : @data.Weights, names? : Array[String]) -> Self raise ModelError
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum GlmFamily {
   Gaussian
@@ -120,6 +122,7 @@ pub struct LinearFit {
   rank : Int32
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Link {
   Identity
@@ -158,6 +161,7 @@ pub struct PenalizedFit {
   converged : Bool
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Penalty {
   Ridge(lambda~ : Double)

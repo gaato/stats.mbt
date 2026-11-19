@@ -29,6 +29,7 @@ pub struct HazardCurve {
 
 ///|
 /// How pointwise intervals for the survival curve are formed.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum CurveInterval {
   Plain
@@ -77,6 +78,7 @@ pub fn log_rank(
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Ties {
   Breslow

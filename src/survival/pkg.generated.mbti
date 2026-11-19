@@ -37,6 +37,7 @@ pub struct CoxFit {
   converged : Bool
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum CurveInterval {
   Plain
@@ -63,6 +64,7 @@ pub struct SurvivalCurve {
 }
 pub fn SurvivalCurve::intervals(Self, level~ : Double, CurveInterval) -> Array[@infer.Interval] raise @regress.ModelError
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Ties {
   Breslow

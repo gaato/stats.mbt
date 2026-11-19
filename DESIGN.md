@@ -343,7 +343,12 @@ generators, and NIST StRD certified values for summaries and regression.
 - `method` and `var` are reserved; an empty struct literal is `T::{ }`;
   a function in a record field is called `(f.make)(x)`.
 - Adding a case to a `pub(all)` enum breaks callers' exhaustive matches, so
-  shapes such as `Samples` are fixed up front.
+  shapes such as `Samples` are fixed up front. Lists that will grow
+  (methods, kinds, rules, links, families) and every error type are
+  `#non_exhaustive` instead: code outside the package then needs a
+  `Type::..` arm, so a later case breaks no caller. Closed sets
+  (`Alternative`, `Samples`, `PowerQuery`, `Observation`, `num.Status`)
+  stay exhaustive, so a match on them stays complete.
 - A choice that needs an assumption carries the certificate as the
   case's payload (`Pooled(Assumed[EqualVariance])`); an optional
   certificate argument could be left out and only fail at run time.

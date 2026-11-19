@@ -5,6 +5,7 @@
 ///|
 /// How a two-sided p-value is formed when the null distribution is not
 /// symmetric (binomial, hypergeometric, permutation nulls).
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum TwoSidedRule {
   /// Twice the smaller tail, capped at 1.
@@ -17,6 +18,7 @@ pub(all) enum TwoSidedRule {
 ///|
 /// How the p-value was obtained. (The names end in `Null` so that they
 /// cannot be taken for the cases of `Exactness`, which asks for a null.)
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum PValueKind {
   /// From the exact null distribution.
@@ -53,6 +55,7 @@ pub(all) enum Variances {
 
 ///|
 /// Zero differences in the Wilcoxon signed-rank test.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Zeros {
   /// Drop them (Wilcoxon's original).

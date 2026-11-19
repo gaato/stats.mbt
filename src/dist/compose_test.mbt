@@ -26,6 +26,7 @@ test "mixture weights are checked, not renormalised" {
     ])
   catch {
     @dist.InvalidParam(name~, ..) => name == "weights"
+    @dist.ParamError::.. => false
   } noraise {
     _ => false
   }

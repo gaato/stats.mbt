@@ -111,6 +111,7 @@ pub fn uniform_index(rng : &RandomSource, n : Int32) -> Int32 {
 
 ///|
 /// Methods for the standard normal. Each is frozen once released.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum NormalMethod {
   /// Inverse of the normal distribution function on one uniform.
@@ -126,6 +127,7 @@ pub fn standard_normal(rng : &RandomSource, how : NormalMethod) -> Double {
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum ExponentialMethod {
   Inversion
@@ -144,6 +146,7 @@ pub fn standard_exponential(
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum GammaMethod {
   /// Marsaglia and Tsang (2000), with the shape < 1 boost.

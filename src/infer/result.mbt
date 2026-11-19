@@ -87,6 +87,7 @@ pub struct Interval {
 ///|
 /// Intervals with different meanings are different values of this, never
 /// the same struct with a comment.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum IntervalKind {
   /// Covers the true parameter with the stated frequency.

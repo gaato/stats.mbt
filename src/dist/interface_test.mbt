@@ -43,6 +43,7 @@ test "location and scale on every continuous family" {
   // the scale must be positive and finite
   let bad = try @dist.Exponential::new(scale=0.0) catch {
     InvalidParam(name~, ..) => name == "scale"
+    @dist.ParamError::.. => false
   } noraise {
     _ => false
   }
@@ -110,6 +111,7 @@ test "truncation keeps the tail it cuts into" {
     @dist.Truncated::new(@dist.Exponential::new(), lo=-3.0, hi=-1.0)
   catch {
     InvalidParam(reason~, ..) => reason == "interval has no mass"
+    @dist.ParamError::.. => false
   } noraise {
     _ => false
   }
@@ -172,12 +174,14 @@ test "fixing a parameter of a family" {
   assert_eq((d.c, d.loc, d.scale), (1.5, 1.0, 2.0))
   let unknown = try fam.fix("shape", 1.0) catch {
     InvalidParam(name~, ..) => name == "shape"
+    @dist.ParamError::.. => false
   } noraise {
     _ => false
   }
   assert_true(unknown)
   let outside = try fam.fix("scale", -1.0) catch {
     InvalidParam(name~, ..) => name == "scale"
+    @dist.ParamError::.. => false
   } noraise {
     _ => false
   }

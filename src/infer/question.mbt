@@ -14,6 +14,7 @@
 
 ///|
 /// What is to be estimated.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Estimand {
   Mean
@@ -56,6 +57,7 @@ pub struct Question {
 /// Why a question could not be answered. The cases separate what the
 /// caller can fix (shapes, lengths, arguments) from what the data make
 /// impossible and from what this library does not do.
+#non_exhaustive
 #derive(Debug)
 pub(all) suberror QuestionError {
   /// The estimand does not fit the data shape (a mean difference from one
@@ -120,6 +122,7 @@ pub(all) enum Resamples {
 ///|
 /// How uncertainty is assessed. Resampling methods take their own
 /// replicate count; the random source is passed separately.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Method {
   /// The textbook sampling distribution, under the assumptions it needs.
@@ -130,6 +133,7 @@ pub(all) enum Method {
 
 ///|
 /// The null hypothesis.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Hypothesis {
   /// The estimand equals a value.

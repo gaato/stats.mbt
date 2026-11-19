@@ -40,6 +40,7 @@ pub fn winsorize(ArrayView[Double], Double, Double, @data.QuantileMethod) -> Fix
 // Errors
 
 // Types and methods
+#non_exhaustive
 pub(all) enum Bins {
   Edges(FixedArray[Double])
   Uniform(k~ : Int32, lo~ : Double, hi~ : Double)
@@ -80,6 +81,7 @@ pub struct Histogram {
   above : Int64
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum MadScale {
   Raw

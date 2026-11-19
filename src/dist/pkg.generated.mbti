@@ -13,6 +13,7 @@ pub fn[D : Density] loglik(D, ArrayView[Double]) -> Double
 pub fn[D : Mass] loglik_int(D, ArrayView[Int64]) -> Double
 
 // Errors
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) suberror FitError {
   TooFewPoints(needed~ : Int32, got~ : Int32)
@@ -20,6 +21,7 @@ pub(all) suberror FitError {
   NotConverged(iterations~ : Int32)
 }
 
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) suberror ParamError {
   InvalidParam(name~ : String, value~ : Double, reason~ : String)
@@ -680,6 +682,7 @@ pub(all) struct Conjugate[P, D] {
   likelihood : (ArrayView[Double]) -> D raise ParamError
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Constraint {
   Real

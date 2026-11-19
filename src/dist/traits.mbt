@@ -15,6 +15,7 @@
 /// Raised when a constructor is given parameters outside the family's
 /// parameter space. Distributions are immutable, so this is the only place
 /// parameters are checked.
+#non_exhaustive
 #derive(Debug)
 pub(all) suberror ParamError {
   InvalidParam(name~ : String, value~ : Double, reason~ : String)
@@ -24,6 +25,7 @@ pub(all) suberror ParamError {
 /// Raised when fitting a family to data fails: too few points, data outside
 /// the support, or an optimiser that did not converge. A fit never returns
 /// parameters it could not justify.
+#non_exhaustive
 #derive(Debug)
 pub(all) suberror FitError {
   TooFewPoints(needed~ : Int32, got~ : Int32)

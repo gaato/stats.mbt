@@ -26,6 +26,7 @@ pub(all) enum Observation {
 /// What to do with NaN in the input, chosen by the caller every time.
 /// `Reject` raises; `Omit` drops and reports how many were dropped;
 /// `Propagate` returns NaN results. (SciPy's nan_policy, R's na.rm.)
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum MissingPolicy {
   Reject
@@ -34,6 +35,7 @@ pub(all) enum MissingPolicy {
 }
 
 ///|
+#non_exhaustive
 #derive(Debug)
 pub(all) suberror DataError {
   ContainsNaN(index~ : Int32)
@@ -58,6 +60,7 @@ pub(all) suberror DataError {
 /// frequency weights count repeated rows (n = Σw); reliability weights are
 /// inverse variances (the effective n is (Σw)²/Σw²); sampling weights are
 /// inverse inclusion probabilities from a survey design.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum WeightKind {
   Frequency

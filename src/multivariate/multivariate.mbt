@@ -4,6 +4,7 @@
 /// for dense linear algebra. Failures are `@regress.ModelError`.
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Scaling {
   /// Center only (covariance-based).
@@ -33,6 +34,7 @@ pub fn pca(
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Rotation {
   Unrotated
@@ -63,6 +65,7 @@ pub fn factor_analysis(
 
 ///|
 /// Linear (shared covariance) or quadratic discriminant analysis.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Discriminant {
   Linear
@@ -134,6 +137,7 @@ pub fn kmeans(
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Linkage {
   Single

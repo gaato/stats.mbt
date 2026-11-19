@@ -83,6 +83,7 @@ pub struct StateSpace {
 }
 pub fn StateSpace::new(transition~ : @data.DataMatrix, selection~ : @data.DataMatrix, observation~ : @data.DataMatrix, state_noise~ : @data.DataMatrix, observation_noise~ : Double) -> Self raise @regress.ModelError
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Taper {
   Rectangular

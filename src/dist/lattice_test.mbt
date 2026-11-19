@@ -120,6 +120,7 @@ test "atoms anywhere on the line" {
   assert_eq((a.support_lower(), a.support_upper()), (0.5, 2.5))
   let bad = try @dist.Atoms::new([1.0, 2.0], [0.5, 0.25]) catch {
     InvalidParam(reason~, ..) => reason == "must sum to 1"
+    @dist.ParamError::.. => false
   } noraise {
     _ => false
   }

@@ -12,6 +12,7 @@
 ///|
 /// Where a parameter may live, and how the optimiser sees it. Fitting works
 /// on the unconstrained line; each constraint maps there and back.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Constraint {
   Real

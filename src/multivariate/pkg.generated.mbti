@@ -47,6 +47,7 @@ pub struct Dendrogram {
   merges : Array[Merge]
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Discriminant {
   Linear
@@ -71,6 +72,7 @@ pub struct KMeans {
   converged : Bool
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Linkage {
   Single
@@ -102,6 +104,7 @@ pub struct Roc {
   auc : Double
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Rotation {
   Unrotated
@@ -109,6 +112,7 @@ pub(all) enum Rotation {
   Promax(power~ : Double)
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Scaling {
   Center

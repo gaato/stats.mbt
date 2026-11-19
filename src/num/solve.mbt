@@ -412,6 +412,7 @@ pub fn CompensatedSum::value(self : CompensatedSum) -> Double {
 ///|
 /// A domain error for the checked variants of special functions; the
 /// plain variants return NaN instead.
+#non_exhaustive
 #derive(Debug)
 pub(all) suberror DomainError {
   OutsideDomain(function~ : String, argument~ : Double)

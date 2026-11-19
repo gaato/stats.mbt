@@ -123,6 +123,9 @@ pub fn ranks(
         Max => (j + 1).to_double()
         Dense => dense.to_double()
         Ordinal => (k + 1).to_double()
+        // Unreachable: a rule added to `data` is handled here in the same
+        // release, since both packages ship in this module.
+        @data.RankTies::.. => abort("ranks: unknown tie rule")
       }
     }
     i = j + 1
@@ -134,6 +137,7 @@ pub fn ranks(
 /// The scale factor of the median absolute deviation: `Raw` is the plain
 /// median of |x - median|; `Normal` multiplies by 1.4826 so that it
 /// estimates σ for normal data (R's default, not SciPy's).
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum MadScale {
   Raw
@@ -193,6 +197,7 @@ pub fn winsorize(
 
 ///|
 /// How histogram bins are chosen.
+#non_exhaustive
 pub(all) enum Bins {
   /// Explicit edges, ascending; values on an inner edge go to the right
   /// bin, the last edge is closed.

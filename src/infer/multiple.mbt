@@ -4,6 +4,7 @@
 ///|
 /// p-value adjustments. FWER methods control the chance of any false
 /// rejection; FDR methods the expected share of false rejections.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Adjust {
   Bonferroni
@@ -94,6 +95,7 @@ pub fn reject(
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum EffectKind {
   /// Standardised mean difference with the pooled SD.
@@ -140,6 +142,7 @@ pub(all) enum PowerQuery {
 }
 
 ///|
+#non_exhaustive
 #derive(Debug)
 pub(all) suberror PowerError {
   /// A quantity outside its range (a power outside (0, 1)).
@@ -149,6 +152,7 @@ pub(all) suberror PowerError {
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum PowerDesign {
   OneSampleT

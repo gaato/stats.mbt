@@ -76,12 +76,14 @@ pub fn t_test_two(ArrayView[Double], ArrayView[Double], variances~ : Variances, 
 pub fn wilcoxon_signed_rank(ArrayView[Double], y? : ArrayView[Double], alternative~ : Alternative, zeros~ : Zeros, exactness~ : Exactness, continuity~ : Bool) -> TestResult raise QuestionError
 
 // Errors
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) suberror PowerError {
   InvalidArgument(name~ : String, reason~ : String)
   Unreachable
 }
 
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) suberror QuestionError {
   ShapeMismatch(estimand~ : Estimand)
@@ -95,6 +97,7 @@ pub(all) suberror QuestionError {
 }
 
 // Types and methods
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Adjust {
   Bonferroni
@@ -118,6 +121,7 @@ pub struct Assumed[A] {
 }
 pub fn[A] Assumed::postulate() -> Self[A]
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum BootstrapInterval {
   Percentile
@@ -141,6 +145,7 @@ pub struct Comparison {
   result : TestResult
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum CorrelationKind {
   Pearson
@@ -155,6 +160,7 @@ pub struct Effect {
   interval : Interval?
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum EffectKind {
   CohenD
@@ -173,6 +179,7 @@ pub(all) enum EffectKind {
 pub(all) enum EqualVariance {
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Estimand {
   Mean
@@ -202,6 +209,7 @@ pub(all) enum Exactness {
   ExactUpTo(Int32)
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Hypothesis {
   Point(Double)
@@ -217,6 +225,7 @@ pub struct Interval {
   procedure : String
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum IntervalKind {
   Confidence
@@ -225,6 +234,7 @@ pub(all) enum IntervalKind {
   Tolerance
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum LeveneCenter {
   Mean
@@ -232,6 +242,7 @@ pub(all) enum LeveneCenter {
   Trimmed(Double)
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Method {
   Analytic
@@ -257,6 +268,7 @@ pub fn NullModel::new(observed~ : Double, null_dist~ : &@dist.Univariate, p_kind
 pub fn NullModel::p_value(Self, Alternative) -> Double
 pub impl @debug.Debug for NullModel
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum PValueKind {
   ExactNull
@@ -264,6 +276,7 @@ pub(all) enum PValueKind {
   MonteCarlo(draws~ : Int32, plus_one~ : Bool)
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum PermutationScheme {
   Independent
@@ -271,6 +284,7 @@ pub(all) enum PermutationScheme {
   WithinPairs
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum PostHoc {
   TukeyHsd
@@ -278,6 +292,7 @@ pub(all) enum PostHoc {
   Pairwise(Adjust)
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum PowerDesign {
   OneSampleT
@@ -338,6 +353,7 @@ pub(all) struct TieTolerance {
   relative : Double
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum TwoSidedRule {
   Doubling
@@ -350,6 +366,7 @@ pub(all) enum Variances {
   Welch
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum Zeros {
   Drop

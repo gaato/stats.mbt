@@ -38,6 +38,7 @@ pub fn ljung_box(
 
 ///|
 /// The window applied before a periodogram.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Taper {
   /// No taper: every value has weight 1.

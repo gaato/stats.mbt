@@ -45,6 +45,7 @@ pub fn uniform_index(&RandomSource, Int32) -> Int32
 pub fn uniform_open(&RandomSource) -> Double
 
 // Errors
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) suberror DomainError {
   OutsideDomain(function~ : String, argument~ : Double)
@@ -61,17 +62,20 @@ pub fn CompensatedSum::merge(Self, Self) -> Self
 pub fn CompensatedSum::value(Self) -> Double
 pub fn CompensatedSum::zero() -> Self
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum ExponentialMethod {
   Inversion
   Ziggurat
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum GammaMethod {
   MarsagliaTsang
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum NormalMethod {
   Inversion

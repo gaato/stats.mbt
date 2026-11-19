@@ -9,6 +9,7 @@ import {
 pub fn clean(ArrayView[Double], MissingPolicy) -> (FixedArray[Double], Int32) raise DataError
 
 // Errors
+#non_exhaustive
 #derive(@debug.Debug)
 pub(all) suberror DataError {
   ContainsNaN(index~ : Int32)
@@ -72,6 +73,7 @@ pub struct Grouped {
 pub fn Grouped::group(Self, Int32) -> FixedArray[Double]
 pub fn Grouped::new(ArrayView[Double], ArrayView[Int32], groups~ : Int32) -> Self raise DataError
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum MissingPolicy {
   Reject
@@ -93,6 +95,7 @@ pub(all) struct Proportion {
   trials : Int64
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum QuantileMethod {
   Type1
@@ -106,6 +109,7 @@ pub(all) enum QuantileMethod {
   Type9
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum RankTies {
   Average
@@ -151,6 +155,7 @@ pub(all) struct TimeSeries {
   frequency : Int32
 }
 
+#non_exhaustive
 #derive(Eq, @debug.Debug)
 pub(all) enum WeightKind {
   Frequency

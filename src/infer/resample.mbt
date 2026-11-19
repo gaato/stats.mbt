@@ -18,6 +18,7 @@ fn pairs(x : FixedArray[Double], y : FixedArray[Double]) -> @data.Bivariate {
 
 ///|
 /// How a bootstrap interval is formed from the bootstrap distribution.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum BootstrapInterval {
   Percentile
@@ -28,6 +29,7 @@ pub(all) enum BootstrapInterval {
 
 ///|
 /// What is exchanged under the null in a permutation test.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum PermutationScheme {
   /// Observations are exchanged between independent samples.

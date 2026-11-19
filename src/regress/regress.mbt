@@ -8,6 +8,7 @@
 /// Why a model could not be fitted. Shared by the model layers above
 /// (survival, time series, multivariate, Bayesian), which fail for the
 /// same reasons.
+#non_exhaustive
 #derive(Debug)
 pub(all) suberror ModelError {
   TooFewObservations(needed~ : Int32, got~ : Int32)
@@ -152,6 +153,7 @@ pub fn gls(
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Link {
   Identity
@@ -167,6 +169,7 @@ pub(all) enum Link {
 ///|
 /// A GLM family: an exponential family response with its variance
 /// function and canonical link.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum GlmFamily {
   Gaussian
@@ -224,6 +227,7 @@ pub fn glm(
 }
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Penalty {
   Ridge(lambda~ : Double)

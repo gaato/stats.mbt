@@ -11,6 +11,7 @@
 ///|
 /// The nine sample quantile definitions of Hyndman and Fan (1996).
 /// R's default is `Type7`; most mooncakes modules hard-code it.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum QuantileMethod {
   Type1
@@ -26,6 +27,7 @@ pub(all) enum QuantileMethod {
 
 ///|
 /// How tied values share ranks.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum RankTies {
   /// Mean of the ranks they span (the statistical default).

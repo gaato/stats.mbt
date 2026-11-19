@@ -548,6 +548,7 @@ pub fn anova_one_way(
 
 ///|
 /// Levene's original uses the mean; Brown–Forsythe the median.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum LeveneCenter {
   Mean
@@ -624,6 +625,7 @@ pub fn bartlett(
 
 ///|
 /// Pairwise comparisons after ANOVA.
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum PostHoc {
   TukeyHsd
@@ -871,6 +873,7 @@ pub fn anderson_darling(
 // ---------------------------------------------------------------------------
 
 ///|
+#non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum CorrelationKind {
   Pearson
