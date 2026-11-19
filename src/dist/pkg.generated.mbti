@@ -2,6 +2,7 @@
 package "gaato/stats/dist"
 
 import {
+  "gaato/stats/num",
   "moonbitlang/core/debug",
 }
 
@@ -261,16 +262,12 @@ pub(open) trait Quantile {
   fn isf(Self, Double) -> Double = _
 }
 
-pub(open) trait RandomSource {
-  fn next_u64(Self) -> UInt64
-}
-
 pub(open) trait Sample {
-  fn sample(Self, &RandomSource) -> Double
+  fn sample(Self, &@num.RandomSource) -> Double
 }
 
 pub(open) trait SampleInt {
-  fn sample_int(Self, &RandomSource) -> Int32
+  fn sample_int(Self, &@num.RandomSource) -> Int32
 }
 
 pub(open) trait Score {

@@ -1,0 +1,62 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/data"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn clean(ArrayView[Double], MissingPolicy) -> (FixedArray[Double], Int32) raise DataError
+
+// Errors
+#derive(@debug.Debug)
+pub(all) suberror DataError {
+  ContainsNaN(index~ : Int32)
+  LengthMismatch(expected~ : Int32, got~ : Int32)
+  Empty
+  NegativeWeight(index~ : Int32)
+  NegativeCount(row~ : Int32, col~ : Int32)
+}
+
+// Types and methods
+#derive(Eq, @debug.Debug)
+pub(all) enum MissingPolicy {
+  Reject
+  Omit
+  Propagate
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Observation {
+  Exact(Double)
+  RightCensored(Double)
+  LeftCensored(Double)
+  IntervalCensored(lo~ : Double, hi~ : Double)
+}
+
+pub struct Table {
+  rows : Int32
+  cols : Int32
+  counts : FixedArray[Int64]
+}
+pub fn Table::at(Self, Int32, Int32) -> Int64
+pub fn Table::new(Int32, Int32, ArrayView[Int64]) -> Self raise DataError
+pub fn Table::total(Self) -> Int64
+
+#derive(Eq, @debug.Debug)
+pub(all) enum WeightKind {
+  Frequency
+  Reliability
+  Sampling
+}
+
+pub struct Weighted {
+  values : FixedArray[Double]
+  weights : FixedArray[Double]
+  kind : WeightKind
+}
+pub fn Weighted::new(ArrayView[Double], ArrayView[Double], kind~ : WeightKind) -> Self raise DataError
+
+// Type aliases
+
+// Traits

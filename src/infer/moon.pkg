@@ -1,4 +1,6 @@
 import {
   "gaato/stats/dist",
   "gaato/stats/describe",
+  "gaato/stats/num",
+  "gaato/stats/data",
 }

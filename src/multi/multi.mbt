@@ -26,7 +26,7 @@ pub(open) trait MvMass: Dimension {
 ///|
 /// Writes one draw into `out`, which must have length `dim`.
 pub(open) trait MvSample: Dimension {
-  sample_into(Self, &@dist.RandomSource, FixedArray[Double]) -> Unit
+  sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
 }
 
 ///|
@@ -177,7 +177,7 @@ pub impl MvMass for Multinomial with logpmf(self, k) {
 /// dependence is separate from its marginals (Sklar's theorem).
 pub(open) trait Copula: Dimension {
   copula_cdf(Self, ArrayView[Double]) -> Double
-  sample_uniform_into(Self, &@dist.RandomSource, FixedArray[Double]) -> Unit
+  sample_uniform_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
 }
 
 ///|

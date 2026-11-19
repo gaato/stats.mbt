@@ -1,0 +1,108 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/num"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn continued_fraction(Double, (Int32) -> (Double, Double), rel_tol? : Double, max_terms? : Int32) -> Solution
+
+pub fn find_root((Double) -> Double, Double, Double, x_tol? : Double, max_iterations? : Int32) -> Solution
+
+pub fn find_root_newton((Double) -> (Double, Double), Double, Double, Double, x_tol? : Double, max_iterations? : Int32) -> Solution
+
+pub fn integrate((Double) -> Double, Double, Double, abs_tol? : Double, rel_tol? : Double) -> Solution
+
+pub fn log1m_exp(Double) -> Double
+
+pub fn log1p(Double) -> Double
+
+pub fn log1p_exp(Double) -> Double
+
+pub fn log_add_exp(Double, Double) -> Double
+
+pub fn log_sub_exp(Double, Double) -> Double
+
+pub fn log_sum_exp(ArrayView[Double]) -> Double
+
+pub fn[T] shuffle(&RandomSource, FixedArray[T]) -> Unit
+
+pub fn standard_exponential(&RandomSource, ExponentialMethod) -> Double
+
+pub fn standard_gamma(&RandomSource, Double, GammaMethod, normal~ : NormalMethod) -> Double
+
+pub fn standard_normal(&RandomSource, NormalMethod) -> Double
+
+pub fn sum_series((Int32) -> Double, rel_tol? : Double, max_terms? : Int32) -> Solution
+
+pub fn uniform(&RandomSource) -> Double
+
+pub fn uniform_below(&RandomSource, UInt64) -> UInt64
+
+pub fn uniform_open(&RandomSource) -> Double
+
+// Errors
+
+// Types and methods
+pub struct CompensatedSum {
+  sum : Double
+  c : Double
+}
+pub fn CompensatedSum::add(Self, Double) -> Self
+pub fn CompensatedSum::merge(Self, Self) -> Self
+pub fn CompensatedSum::value(Self) -> Double
+pub fn CompensatedSum::zero() -> Self
+
+#derive(Eq, @debug.Debug)
+pub(all) enum DiscreteMethod {
+  Inversion
+  Rejection
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum ExponentialMethod {
+  Inversion
+  Ziggurat
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum GammaMethod {
+  MarsagliaTsang
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum NormalMethod {
+  Inversion
+  Ziggurat
+}
+
+pub struct Solution {
+  value : Double
+  status : Status
+  iterations : Int32
+  error_bound : Double
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Status {
+  Converged
+  MaxIterations
+  NoBracket
+  NaN
+}
+
+pub struct Xoshiro256 {
+  // private fields
+}
+pub fn Xoshiro256::from_state(UInt64, UInt64, UInt64, UInt64) -> Self
+pub fn Xoshiro256::next_u64(Self) -> UInt64
+pub fn Xoshiro256::seed(UInt64) -> Self
+pub impl RandomSource for Xoshiro256
+
+// Type aliases
+
+// Traits
+pub(open) trait RandomSource {
+  fn next_u64(Self) -> UInt64
+}

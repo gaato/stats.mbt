@@ -3,6 +3,7 @@ package "gaato/stats/multi"
 
 import {
   "gaato/stats/dist",
+  "gaato/stats/num",
 }
 
 // Values
@@ -53,7 +54,7 @@ pub impl MvSample for MvNormal
 // Traits
 pub(open) trait Copula : Dimension {
   fn copula_cdf(Self, ArrayView[Double]) -> Double
-  fn sample_uniform_into(Self, &@dist.RandomSource, FixedArray[Double]) -> Unit
+  fn sample_uniform_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
 }
 
 pub(open) trait Dimension {
@@ -78,5 +79,5 @@ pub(open) trait MvMoments : Dimension {
 }
 
 pub(open) trait MvSample : Dimension {
-  fn sample_into(Self, &@dist.RandomSource, FixedArray[Double]) -> Unit
+  fn sample_into(Self, &@num.RandomSource, FixedArray[Double]) -> Unit
 }

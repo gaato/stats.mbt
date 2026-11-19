@@ -3,13 +3,14 @@ package "gaato/stats/infer"
 
 import {
   "gaato/stats/dist",
+  "gaato/stats/num",
   "moonbitlang/core/debug",
 }
 
 // Values
-pub fn estimate(Question, Method, level~ : Double, rng~ : &@dist.RandomSource) -> Estimate raise QuestionError
+pub fn estimate(Question, Method, level~ : Double, rng~ : &@num.RandomSource) -> Estimate raise QuestionError
 
-pub fn null_model(Question, Hypothesis, Method, rng~ : &@dist.RandomSource) -> NullModel raise QuestionError
+pub fn null_model(Question, Hypothesis, Method, rng~ : &@num.RandomSource) -> NullModel raise QuestionError
 
 pub fn welch_t_test(ArrayView[Double], ArrayView[Double], alternative? : Alternative, normality~ : Assumed[Normality]) -> TestResult raise @dist.ParamError
 

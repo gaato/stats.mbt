@@ -29,14 +29,6 @@ pub(all) suberror FitError {
   NotConverged(iterations~ : Int)
 }
 
-///|
-/// A source of uniform bits. Sampling takes it as a trait object so that the
-/// distribution traits need no type parameter of their own, and so that no
-/// global random state exists anywhere in the library.
-pub(open) trait RandomSource {
-  next_u64(Self) -> UInt64
-}
-
 // ---------------------------------------------------------------------------
 // Common to every distribution on the real line.
 // ---------------------------------------------------------------------------
@@ -94,7 +86,7 @@ impl Quantile with isf(self, q) {
 
 ///|
 pub(open) trait Sample {
-  sample(Self, &RandomSource) -> Double
+  sample(Self, &@num.RandomSource) -> Double
 }
 
 ///|
@@ -154,7 +146,7 @@ pub(open) trait IntQuantile {
 
 ///|
 pub(open) trait SampleInt {
-  sample_int(Self, &RandomSource) -> Int
+  sample_int(Self, &@num.RandomSource) -> Int
 }
 
 // ---------------------------------------------------------------------------

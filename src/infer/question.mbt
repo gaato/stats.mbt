@@ -94,7 +94,7 @@ pub fn estimate(
   q : Question,
   how : Method,
   level~ : Double,
-  rng~ : &@dist.RandomSource,
+  rng~ : &@num.RandomSource,
 ) -> Estimate raise QuestionError {
   ignore((q, how, level, rng))
   ...
@@ -115,7 +115,7 @@ pub fn null_model(
   q : Question,
   h : Hypothesis,
   how : Method,
-  rng~ : &@dist.RandomSource,
+  rng~ : &@num.RandomSource,
 ) -> NullModel raise QuestionError {
   ignore((q, h, how, rng))
   ...
