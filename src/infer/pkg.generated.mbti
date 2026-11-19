@@ -19,7 +19,7 @@ pub fn bartlett(ArrayView[ArrayView[Double]], normality~ : Assumed[Normality]) -
 
 pub fn binomial_test(@data.Proportion, p0~ : Double, alternative~ : Alternative, two_sided~ : TwoSidedRule, level~ : Double) -> TestResult raise QuestionError
 
-pub fn bootstrap(Sample, (Sample) -> Double, reps~ : Int32, level~ : Double, interval~ : BootstrapInterval, rng~ : &@num.RandomSource) -> BootstrapResult raise QuestionError
+pub fn bootstrap(Samples, (Samples) -> Double, reps~ : Int32, level~ : Double, interval~ : BootstrapInterval, rng~ : &@num.RandomSource) -> BootstrapResult raise QuestionError
 
 pub fn chi_square_goodness_of_fit(@data.CategoryCounts, fitted_params~ : Int32) -> TestResult raise QuestionError
 
@@ -33,7 +33,7 @@ pub fn fisher_exact(@data.Table, alternative~ : Alternative, two_sided~ : TwoSid
 
 pub fn friedman(@data.Blocks) -> TestResult raise QuestionError
 
-pub fn jackknife(Sample, (Sample) -> Double) -> Estimate raise QuestionError
+pub fn jackknife(Samples, (Samples) -> Double) -> Estimate raise QuestionError
 
 pub fn kruskal_wallis(ArrayView[ArrayView[Double]]) -> TestResult raise QuestionError
 
@@ -43,23 +43,23 @@ pub fn ks_two(ArrayView[Double], ArrayView[Double], alternative~ : Alternative, 
 
 pub fn levene(ArrayView[ArrayView[Double]], center~ : LeveneCenter) -> TestResult raise QuestionError
 
-pub fn likelihood_ratio(Double, Double, Int32) -> TestResult raise QuestionError
+pub fn likelihood_ratio(loglik_null~ : Double, loglik_alt~ : Double, df~ : Int32) -> TestResult raise QuestionError
 
 pub fn mann_whitney(ArrayView[Double], ArrayView[Double], alternative~ : Alternative, exactness~ : Exactness, continuity~ : Bool) -> TestResult raise QuestionError
 
 pub fn mcnemar(@data.Table, exactness~ : Exactness) -> TestResult raise QuestionError
 
-pub fn monte_carlo_test(Sample, (&@num.RandomSource) -> Sample, (Sample) -> Double, reps~ : Int32, rng~ : &@num.RandomSource) -> NullModel raise QuestionError
+pub fn monte_carlo_test(Samples, (&@num.RandomSource) -> Samples, (Samples) -> Double, reps~ : Int32, rng~ : &@num.RandomSource) -> NullModel raise QuestionError
 
 pub fn null_model(Question, Hypothesis, Method, rng~ : &@num.RandomSource) -> NullModel raise QuestionError
 
-pub fn permutation_test(Sample, (Sample) -> Double, scheme~ : PermutationScheme, reps~ : Int32?, ties~ : TieTolerance, rng~ : &@num.RandomSource) -> NullModel raise QuestionError
+pub fn permutation_test(Samples, (Samples) -> Double, scheme~ : PermutationScheme, reps~ : Resamples, ties~ : TieTolerance, rng~ : &@num.RandomSource) -> NullModel raise QuestionError
 
-pub fn post_hoc(ArrayView[ArrayView[Double]], PostHoc, level~ : Double) -> Array[TestResult] raise QuestionError
+pub fn post_hoc(ArrayView[ArrayView[Double]], PostHoc, level~ : Double) -> Array[Comparison] raise QuestionError
 
 pub fn proportion_test(ArrayView[@data.Proportion], p0? : Double, continuity~ : Bool, alternative~ : Alternative, level~ : Double) -> TestResult raise QuestionError
 
-pub fn reject(ArrayView[Double], Double, Adjust) -> FixedArray[Bool]
+pub fn reject(ArrayView[Double], alpha~ : Double, Adjust) -> FixedArray[Bool]
 
 pub fn shapiro_wilk(ArrayView[Double]) -> TestResult raise QuestionError
 
@@ -67,28 +67,31 @@ pub fn solve_power(PowerQuery, PowerDesign, alternative~ : Alternative) -> Doubl
 
 pub fn t_test_one(ArrayView[Double], mu~ : Double, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality]) -> TestResult raise QuestionError
 
-pub fn t_test_paired(ArrayView[Double], ArrayView[Double], alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality]) -> TestResult raise QuestionError
+pub fn t_test_paired(@data.Bivariate, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality]) -> TestResult raise QuestionError
 
-pub fn t_test_summary(@data.Summary, @data.Summary, variances~ : Variances, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality], equal_variance? : Assumed[EqualVariance]) -> TestResult raise QuestionError
+pub fn t_test_summary(@data.Summary, @data.Summary, variances~ : Variances, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality]) -> TestResult raise QuestionError
 
-pub fn t_test_two(ArrayView[Double], ArrayView[Double], variances~ : Variances, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality], equal_variance? : Assumed[EqualVariance]) -> TestResult raise QuestionError
+pub fn t_test_two(ArrayView[Double], ArrayView[Double], variances~ : Variances, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality]) -> TestResult raise QuestionError
 
 pub fn wilcoxon_signed_rank(ArrayView[Double], y? : ArrayView[Double], alternative~ : Alternative, zeros~ : Zeros, exactness~ : Exactness, continuity~ : Bool) -> TestResult raise QuestionError
 
 // Errors
 #derive(@debug.Debug)
 pub(all) suberror PowerError {
-  UnknownCount(Int32)
+  InvalidArgument(name~ : String, reason~ : String)
   Unreachable
 }
 
 #derive(@debug.Debug)
 pub(all) suberror QuestionError {
   ShapeMismatch(estimand~ : Estimand)
+  SchemeMismatch(scheme~ : PermutationScheme)
+  LengthMismatch(expected~ : Int32, got~ : Int32)
   TooFewPoints(needed~ : Int32, got~ : Int32)
-  MissingAssumption(name~ : String)
+  InvalidArgument(name~ : String, reason~ : String)
   Degenerate(reason~ : String)
   Unsupported(reason~ : String)
+  NotImplemented(what~ : String)
 }
 
 // Types and methods
@@ -109,6 +112,7 @@ pub(all) enum Alternative {
   Greater
 }
 
+#derive(Eq, @debug.Debug)
 pub struct Assumed[A] {
   // private fields
 }
@@ -121,12 +125,20 @@ pub(all) enum BootstrapInterval {
   BCa
 }
 
+#derive(@debug.Debug)
 pub struct BootstrapResult {
   estimate : Double
   interval : Interval
   se : Double
   distribution : @dist.Empirical
   reps : Int32
+}
+
+#derive(@debug.Debug)
+pub struct Comparison {
+  first : Int32
+  second : Int32
+  result : TestResult
 }
 
 #derive(Eq, @debug.Debug)
@@ -136,6 +148,7 @@ pub(all) enum CorrelationKind {
   KendallTauB
 }
 
+#derive(Eq, @debug.Debug)
 pub struct Effect {
   kind : EffectKind
   value : Double
@@ -156,6 +169,7 @@ pub(all) enum EffectKind {
   RankBiserial
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum EqualVariance {
 }
 
@@ -172,6 +186,7 @@ pub(all) enum Estimand {
   Correlation
 }
 
+#derive(Eq, @debug.Debug)
 pub struct Estimate {
   value : Double
   se : Double?
@@ -187,11 +202,13 @@ pub(all) enum Exactness {
   ExactUpTo(Int32)
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Hypothesis {
   Point(Double)
   Independence
 }
 
+#derive(Eq, @debug.Debug)
 pub struct Interval {
   lo : Double
   hi : Double
@@ -215,28 +232,35 @@ pub(all) enum LeveneCenter {
   Trimmed(Double)
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Method {
   Analytic
   Bootstrap(reps~ : Int32)
-  Permutation(reps~ : Int32)
+  Permutation(Resamples)
 }
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Normality {
 }
 
-pub(all) struct NullModel {
+pub struct NullModel {
   observed : Double
   null_dist : &@dist.Univariate
   two_sided : TwoSidedRule
   p_kind : PValueKind
   procedure : String
+  // private fields
 }
+pub fn NullModel::atoms(observed~ : Double, null_dist~ : @dist.Atoms, two_sided~ : TwoSidedRule, p_kind~ : PValueKind, procedure~ : String) -> Self
+pub fn[D : @dist.Univariate + @dist.Mass + @dist.IntCdf + @dist.Support + @dist.Mode] NullModel::discrete(observed~ : Int64, null_dist~ : D, two_sided~ : TwoSidedRule, p_kind~ : PValueKind, procedure~ : String) -> Self
+pub fn NullModel::new(observed~ : Double, null_dist~ : &@dist.Univariate, p_kind~ : PValueKind, procedure~ : String) -> Self
 pub fn NullModel::p_value(Self, Alternative) -> Double
+pub impl @debug.Debug for NullModel
 
 #derive(Eq, @debug.Debug)
 pub(all) enum PValueKind {
-  Exact
-  Asymptotic
+  ExactNull
+  AsymptoticNull
   MonteCarlo(draws~ : Int32, plus_one~ : Bool)
 }
 
@@ -265,28 +289,35 @@ pub(all) enum PowerDesign {
   ChiSquare(df~ : Int32)
 }
 
-pub struct PowerQuery {
-  n : Double?
-  effect : Double?
-  alpha : Double?
-  power : Double?
+#derive(Eq, @debug.Debug)
+pub(all) enum PowerQuery {
+  SampleSize(effect~ : Double, alpha~ : Double, power~ : Double)
+  Power(n~ : Double, effect~ : Double, alpha~ : Double)
+  Effect(n~ : Double, alpha~ : Double, power~ : Double)
+  Alpha(n~ : Double, effect~ : Double, power~ : Double)
 }
-pub fn PowerQuery::new(n? : Double, effect? : Double, alpha? : Double, power? : Double) -> Self raise PowerError
 
 pub struct Question {
   estimand : Estimand
-  sample : Sample
+  sample : Samples
 }
-pub fn Question::new(Estimand, Sample) -> Self raise QuestionError
+pub fn Question::new(Estimand, Samples) -> Self raise QuestionError
 
-pub(all) enum Sample {
+#derive(Eq, @debug.Debug)
+pub(all) enum Resamples {
+  All
+  Random(Int32)
+}
+
+pub(all) enum Samples {
   One(ArrayView[Double])
   Two(ArrayView[Double], ArrayView[Double])
-  Paired(ArrayView[Double], ArrayView[Double])
+  Paired(@data.Bivariate)
   Groups(Array[ArrayView[Double]])
   Blocks(@data.Blocks)
 }
 
+#derive(@debug.Debug)
 pub struct TestResult {
   statistic : Double
   p_value : Double
@@ -315,7 +346,7 @@ pub(all) enum TwoSidedRule {
 
 #derive(Eq, @debug.Debug)
 pub(all) enum Variances {
-  Pooled
+  Pooled(Assumed[EqualVariance])
   Welch
 }
 
@@ -327,6 +358,6 @@ pub(all) enum Zeros {
 }
 
 // Type aliases
-pub type Statistic = (Sample) -> Double
+pub type Statistic = (Samples) -> Double
 
 // Traits

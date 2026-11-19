@@ -32,11 +32,14 @@ pub(all) enum Estimand {
 /// Fixed now, because adding a case later would break callers'
 /// exhaustive matches; the cases cover the shapes found in R, SciPy,
 /// statsmodels and the mooncakes survey that resampling can act on.
-pub(all) enum Sample {
+/// (Named in the plural: `@dist.Sample` is the trait for drawing from a
+/// distribution.)
+pub(all) enum Samples {
   One(ArrayView[Double])
   Two(ArrayView[Double], ArrayView[Double])
-  /// Two measurements on the same units, or (x, y) pairs.
-  Paired(ArrayView[Double], ArrayView[Double])
+  /// Two measurements on the same units, or (x, y) pairs. A `Bivariate`
+  /// has checked that the two have the same length.
+  Paired(@data.Bivariate)
   /// k independent groups.
   Groups(Array[ArrayView[Double]])
   /// k related measurements on each of n blocks.
@@ -46,58 +49,88 @@ pub(all) enum Sample {
 ///|
 pub struct Question {
   estimand : Estimand
-  sample : Sample
+  sample : Samples
 }
 
 ///|
-/// Raised when the estimand does not fit the data shape (a mean
-/// difference from one sample), so the mismatch is an error at the point
-/// of asking, not a NaN later.
+/// Why a question could not be answered. The cases separate what the
+/// caller can fix (shapes, lengths, arguments) from what the data make
+/// impossible and from what this library does not do.
 #derive(Debug)
 pub(all) suberror QuestionError {
+  /// The estimand does not fit the data shape (a mean difference from one
+  /// sample), so the mismatch is an error at the point of asking, not a
+  /// NaN later.
   ShapeMismatch(estimand~ : Estimand)
+  /// The permutation scheme does not fit the data shape (pairings of two
+  /// independent samples).
+  SchemeMismatch(scheme~ : PermutationScheme)
+  /// Two arrays that must have the same length do not.
+  LengthMismatch(expected~ : Int32, got~ : Int32)
   TooFewPoints(needed~ : Int32, got~ : Int32)
-  /// A procedure that relies on an assumption was called without its
-  /// certificate (a pooled t test without `Assumed[EqualVariance]`).
-  MissingAssumption(name~ : String)
+  /// An argument outside what the procedure accepts (a level outside
+  /// (0, 1), fewer than two replicates).
+  InvalidArgument(name~ : String, reason~ : String)
   /// The data make the statistic undefined (zero variance, empty cell).
   Degenerate(reason~ : String)
-  /// A combination this library does not compute (yet), named rather than
-  /// approximated silently.
+  /// The request has no answer by the method asked for, however it is
+  /// implemented (an interval from a permutation; more arrangements than
+  /// can be enumerated).
   Unsupported(reason~ : String)
+  /// A procedure or path this library does not compute yet. It is named,
+  /// never approximated silently.
+  NotImplemented(what~ : String)
 }
 
 ///|
+/// Checks the estimand against the shape: one number must answer it. A
+/// mean of several groups is not one number, so groups and blocks are
+/// taken by the tests that compare them, not by a question.
 pub fn Question::new(
   estimand : Estimand,
-  sample : Sample,
+  sample : Samples,
 ) -> Question raise QuestionError {
   let ok = match (estimand, sample) {
     (Mean | Median | Quantile(_) | Variance | Proportion, One(_)) => true
-    (MeanDifference | MedianDifference | MeanRatio, Two(_, _) | Paired(_, _)) =>
+    (MeanDifference | MedianDifference | MeanRatio, Two(_, _) | Paired(_)) =>
       true
-    (Correlation, Paired(_, _)) => true
-    (Mean | Median | Variance, Groups(_) | Blocks(_)) => true
+    (Correlation, Paired(_)) => true
     _ => false
   }
   if !ok {
     raise ShapeMismatch(estimand~)
   }
+  if estimand is Quantile(p) && !(p >= 0.0 && p <= 1.0) {
+    raise InvalidArgument(name="p", reason="a quantile is asked at p in [0, 1]")
+  }
   { estimand, sample, }
+}
+
+///|
+/// How many resamples a randomisation method uses.
+#derive(Eq, Debug)
+pub(all) enum Resamples {
+  /// Every arrangement, enumerated: the exact randomisation distribution.
+  All
+  /// This many random arrangements; p-values then carry the
+  /// (k + 1)/(N + 1) correction.
+  Random(Int32)
 }
 
 ///|
 /// How uncertainty is assessed. Resampling methods take their own
 /// replicate count; the random source is passed separately.
+#derive(Eq, Debug)
 pub(all) enum Method {
   /// The textbook sampling distribution, under the assumptions it needs.
   Analytic
   Bootstrap(reps~ : Int32)
-  Permutation(reps~ : Int32)
+  Permutation(Resamples)
 }
 
 ///|
 /// The null hypothesis.
+#derive(Eq, Debug)
 pub(all) enum Hypothesis {
   /// The estimand equals a value.
   Point(Double)
@@ -134,7 +167,7 @@ pub fn estimate(
         procedure: "bootstrap (percentile)",
       }
     }
-    Permutation(..) =>
+    Permutation(_) =>
       raise Unsupported(
         reason="permutation gives tests, not intervals; use null_model",
       )
@@ -142,10 +175,11 @@ pub fn estimate(
 }
 
 ///|
-fn sample_size(s : Sample) -> Int64 {
+fn sample_size(s : Samples) -> Int64 {
   match s {
     One(x) => x.length().to_int64()
-    Two(x, y) | Paired(x, y) => (x.length() + y.length()).to_int64()
+    Two(x, y) => (x.length() + y.length()).to_int64()
+    Paired(xy) => xy.length().to_int64()
     Groups(gs) => {
       let mut n = 0
       for g in gs {
@@ -170,9 +204,14 @@ fn median_of(x : ArrayView[Double]) -> Double {
 }
 
 ///|
+fn differences(xy : @data.Bivariate) -> FixedArray[Double] {
+  FixedArray::makei(xy.length(), i => xy.x[i] - xy.y[i])
+}
+
+///|
 /// The statistic an estimand stands for, on the sample shapes it accepts.
 fn estimand_statistic(e : Estimand) -> Statistic {
-  fn(s : Sample) -> Double {
+  fn(s : Samples) -> Double {
     match (e, s) {
       (Mean | Proportion, One(x)) => mean_of(x)
       (Median, One(x)) => median_of(x)
@@ -182,26 +221,22 @@ fn estimand_statistic(e : Estimand) -> Statistic {
         }
       (Variance, One(x)) => summarize(x).2
       (MeanDifference, Two(x, y)) => mean_of(x) - mean_of(y)
-      (MeanDifference, Paired(x, y)) => {
-        let d = FixedArray::makei(x.length(), i => x[i] - y[i])
-        mean_of(d[:])
-      }
+      (MeanDifference, Paired(xy)) => mean_of(differences(xy)[:])
       (MedianDifference, Two(x, y)) => median_of(x) - median_of(y)
-      (MedianDifference, Paired(x, y)) => {
-        let d = FixedArray::makei(x.length(), i => x[i] - y[i])
-        median_of(d[:])
-      }
-      (MeanRatio, Two(x, y) | Paired(x, y)) => mean_of(x) / mean_of(y)
-      (Correlation, Paired(x, y)) => {
+      (MedianDifference, Paired(xy)) => median_of(differences(xy)[:])
+      (MeanRatio, Two(x, y)) => mean_of(x) / mean_of(y)
+      (MeanRatio, Paired(xy)) => mean_of(xy.x[:]) / mean_of(xy.y[:])
+      (Correlation, Paired(xy)) => {
         let mut c = @describe.Comoment::empty()
-        for i in 0..<x.length() {
-          c = c.push(x[i], y[i])
+        for i in 0..<xy.length() {
+          c = c.push(xy.x[i], xy.y[i])
         }
         match c.correlation() {
           Some(r) => r
           None => 0.0 / 0.0
         }
       }
+      // `Question::new` admits no other pair
       _ => 0.0 / 0.0
     }
   }
@@ -239,9 +274,9 @@ fn analytic_estimate(
       )
       from_test(r, (x.length() + y.length()).to_int64(), "Welch t interval")
     }
-    (MeanDifference, Paired(x, y)) => {
-      let r = t_test_paired(x, y, alternative=TwoSided, level~, normality~)
-      from_test(r, x.length().to_int64(), "paired t interval")
+    (MeanDifference, Paired(xy)) => {
+      let r = t_test_paired(xy, alternative=TwoSided, level~, normality~)
+      from_test(r, xy.length().to_int64(), "paired t interval")
     }
     (Variance, One(x)) => {
       let (n, _, v) = summarize(x)
@@ -255,8 +290,8 @@ fn analytic_estimate(
         value: v,
         se: Some(v * (2.0 / df).sqrt()),
         interval: Some({
-          lo: df * v / @dist.Quantile::isf(chi, 0.5 * alpha),
-          hi: df * v / @dist.Quantile::quantile(chi, 0.5 * alpha),
+          lo: df * v / chi.isf(0.5 * alpha),
+          hi: df * v / chi.quantile(0.5 * alpha),
           level,
           kind: Confidence,
           procedure: "chi-square interval",
@@ -287,16 +322,13 @@ fn analytic_estimate(
         procedure: "Clopper-Pearson",
       }
     }
-    (Correlation, Paired(x, y)) => {
-      let xy = @data.Bivariate::new(x, y) catch {
-        _ => raise ShapeMismatch(estimand=Correlation)
-      }
+    (Correlation, Paired(xy)) => {
       let r = correlation_test(xy, Pearson, alternative=TwoSided, level~)
       {
         value: r.estimate.unwrap(),
         se: None,
         interval: r.interval,
-        n: x.length().to_int64(),
+        n: xy.length().to_int64(),
         procedure: "Fisher z interval",
       }
     }
@@ -308,18 +340,7 @@ fn analytic_estimate(
 }
 
 ///|
-/// Observed statistic and null distribution, before any p-value. Keeping
-/// the null distribution lets a caller look at it, plot it, or compute a
-/// p-value for another alternative without recomputing.
-pub(all) struct NullModel {
-  observed : Double
-  null_dist : &@dist.Univariate
-  two_sided : TwoSidedRule
-  p_kind : PValueKind
-  procedure : String
-}
-
-///|
+/// The null distribution of the question's statistic under the hypothesis.
 pub fn null_model(
   q : Question,
   h : Hypothesis,
@@ -328,58 +349,27 @@ pub fn null_model(
 ) -> NullModel raise QuestionError {
   let stat = estimand_statistic(q.estimand)
   match (how, h, q.sample) {
-    (Permutation(reps~), Independence, Two(_, _)) =>
+    (Permutation(reps), Independence, Two(_, _)) =>
       permutation_test(
         q.sample,
         stat,
         scheme=Independent,
-        reps=Some(reps),
+        reps~,
         ties={ relative: 1.0e-12, },
         rng~,
       )
-    (Permutation(reps~), Independence, Paired(_, _)) =>
+    (Permutation(reps), Independence, Paired(_)) =>
       permutation_test(
         q.sample,
         stat,
         scheme=if q.estimand == Correlation { Pairings } else { WithinPairs },
-        reps=Some(reps),
+        reps~,
         ties={ relative: 1.0e-12, },
         rng~,
       )
     _ =>
-      raise Unsupported(
-        reason="null_model supports permutation nulls of independence for now; the analytic tests are separate functions",
+      raise NotImplemented(
+        what="null_model beyond permutation nulls of independence; the analytic tests are separate functions",
       )
-  }
-}
-
-///|
-/// The p-value from a null model, the same code for theory-based and
-/// randomisation tests. Each tail includes the observed value itself
-/// (P(T >= t), P(T <= t)), which matters for discrete and permutation nulls,
-/// and neither tail is computed as 1 minus the other.
-pub fn NullModel::p_value(
-  self : NullModel,
-  alternative : Alternative,
-) -> Double {
-  let upper = @dist.Cdf::sf_at_least(self.null_dist, self.observed)
-  let lower = @dist.Cdf::cdf(self.null_dist, self.observed)
-  match alternative {
-    Greater => upper
-    Less => lower
-    TwoSided =>
-      match self.two_sided {
-        Doubling => {
-          let p = 2.0 * (if upper < lower { upper } else { lower })
-          if p > 1.0 {
-            1.0
-          } else {
-            p
-          }
-        }
-        // needs the null's mass function, which `Univariate` does not carry;
-        // tests that use this rule compute it from their discrete null
-        MinLikelihood => 0.0 / 0.0
-      }
   }
 }

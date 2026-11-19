@@ -1,7 +1,6 @@
 ///|
-/// Shared pieces of the tests: two-pass summaries, critical values,
-/// result assembly, and the minimum-likelihood two-sided p-value for
-/// unimodal discrete nulls.
+/// Shared pieces of the tests: two-pass summaries, critical values and
+/// result assembly.
 
 ///|
 /// (n, mean, variance with divisor n - 1), two-pass with compensated sums.
@@ -23,7 +22,7 @@ fn summarize(x : ArrayView[Double]) -> (Int32, Double, Double) {
 ///|
 fn check_level(level : Double) -> Unit raise QuestionError {
   if !(level > 0.0 && level < 1.0) {
-    raise Degenerate(reason="level must be in (0, 1)")
+    raise InvalidArgument(name="level", reason="must be in (0, 1)")
   }
 }
 
@@ -101,13 +100,7 @@ fn continuous_result(
   p_kind~ : PValueKind,
   procedure~ : String,
 ) -> TestResult {
-  let nm : NullModel = {
-    observed: statistic,
-    null_dist,
-    two_sided: Doubling,
-    p_kind,
-    procedure,
-  }
+  let nm = NullModel::new(observed=statistic, null_dist~, p_kind~, procedure~)
   {
     statistic,
     p_value: nm.p_value(alternative),
@@ -126,74 +119,32 @@ fn continuous_result(
 }
 
 ///|
-/// Two-sided p-value of a unimodal discrete null by minimum likelihood: the
-/// total probability of outcomes no more likely than the observed k, with
-/// the relative slack 1 + 1e-7 that R and SciPy use so that outcomes equal
-/// in exact arithmetic are not split by rounding.
-fn[D : @dist.Mass + @dist.IntCdf] min_likelihood_p(
-  d : D,
-  k : Int64,
-  lo : Int64,
-  hi : Int64,
-  mode : Double,
-) -> Double {
-  let bound = @dist.Mass::pmf(d, k) * (1.0 + 1.0e-7)
-  let p = if k.to_double() < mode {
-    // the other tail starts at the first j above the mode with pmf <= bound
-    let mut j = @math.ceil(mode).to_int64()
-    while j <= hi && @dist.Mass::pmf(d, j) > bound {
-      j = j + 1
-    }
-    @dist.IntCdf::cdf_int(d, k) + @dist.IntCdf::sf_int(d, j - 1)
-  } else if k.to_double() > mode {
-    let mut j = @math.floor(mode).to_int64()
-    while j >= lo && @dist.Mass::pmf(d, j) > bound {
-      j = j - 1
-    }
-    @dist.IntCdf::cdf_int(d, j) + @dist.IntCdf::sf_int(d, k - 1)
-  } else {
-    1.0
-  }
-  if p > 1.0 {
-    1.0
-  } else {
-    p
-  }
-}
-
-///|
-/// Tail p-values of a discrete null at k: (P(X >= k), P(X <= k)).
-fn[D : @dist.IntCdf] discrete_tails(d : D, k : Int64) -> (Double, Double) {
-  (@dist.IntCdf::sf_int(d, k - 1), @dist.IntCdf::cdf_int(d, k))
-}
-
-///|
-/// Choose the p-value of a discrete null for the alternative and rule.
-fn[D : @dist.Mass + @dist.IntCdf] discrete_p(
-  d : D,
-  k : Int64,
-  lo : Int64,
-  hi : Int64,
-  mode : Double,
+/// A test result on a discrete null: the p-value comes from the null
+/// model, so the result and the model it keeps cannot disagree.
+fn discrete_result(
+  statistic : Double,
+  nm : NullModel,
   alternative : Alternative,
-  rule : TwoSidedRule,
-) -> Double {
-  let (upper, lower) = discrete_tails(d, k)
-  match alternative {
-    Greater => upper
-    Less => lower
-    TwoSided =>
-      match rule {
-        Doubling => {
-          let p = 2.0 * (if upper < lower { upper } else { lower })
-          if p > 1.0 {
-            1.0
-          } else {
-            p
-          }
-        }
-        MinLikelihood => min_likelihood_p(d, k, lo, hi, mode)
-      }
+  estimate~ : Double? = None,
+  null_value~ : Double? = None,
+  interval~ : Interval? = None,
+  effect~ : Effect? = None,
+) -> TestResult {
+  let p = nm.p_value(alternative)
+  {
+    statistic,
+    p_value: p,
+    log_p_value: @math.ln(p),
+    df: None,
+    df2: None,
+    alternative,
+    estimate,
+    null_value,
+    interval,
+    effect,
+    p_kind: nm.p_kind,
+    null_model: Some(nm),
+    procedure: nm.procedure,
   }
 }
 

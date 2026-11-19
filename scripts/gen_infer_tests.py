@@ -90,17 +90,19 @@ for alt in ALT:
     block(f"one-sample t ({alt})", data + [
         f"let r = @infer.t_test_one(x[:], mu=4.5, alternative={ALT[alt]}, level=0.9, normality=normality())",
     ] + checks("r", r.statistic, r.pvalue, r.df, ci=(ci.low, ci.high)))
-    for eq, var in ((False, "Welch"), (True, "Pooled")):
+    for eq, var, name in (
+        (False, "Welch", "Welch"),
+        (True, "Pooled(@infer.Assumed::postulate())", "Pooled"),
+    ):
         r = st.ttest_ind(x, y, equal_var=eq, alternative=alt)
         ci = r.confidence_interval(0.95)
-        extra = ", equal_variance=@infer.Assumed::postulate()" if eq else ""
-        block(f"two-sample t {var} ({alt})", data + [
-            f"let r = @infer.t_test_two(x[:], y[:], variances={var}, alternative={ALT[alt]}, level=0.95, normality=normality(){extra})",
+        block(f"two-sample t {name} ({alt})", data + [
+            f"let r = @infer.t_test_two(x[:], y[:], variances={var}, alternative={ALT[alt]}, level=0.95, normality=normality())",
         ] + checks("r", r.statistic, r.pvalue, r.df, ci=(ci.low, ci.high)))
     r = st.ttest_rel(x, z, alternative=alt)
     ci = r.confidence_interval(0.95)
     block(f"paired t ({alt})", data + [
-        f"let r = @infer.t_test_paired(x[:], z[:], alternative={ALT[alt]}, level=0.95, normality=normality())",
+        f"let r = @infer.t_test_paired(@data.Bivariate::new(x[:], z[:]), alternative={ALT[alt]}, level=0.95, normality=normality())",
     ] + checks("r", r.statistic, r.pvalue, r.df, ci=(ci.low, ci.high)))
 
 r = st.ttest_ind_from_stats(5.1, 1.9, 20, 6.3, 2.7, 25, equal_var=False)
@@ -108,22 +110,14 @@ block("t from summaries (Welch)", [
     "let r = @infer.t_test_summary({ n: 20, mean: 5.1, sd: 1.9 }, { n: 25, mean: 6.3, sd: 2.7 }, variances=Welch, alternative=TwoSided, level=0.95, normality=normality())",
 ] + checks("r", r.statistic, r.pvalue))
 
-block("pooled t without the certificate is an error", data + [
-    "let refused = try @infer.t_test_two(x[:], y[:], variances=Pooled, alternative=TwoSided, level=0.95, normality=normality()) catch {",
-    "  MissingAssumption(name~) => name == \"EqualVariance\"",
-    "  _ => false",
-    "} noraise {",
-    "  _ => false",
-    "}",
-    "assert_true(refused)",
-])
-
 for k, n, p0 in ((7, 20, 0.3), (2, 25, 0.35), (40, 50, 0.6)):
     for alt in ALT:
         r = st.binomtest(k, n, p0, alternative=alt)
         ci = r.proportion_ci(0.95, method="exact")
         block(f"binomial k={k} n={n} p={p0} ({alt})", [
             f"let r = @infer.binomial_test({{ successes: {k}, trials: {n} }}, p0={lit(p0)}, alternative={ALT[alt]}, two_sided=MinLikelihood, level=0.95)",
+            # the kept null model gives the same p-value, for every rule
+            f"assert_close(r.null_model.unwrap().p_value({ALT[alt]}), {lit(r.pvalue)}, \"null model p\")",
         ] + checks("r", p=r.pvalue, ci=(ci.low, ci.high)))
 
 obs = [18, 22, 30, 30]
@@ -152,13 +146,14 @@ for table in ([[8, 2], [1, 5]], [[3, 9], [12, 4]], [[20, 15], [11, 30]]):
         block(f"fisher exact {flat} ({alt})", [
             f"let t = @data.Table::new(2, 2, [{', '.join(f'{c}L' for c in flat)}][:])",
             f"let r = @infer.fisher_exact(t, alternative={ALT[alt]}, two_sided=MinLikelihood)",
+            f"assert_close(r.null_model.unwrap().p_value({ALT[alt]}), {lit(res.pvalue)}, \"null model p\")",
         ] + checks("r", res.statistic, res.pvalue))
 
 g3 = rng.normal(5.5, 2.5, 10).round(3)
 data3 = data + [f"let w : Array[Double] = {arr(g3)}"]
 r = st.f_oneway(x, y, g3)
 block("one-way ANOVA", data3 + [
-    "let r = @infer.anova_one_way([x[:], y[:], w[:]][:], variances=Pooled, normality=normality())",
+    "let r = @infer.anova_one_way([x[:], y[:], w[:]][:], variances=Pooled(@infer.Assumed::postulate()), normality=normality())",
 ] + checks("r", r.statistic, r.pvalue))
 r = st.f_oneway(x, y, g3, equal_var=False)
 block("Welch's ANOVA", data3 + [
@@ -215,7 +210,7 @@ r = st.permutation_test((a, b), lambda u, v: np.mean(u) - np.mean(v), permutatio
 block("exact permutation test of a mean difference", ab + [
     "let q = @infer.Question::new(MeanDifference, Two(a[:], b[:]))",
     "let rng = @num.Xoshiro256::seed(1)",
-    "let stat = (s : @infer.Sample) => match s {",
+    "let stat = (s : @infer.Samples) => match s {",
     "  Two(u, v) => {",
     "    let mut su = 0.0",
     "    let mut sv = 0.0",
@@ -226,12 +221,12 @@ block("exact permutation test of a mean difference", ab + [
     "  _ => 0.0",
     "}",
     "ignore(q)",
-    "let m = @infer.permutation_test(Two(a[:], b[:]), stat, scheme=Independent, reps=None, ties={ relative: 1.0e-12 }, rng~)",
+    "let m = @infer.permutation_test(Two(a[:], b[:]), stat, scheme=Independent, reps=All, ties={ relative: 1.0e-12 }, rng~)",
     f"assert_close(m.p_value(TwoSided), {lit(r.pvalue)}, \"p\")",
 ])
 
 block("likelihood ratio", [
-    "let r = @infer.likelihood_ratio(-120.5, -115.25, 2)",
+    "let r = @infer.likelihood_ratio(loglik_null=-120.5, loglik_alt=-115.25, df=2)",
 ] + checks("r", 10.5, st.chi2.sf(10.5, 2)))
 
 header = f"// Generated by scripts/gen_infer_tests.py from SciPy {scipy.__version__}; do not edit.\n\n"

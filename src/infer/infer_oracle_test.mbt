@@ -90,11 +90,10 @@ test "infer: two-sample t Pooled (two-sided)" {
   let r = @infer.t_test_two(
     x[:],
     y[:],
-    variances=Pooled,
+    variances=Pooled(@infer.Assumed::postulate()),
     alternative=TwoSided,
     level=0.95,
     normality=normality(),
-    equal_variance=@infer.Assumed::postulate(),
   )
   assert_close(r.statistic, -3.741115981240007, "statistic")
   assert_close(r.p_value, 0.0009602258033190143, "p")
@@ -118,8 +117,7 @@ test "infer: paired t (two-sided)" {
     3.649, 1.362, 0.043, 7.542,
   ]
   let r = @infer.t_test_paired(
-    x[:],
-    z[:],
+    @data.Bivariate::new(x[:], z[:]),
     alternative=TwoSided,
     level=0.95,
     normality=normality(),
@@ -205,11 +203,10 @@ test "infer: two-sample t Pooled (greater)" {
   let r = @infer.t_test_two(
     x[:],
     y[:],
-    variances=Pooled,
+    variances=Pooled(@infer.Assumed::postulate()),
     alternative=Greater,
     level=0.95,
     normality=normality(),
-    equal_variance=@infer.Assumed::postulate(),
   )
   assert_close(r.statistic, -3.741115981240007, "statistic")
   assert_close(r.p_value, 0.9995198870983405, "p")
@@ -233,8 +230,7 @@ test "infer: paired t (greater)" {
     3.649, 1.362, 0.043, 7.542,
   ]
   let r = @infer.t_test_paired(
-    x[:],
-    z[:],
+    @data.Bivariate::new(x[:], z[:]),
     alternative=Greater,
     level=0.95,
     normality=normality(),
@@ -320,11 +316,10 @@ test "infer: two-sample t Pooled (less)" {
   let r = @infer.t_test_two(
     x[:],
     y[:],
-    variances=Pooled,
+    variances=Pooled(@infer.Assumed::postulate()),
     alternative=Less,
     level=0.95,
     normality=normality(),
-    equal_variance=@infer.Assumed::postulate(),
   )
   assert_close(r.statistic, -3.741115981240007, "statistic")
   assert_close(r.p_value, 0.00048011290165950714, "p")
@@ -348,8 +343,7 @@ test "infer: paired t (less)" {
     3.649, 1.362, 0.043, 7.542,
   ]
   let r = @infer.t_test_paired(
-    x[:],
-    z[:],
+    @data.Bivariate::new(x[:], z[:]),
     alternative=Less,
     level=0.95,
     normality=normality(),
@@ -377,37 +371,6 @@ test "infer: t from summaries (Welch)" {
 }
 
 ///|
-test "infer: pooled t without the certificate is an error" {
-  let x : Array[Double] = [
-    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
-    2.002, -1.135, 5.757,
-  ]
-  let y : Array[Double] = [
-    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
-  ]
-  let z : Array[Double] = [
-    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
-    3.649, 1.362, 0.043, 7.542,
-  ]
-  let refused = try
-    @infer.t_test_two(
-      x[:],
-      y[:],
-      variances=Pooled,
-      alternative=TwoSided,
-      level=0.95,
-      normality=normality(),
-    )
-  catch {
-    MissingAssumption(name~) => name == "EqualVariance"
-    _ => false
-  } noraise {
-    _ => false
-  }
-  assert_true(refused)
-}
-
-///|
 test "infer: binomial k=7 n=20 p=0.3 (two-sided)" {
   let r = @infer.binomial_test(
     { successes: 7, trials: 20, },
@@ -415,6 +378,11 @@ test "infer: binomial k=7 n=20 p=0.3 (two-sided)" {
     alternative=TwoSided,
     two_sided=MinLikelihood,
     level=0.95,
+  )
+  assert_close(
+    r.null_model.unwrap().p_value(TwoSided),
+    0.6294979666766769,
+    "null model p",
   )
   assert_close(r.p_value, 0.6294979666766769, "p")
   let iv = r.interval.unwrap()
@@ -431,6 +399,11 @@ test "infer: binomial k=7 n=20 p=0.3 (greater)" {
     two_sided=MinLikelihood,
     level=0.95,
   )
+  assert_close(
+    r.null_model.unwrap().p_value(Greater),
+    0.3919901877990756,
+    "null model p",
+  )
   assert_close(r.p_value, 0.3919901877990756, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.17731091757444917, "ci lo")
@@ -445,6 +418,11 @@ test "infer: binomial k=7 n=20 p=0.3 (less)" {
     alternative=Less,
     two_sided=MinLikelihood,
     level=0.95,
+  )
+  assert_close(
+    r.null_model.unwrap().p_value(Less),
+    0.7722717974181608,
+    "null model p",
   )
   assert_close(r.p_value, 0.7722717974181608, "p")
   let iv = r.interval.unwrap()
@@ -461,6 +439,11 @@ test "infer: binomial k=2 n=25 p=0.35 (two-sided)" {
     two_sided=MinLikelihood,
     level=0.95,
   )
+  assert_close(
+    r.null_model.unwrap().p_value(TwoSided),
+    0.0029257897453341462,
+    "null model p",
+  )
   assert_close(r.p_value, 0.0029257897453341462, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.009839590018797513, "ci lo")
@@ -475,6 +458,11 @@ test "infer: binomial k=2 n=25 p=0.35 (greater)" {
     alternative=Greater,
     two_sided=MinLikelihood,
     level=0.95,
+  )
+  assert_close(
+    r.null_model.unwrap().p_value(Greater),
+    0.9996958775972414,
+    "null model p",
   )
   assert_close(r.p_value, 0.9996958775972414, "p")
   let iv = r.interval.unwrap()
@@ -491,6 +479,11 @@ test "infer: binomial k=2 n=25 p=0.35 (less)" {
     two_sided=MinLikelihood,
     level=0.95,
   )
+  assert_close(
+    r.null_model.unwrap().p_value(Less),
+    0.00213333652737008,
+    "null model p",
+  )
   assert_close(r.p_value, 0.00213333652737008, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.0, "ci lo")
@@ -505,6 +498,11 @@ test "infer: binomial k=40 n=50 p=0.6 (two-sided)" {
     alternative=TwoSided,
     two_sided=MinLikelihood,
     level=0.95,
+  )
+  assert_close(
+    r.null_model.unwrap().p_value(TwoSided),
+    0.003570906449261748,
+    "null model p",
   )
   assert_close(r.p_value, 0.003570906449261748, "p")
   let iv = r.interval.unwrap()
@@ -521,6 +519,11 @@ test "infer: binomial k=40 n=50 p=0.6 (greater)" {
     two_sided=MinLikelihood,
     level=0.95,
   )
+  assert_close(
+    r.null_model.unwrap().p_value(Greater),
+    0.0021971447572466827,
+    "null model p",
+  )
   assert_close(r.p_value, 0.0021971447572466827, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.6844039385799862, "ci lo")
@@ -535,6 +538,11 @@ test "infer: binomial k=40 n=50 p=0.6 (less)" {
     alternative=Less,
     two_sided=MinLikelihood,
     level=0.95,
+  )
+  assert_close(
+    r.null_model.unwrap().p_value(Less),
+    0.9992427034170903,
+    "null model p",
   )
   assert_close(r.p_value, 0.9992427034170903, "p")
   let iv = r.interval.unwrap()
@@ -593,6 +601,11 @@ test "infer: chi-square independence 2x3 correction=True" {
 test "infer: fisher exact [8, 2, 1, 5] (two-sided)" {
   let t = @data.Table::new(2, 2, [8L, 2L, 1L, 5L][:])
   let r = @infer.fisher_exact(t, alternative=TwoSided, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(TwoSided),
+    0.034965034965034975,
+    "null model p",
+  )
   assert_close(r.statistic, 20.0, "statistic")
   assert_close(r.p_value, 0.034965034965034975, "p")
 }
@@ -601,6 +614,11 @@ test "infer: fisher exact [8, 2, 1, 5] (two-sided)" {
 test "infer: fisher exact [8, 2, 1, 5] (greater)" {
   let t = @data.Table::new(2, 2, [8L, 2L, 1L, 5L][:])
   let r = @infer.fisher_exact(t, alternative=Greater, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(Greater),
+    0.024475524475524483,
+    "null model p",
+  )
   assert_close(r.statistic, 20.0, "statistic")
   assert_close(r.p_value, 0.024475524475524483, "p")
 }
@@ -609,6 +627,11 @@ test "infer: fisher exact [8, 2, 1, 5] (greater)" {
 test "infer: fisher exact [8, 2, 1, 5] (less)" {
   let t = @data.Table::new(2, 2, [8L, 2L, 1L, 5L][:])
   let r = @infer.fisher_exact(t, alternative=Less, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(Less),
+    0.9991258741258742,
+    "null model p",
+  )
   assert_close(r.statistic, 20.0, "statistic")
   assert_close(r.p_value, 0.9991258741258742, "p")
 }
@@ -617,6 +640,11 @@ test "infer: fisher exact [8, 2, 1, 5] (less)" {
 test "infer: fisher exact [3, 9, 12, 4] (two-sided)" {
   let t = @data.Table::new(2, 2, [3L, 9L, 12L, 4L][:])
   let r = @infer.fisher_exact(t, alternative=TwoSided, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(TwoSided),
+    0.02001764855446373,
+    "null model p",
+  )
   assert_close(r.statistic, 0.1111111111111111, "statistic")
   assert_close(r.p_value, 0.02001764855446373, "p")
 }
@@ -625,6 +653,11 @@ test "infer: fisher exact [3, 9, 12, 4] (two-sided)" {
 test "infer: fisher exact [3, 9, 12, 4] (greater)" {
   let t = @data.Table::new(2, 2, [3L, 9L, 12L, 4L][:])
   let r = @infer.fisher_exact(t, alternative=Greater, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(Greater),
+    0.9989739908167691,
+    "null model p",
+  )
   assert_close(r.statistic, 0.1111111111111111, "statistic")
   assert_close(r.p_value, 0.9989739908167691, "p")
 }
@@ -633,6 +666,11 @@ test "infer: fisher exact [3, 9, 12, 4] (greater)" {
 test "infer: fisher exact [3, 9, 12, 4] (less)" {
   let t = @data.Table::new(2, 2, [3L, 9L, 12L, 4L][:])
   let r = @infer.fisher_exact(t, alternative=Less, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(Less),
+    0.011719836676089196,
+    "null model p",
+  )
   assert_close(r.statistic, 0.1111111111111111, "statistic")
   assert_close(r.p_value, 0.011719836676089196, "p")
 }
@@ -641,6 +679,11 @@ test "infer: fisher exact [3, 9, 12, 4] (less)" {
 test "infer: fisher exact [20, 15, 11, 30] (two-sided)" {
   let t = @data.Table::new(2, 2, [20L, 15L, 11L, 30L][:])
   let r = @infer.fisher_exact(t, alternative=TwoSided, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(TwoSided),
+    0.010139449491337563,
+    "null model p",
+  )
   assert_close(r.statistic, 3.6363636363636362, "statistic")
   assert_close(r.p_value, 0.010139449491337563, "p")
 }
@@ -649,6 +692,11 @@ test "infer: fisher exact [20, 15, 11, 30] (two-sided)" {
 test "infer: fisher exact [20, 15, 11, 30] (greater)" {
   let t = @data.Table::new(2, 2, [20L, 15L, 11L, 30L][:])
   let r = @infer.fisher_exact(t, alternative=Greater, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(Greater),
+    0.007027031005028792,
+    "null model p",
+  )
   assert_close(r.statistic, 3.6363636363636362, "statistic")
   assert_close(r.p_value, 0.007027031005028792, "p")
 }
@@ -657,6 +705,11 @@ test "infer: fisher exact [20, 15, 11, 30] (greater)" {
 test "infer: fisher exact [20, 15, 11, 30] (less)" {
   let t = @data.Table::new(2, 2, [20L, 15L, 11L, 30L][:])
   let r = @infer.fisher_exact(t, alternative=Less, two_sided=MinLikelihood)
+  assert_close(
+    r.null_model.unwrap().p_value(Less),
+    0.9983263711052414,
+    "null model p",
+  )
   assert_close(r.statistic, 3.6363636363636362, "statistic")
   assert_close(r.p_value, 0.9983263711052414, "p")
 }
@@ -679,7 +732,7 @@ test "infer: one-way ANOVA" {
   ]
   let r = @infer.anova_one_way(
     [x[:], y[:], w[:]][:],
-    variances=Pooled,
+    variances=Pooled(@infer.Assumed::postulate()),
     normality=normality(),
   )
   assert_close(r.statistic, 7.047812280399403, "statistic")
@@ -1075,7 +1128,7 @@ test "infer: exact permutation test of a mean difference" {
   let b : Array[Double] = [1.3303, -0.4381, 0.8508, 1.5719, 1.5202, 2.7292]
   let q = @infer.Question::new(MeanDifference, Two(a[:], b[:]))
   let rng = @num.Xoshiro256::seed(1)
-  let stat = (s : @infer.Sample) => {
+  let stat = (s : @infer.Samples) => {
     match s {
       Two(u, v) => {
         let mut su = 0.0
@@ -1096,7 +1149,7 @@ test "infer: exact permutation test of a mean difference" {
     Two(a[:], b[:]),
     stat,
     scheme=Independent,
-    reps=None,
+    reps=All,
     ties={ relative: 1.0e-12, },
     rng~,
   )
@@ -1105,7 +1158,7 @@ test "infer: exact permutation test of a mean difference" {
 
 ///|
 test "infer: likelihood ratio" {
-  let r = @infer.likelihood_ratio(-120.5, -115.25, 2)
+  let r = @infer.likelihood_ratio(loglik_null=-120.5, loglik_alt=-115.25, df=2)
   assert_close(r.statistic, 10.5, "statistic")
   assert_close(r.p_value, 0.0052475183991813855, "p")
 }

@@ -5,3 +5,7 @@ import {
   "gaato/stats/data",
   "moonbitlang/core/math",
 }
+
+import {
+  "moonbitlang/core/debug",
+} for "test"

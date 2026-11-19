@@ -5,7 +5,16 @@
 
 ///|
 /// A statistic of a sample of any shape.
-pub type Statistic = (Sample) -> Double
+pub type Statistic = (Samples) -> Double
+
+///|
+/// Pairs from two arrays this package built with equal lengths; copied, so
+/// that a statistic that keeps its input sees no later change.
+fn pairs(x : FixedArray[Double], y : FixedArray[Double]) -> @data.Bivariate {
+  @data.Bivariate::new(x[:], y[:]) catch {
+    _ => abort("pairs: lengths differ")
+  }
+}
 
 ///|
 /// How a bootstrap interval is formed from the bootstrap distribution.
@@ -30,6 +39,7 @@ pub(all) enum PermutationScheme {
 }
 
 ///|
+#derive(Debug)
 pub struct BootstrapResult {
   estimate : Double
   interval : Interval
@@ -43,7 +53,7 @@ pub struct BootstrapResult {
 /// Resamples each independent sample with replacement (pairs together for
 /// `Paired` and `Bivariate`-like shapes).
 pub fn bootstrap(
-  sample : Sample,
+  sample : Samples,
   statistic : Statistic,
   reps~ : Int32,
   level~ : Double,
@@ -52,10 +62,10 @@ pub fn bootstrap(
 ) -> BootstrapResult raise QuestionError {
   check_level(level)
   if reps < 2 {
-    raise TooFewPoints(needed=2, got=reps)
+    raise InvalidArgument(name="reps", reason="need at least 2 resamples")
   }
   if interval == BCa {
-    raise Unsupported(reason="BCa intervals are not implemented yet")
+    raise NotImplemented(what="BCa bootstrap intervals")
   }
   let draw = (x : ArrayView[Double]) => {
     FixedArray::makei(x.length(), _ => x[@num.uniform_index(rng, x.length())])
@@ -64,13 +74,14 @@ pub fn bootstrap(
     match sample {
       One(x) => One(draw(x)[:])
       Two(x, y) => Two(draw(x)[:], draw(y)[:])
-      Paired(x, y) => {
-        let idx = FixedArray::makei(x.length(), _ => {
-          @num.uniform_index(rng, x.length())
-        })
+      Paired(xy) => {
+        let n = xy.length()
+        let idx = FixedArray::makei(n, _ => @num.uniform_index(rng, n))
         Paired(
-          FixedArray::makei(x.length(), i => x[idx[i]])[:],
-          FixedArray::makei(x.length(), i => y[idx[i]])[:],
+          pairs(
+            FixedArray::makei(n, i => xy.x[idx[i]]),
+            FixedArray::makei(n, i => xy.y[idx[i]]),
+          ),
         )
       }
       Groups(gs) => Groups(gs.map(g => draw(g)[:]))
@@ -78,7 +89,7 @@ pub fn bootstrap(
     }
   }
   if sample is Blocks(_) {
-    raise Unsupported(reason="bootstrapping blocks is not implemented yet")
+    raise NotImplemented(what="bootstrapping blocks")
   }
   let theta = statistic(sample)
   let values = FixedArray::makei(reps, _ => statistic(resample()))
@@ -104,17 +115,20 @@ pub fn bootstrap(
 }
 
 ///|
-/// The permutation null of a statistic. `reps = None` enumerates every
-/// permutation (exact); otherwise draws that many, and the p-values carry
+/// The permutation null of a statistic. `All` enumerates every
+/// arrangement (exact); `Random(n)` draws n of them, and the p-values carry
 /// the (k + 1)/(N + 1) correction.
 pub fn permutation_test(
-  sample : Sample,
+  sample : Samples,
   statistic : Statistic,
   scheme~ : PermutationScheme,
-  reps~ : Int32?,
+  reps~ : Resamples,
   ties~ : TieTolerance,
   rng~ : &@num.RandomSource,
 ) -> NullModel raise QuestionError {
+  if reps is Random(r) && r < 1 {
+    raise InvalidArgument(name="reps", reason="need at least 1 resample")
+  }
   let observed = statistic(sample)
   let values : Array[Double] = []
   match (scheme, sample) {
@@ -128,7 +142,7 @@ pub fn permutation_test(
       })
       let n1 = x.length()
       match reps {
-        None => {
+        All => {
           // every split of the pooled values into sizes n1 and n2
           let n = pooled.length()
           let pick = FixedArray::make(n1, 0)
@@ -162,19 +176,21 @@ pub fn permutation_test(
           }
           visit(0, 0)
         }
-        Some(r) =>
+        Random(r) =>
           for _ in 0..<r {
             @num.shuffle(rng, pooled)
             values.push(statistic(Two(pooled[0:n1], pooled[n1:])))
           }
       }
     }
-    (WithinPairs, Paired(x, y)) => {
-      let n = x.length()
-      let a = FixedArray::from_iter(x.iter())
-      let b = FixedArray::from_iter(y.iter())
+    (WithinPairs, Paired(xy)) => {
+      let n = xy.length()
+      let x = xy.x
+      let y = xy.y
+      let a = x.copy()
+      let b = y.copy()
       match reps {
-        None => {
+        All => {
           if n > 20 {
             raise Unsupported(reason="more than 2^20 swaps; pass reps")
           }
@@ -184,35 +200,35 @@ pub fn permutation_test(
               a[i] = if swap { y[i] } else { x[i] }
               b[i] = if swap { x[i] } else { y[i] }
             }
-            values.push(statistic(Paired(a[:], b[:])))
+            values.push(statistic(Paired(pairs(a, b))))
           }
         }
-        Some(r) =>
+        Random(r) =>
           for _ in 0..<r {
             for i in 0..<n {
               let swap = @num.uniform_below(rng, 2UL) == 1UL
               a[i] = if swap { y[i] } else { x[i] }
               b[i] = if swap { x[i] } else { y[i] }
             }
-            values.push(statistic(Paired(a[:], b[:])))
+            values.push(statistic(Paired(pairs(a, b))))
           }
       }
     }
-    (Pairings, Paired(x, y)) => {
-      let b = FixedArray::from_iter(y.iter())
+    (Pairings, Paired(xy)) => {
+      let b = xy.y.copy()
       match reps {
-        None =>
-          raise Unsupported(
-            reason="exact pairings need n! arrangements; pass reps",
+        All =>
+          raise NotImplemented(
+            what="exact pairings (n! arrangements); pass Random(n)",
           )
-        Some(r) =>
+        Random(r) =>
           for _ in 0..<r {
             @num.shuffle(rng, b)
-            values.push(statistic(Paired(x, b[:])))
+            values.push(statistic(Paired(pairs(xy.x, b))))
           }
       }
     }
-    _ => raise ShapeMismatch(estimand=MeanDifference)
+    _ => raise SchemeMismatch(scheme~)
   }
   // values within the tolerance of the observed statistic count as equal
   let tol = ties.relative * observed.abs()
@@ -222,8 +238,8 @@ pub fn permutation_test(
     }
   }
   let p_kind = match reps {
-    None => PValueKind::Exact
-    Some(r) => {
+    All => ExactNull
+    Random(r) => {
       // including the observed statistic gives the (k + 1)/(N + 1) p-value
       values.push(observed)
       MonteCarlo(draws=r, plus_one=true)
@@ -232,44 +248,40 @@ pub fn permutation_test(
   let null_dist = @dist.Empirical::new(values[:], quantile_method=Type7) catch {
     _ => raise Degenerate(reason="the statistic was NaN on a permutation")
   }
-  {
-    observed,
-    null_dist,
-    two_sided: Doubling,
-    p_kind,
-    procedure: "permutation test",
-  }
+  NullModel::new(observed~, null_dist~, p_kind~, procedure="permutation test")
 }
 
 ///|
 /// A Monte Carlo test: the null is a generator of samples of the same
 /// shape, and the statistic is computed on each draw.
 pub fn monte_carlo_test(
-  observed : Sample,
-  null_sampler : (&@num.RandomSource) -> Sample,
+  observed : Samples,
+  null_sampler : (&@num.RandomSource) -> Samples,
   statistic : Statistic,
   reps~ : Int32,
   rng~ : &@num.RandomSource,
 ) -> NullModel raise QuestionError {
+  if reps < 1 {
+    raise InvalidArgument(name="reps", reason="need at least 1 draw")
+  }
   let t0 = statistic(observed)
   let values = Array::makei(reps, _ => statistic(null_sampler(rng)))
   values.push(t0)
   let null_dist = @dist.Empirical::new(values[:], quantile_method=Type7) catch {
     _ => raise Degenerate(reason="the statistic was NaN on a draw")
   }
-  {
-    observed: t0,
-    null_dist,
-    two_sided: Doubling,
-    p_kind: MonteCarlo(draws=reps, plus_one=true),
-    procedure: "Monte Carlo test",
-  }
+  NullModel::new(
+    observed=t0,
+    null_dist~,
+    p_kind=MonteCarlo(draws=reps, plus_one=true),
+    procedure="Monte Carlo test",
+  )
 }
 
 ///|
 /// Leave-one-out estimates of bias and standard error.
 pub fn jackknife(
-  sample : Sample,
+  sample : Samples,
   statistic : Statistic,
 ) -> Estimate raise QuestionError {
   match sample {
@@ -299,6 +311,6 @@ pub fn jackknife(
         procedure: "jackknife (bias-corrected)",
       }
     }
-    _ => raise Unsupported(reason="jackknife for one sample only, for now")
+    _ => raise NotImplemented(what="jackknife beyond one sample")
   }
 }

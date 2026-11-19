@@ -20,20 +20,17 @@ test "p-value adjustments agree with statsmodels" {
     }
   }
   assert_eq(
-    @infer.reject(p[:], 0.05, BenjaminiHochberg),
+    @infer.reject(p[:], alpha=0.05, BenjaminiHochberg),
     FixedArray::from_array([true, true, true, true, false, true]),
   )
 }
 
 ///|
-test "power queries leave exactly one quantity open" {
-  let ok = @infer.PowerQuery::new(effect=0.5, alpha=0.05, power=0.8)
-  assert_true(ok.n is None)
-  let bad = try @infer.PowerQuery::new(effect=0.5, alpha=0.05) catch {
-    UnknownCount(k) => k == 2
-    _ => false
-  } noraise {
-    _ => false
+/// The unknown is the case: a query names one and supplies the other three.
+test "power queries name their one unknown" {
+  let q = @infer.PowerQuery::SampleSize(effect=0.5, alpha=0.05, power=0.8)
+  guard q is SampleSize(power~, ..) else {
+    fail("expected a sample-size query")
   }
-  assert_true(bad)
+  assert_eq(power, 0.8)
 }

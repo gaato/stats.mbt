@@ -15,13 +15,14 @@ pub(all) enum TwoSidedRule {
 }
 
 ///|
-/// How the p-value was obtained.
+/// How the p-value was obtained. (The names end in `Null` so that they
+/// cannot be taken for the cases of `Exactness`, which asks for a null.)
 #derive(Eq, Debug)
 pub(all) enum PValueKind {
   /// From the exact null distribution.
-  Exact
+  ExactNull
   /// From a limiting distribution.
-  Asymptotic
+  AsymptoticNull
   /// From random draws of the null, with the (k + 1)/(N + 1) correction
   /// when `plus_one` is set, which keeps the p-value valid.
   MonteCarlo(draws~ : Int32, plus_one~ : Bool)
@@ -41,10 +42,12 @@ pub(all) enum Exactness {
 
 ///|
 /// Pooled or separate variances. R's t.test defaults to separate (Welch),
-/// SciPy's ttest_ind to pooled; this library has no default.
+/// SciPy's ttest_ind to pooled; this library has no default. Pooling
+/// assumes equal variances, so that case carries the certificate: it
+/// cannot be chosen without stating the assumption.
 #derive(Eq, Debug)
 pub(all) enum Variances {
-  Pooled
+  Pooled(Assumed[EqualVariance])
   Welch
 }
 

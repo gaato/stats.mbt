@@ -37,7 +37,7 @@ fn t_from(
       pivot_interval(null_dist, est, se, level, alternative, procedure),
     ),
     effect~,
-    p_kind=Exact,
+    p_kind=ExactNull,
     procedure~,
   )
 }
@@ -81,7 +81,6 @@ fn two_sample_t(
   variances : Variances,
   alternative : Alternative,
   level : Double,
-  equal_variance : Assumed[EqualVariance]?,
 ) -> TestResult raise QuestionError {
   check_level(level)
   if n1 < 2 || n2 < 2 {
@@ -95,10 +94,7 @@ fn two_sample_t(
     interval: None,
   }
   match variances {
-    Pooled => {
-      if equal_variance is None {
-        raise MissingAssumption(name="EqualVariance")
-      }
+    Pooled(_) => {
       let se = (pooled * (1.0 / n1.to_double() + 1.0 / n2.to_double())).sqrt()
       t_from(
         m1 - m2,
@@ -132,8 +128,8 @@ fn two_sample_t(
 }
 
 ///|
-/// Two independent samples; `Pooled` additionally asks for the
-/// equal-variance certificate.
+/// Two independent samples. `Pooled` carries the equal-variance
+/// certificate, so the pooled test cannot be asked for without it.
 pub fn t_test_two(
   x : ArrayView[Double],
   y : ArrayView[Double],
@@ -141,7 +137,6 @@ pub fn t_test_two(
   alternative~ : Alternative,
   level~ : Double,
   normality~ : Assumed[Normality],
-  equal_variance? : Assumed[EqualVariance],
 ) -> TestResult raise QuestionError {
   ignore(normality)
   let (n1, m1, v1) = summarize(x)
@@ -156,22 +151,18 @@ pub fn t_test_two(
     variances,
     alternative,
     level,
-    equal_variance,
   )
 }
 
 ///|
+/// The one-sample t test on the differences x - y of the pairs.
 pub fn t_test_paired(
-  x : ArrayView[Double],
-  y : ArrayView[Double],
+  xy : @data.Bivariate,
   alternative~ : Alternative,
   level~ : Double,
   normality~ : Assumed[Normality],
 ) -> TestResult raise QuestionError {
-  if x.length() != y.length() {
-    raise ShapeMismatch(estimand=MeanDifference)
-  }
-  let d = FixedArray::makei(x.length(), i => x[i] - y[i])
+  let d = differences(xy)
   let r = t_test_one(d[:], mu=0.0, alternative~, level~, normality~)
   { ..r, procedure: "paired t test", }
 }
@@ -185,7 +176,6 @@ pub fn t_test_summary(
   alternative~ : Alternative,
   level~ : Double,
   normality~ : Assumed[Normality],
-  equal_variance? : Assumed[EqualVariance],
 ) -> TestResult raise QuestionError {
   ignore(normality)
   two_sample_t(
@@ -198,7 +188,6 @@ pub fn t_test_summary(
     variances,
     alternative,
     level,
-    equal_variance,
   )
 }
 
@@ -266,34 +255,29 @@ pub fn binomial_test(
   let n = x.trials
   let k = x.successes
   if n <= 0L || k < 0L || k > n {
-    raise Degenerate(reason="need 0 <= successes <= trials, trials > 0")
+    raise InvalidArgument(
+      name="x",
+      reason="need 0 <= successes <= trials, trials > 0",
+    )
   }
   let d = @dist.Binomial::new(n~, p=p0) catch {
-    _ => raise Degenerate(reason="p0 must be in [0, 1]")
+    _ => raise InvalidArgument(name="p0", reason="must be in [0, 1]")
   }
-  let p = discrete_p(d, k, 0, n, n.to_double() * p0, alternative, two_sided)
-  let null_dist = d as &@dist.Univariate
-  {
-    statistic: k.to_double(),
-    p_value: p,
-    log_p_value: @math.ln(p),
-    df: None,
-    df2: None,
+  let nm = NullModel::discrete(
+    observed=k,
+    null_dist=d,
+    two_sided~,
+    p_kind=ExactNull,
+    procedure="exact binomial test",
+  )
+  discrete_result(
+    k.to_double(),
+    nm,
     alternative,
-    estimate: Some(k.to_double() / n.to_double()),
-    null_value: Some(p0),
-    interval: Some(clopper_pearson(k, n, level, alternative)),
-    effect: None,
-    p_kind: Exact,
-    null_model: Some({
-      observed: k.to_double(),
-      null_dist,
-      two_sided,
-      p_kind: Exact,
-      procedure: "exact binomial test",
-    }),
-    procedure: "exact binomial test",
-  }
+    estimate=Some(k.to_double() / n.to_double()),
+    null_value=Some(p0),
+    interval=Some(clopper_pearson(k, n, level, alternative)),
+  )
 }
 
 ///|
@@ -306,7 +290,7 @@ pub fn proportion_test(
   level~ : Double,
 ) -> TestResult raise QuestionError {
   ignore((xs, p0, continuity, alternative, level))
-  raise Unsupported(reason="proportion_test is not implemented yet")
+  raise NotImplemented(what="proportion_test")
 }
 
 ///|
@@ -344,7 +328,7 @@ pub fn chi_square_goodness_of_fit(
     chi,
     Greater,
     df=Some(df),
-    p_kind=Asymptotic,
+    p_kind=AsymptoticNull,
     procedure="chi-square goodness-of-fit test",
   )
 }
@@ -397,7 +381,7 @@ pub fn chi_square_independence(
     chi,
     Greater,
     df=Some(df),
-    p_kind=Asymptotic,
+    p_kind=AsymptoticNull,
     procedure="chi-square test of independence",
   )
 }
@@ -412,7 +396,7 @@ pub fn fisher_exact(
   two_sided~ : TwoSidedRule,
 ) -> TestResult raise QuestionError {
   if table.rows != 2 || table.cols != 2 {
-    raise Unsupported(reason="Fisher's exact test beyond 2 x 2")
+    raise NotImplemented(what="Fisher's exact test beyond 2 x 2")
   }
   let a = table.at(0, 0)
   let b = table.at(0, 1)
@@ -422,34 +406,22 @@ pub fn fisher_exact(
   let h = @dist.Hypergeometric::new(population=m, successes=a + b, draws=a + c) catch {
     _ => raise Degenerate(reason="bad table")
   }
-  let lo = if a + c - (c + d) > 0 { a + c - (c + d) } else { 0 }
-  let hi = if a + b < a + c { a + b } else { a + c }
-  let mode = @math.floor(
-    (a + c + 1).to_double() * (a + b + 1).to_double() / (m + 2).to_double(),
+  let nm = NullModel::discrete(
+    observed=a,
+    null_dist=h,
+    two_sided~,
+    p_kind=ExactNull,
+    procedure="Fisher's exact test",
   )
-  let p = discrete_p(h, a, lo, hi, mode, alternative, two_sided)
   let odds = a.to_double() * d.to_double() / (b.to_double() * c.to_double())
-  {
-    statistic: odds,
-    p_value: p,
-    log_p_value: @math.ln(p),
-    df: None,
-    df2: None,
+  discrete_result(
+    odds,
+    nm,
     alternative,
-    estimate: Some(odds),
-    null_value: Some(1.0),
-    interval: None,
-    effect: Some({ kind: OddsRatio, value: odds, interval: None, }),
-    p_kind: Exact,
-    null_model: Some({
-      observed: a.to_double(),
-      null_dist: h,
-      two_sided,
-      p_kind: Exact,
-      procedure: "Fisher's exact test",
-    }),
-    procedure: "Fisher's exact test",
-  }
+    estimate=Some(odds),
+    null_value=Some(1.0),
+    effect=Some({ kind: OddsRatio, value: odds, interval: None, }),
+  )
 }
 
 ///|
@@ -458,7 +430,7 @@ pub fn mcnemar(
   exactness~ : Exactness,
 ) -> TestResult raise QuestionError {
   ignore((table, exactness))
-  raise Unsupported(reason="mcnemar is not implemented yet")
+  raise NotImplemented(what="mcnemar")
 }
 
 // ---------------------------------------------------------------------------
@@ -468,7 +440,7 @@ pub fn mcnemar(
 ///|
 fn anova_core(
   groups : ArrayView[ArrayView[Double]],
-  variances : Variances,
+  pooled~ : Bool,
   procedure : String,
 ) -> TestResult raise QuestionError {
   let k = groups.length()
@@ -489,8 +461,8 @@ fn anova_core(
     vs[i] = v
     big_n = big_n + n
   }
-  match variances {
-    Pooled => {
+  match pooled {
+    true => {
       let mut grand = 0.0
       for i in 0..<k {
         grand = grand + ns[i].to_double() * ms[i]
@@ -521,11 +493,11 @@ fn anova_core(
           value: ssb / (ssb + ssw),
           interval: None,
         }),
-        p_kind=Exact,
+        p_kind=ExactNull,
         procedure~,
       )
     }
-    Welch => {
+    false => {
       let ws = FixedArray::makei(k, i => ns[i].to_double() / vs[i])
       let mut wsum = 0.0
       let mut wm = 0.0
@@ -555,7 +527,7 @@ fn anova_core(
         Greater,
         df=Some(df1),
         df2=Some(df2),
-        p_kind=Asymptotic,
+        p_kind=AsymptoticNull,
         procedure="Welch's ANOVA",
       )
     }
@@ -563,14 +535,15 @@ fn anova_core(
 }
 
 ///|
-/// One-way ANOVA; `Welch` gives Welch's heteroscedastic version.
+/// One-way ANOVA; `Welch` gives Welch's heteroscedastic version, and the
+/// classical one comes with its equal-variance certificate in `Pooled`.
 pub fn anova_one_way(
   groups : ArrayView[ArrayView[Double]],
   variances~ : Variances,
   normality~ : Assumed[Normality],
 ) -> TestResult raise QuestionError {
   ignore(normality)
-  anova_core(groups, variances, "one-way ANOVA")
+  anova_core(groups, pooled=variances is Pooled(_), "one-way ANOVA")
 }
 
 ///|
@@ -603,7 +576,7 @@ pub fn levene(
     }
     devs.push(FixedArray::from_iter(g.iter().map(v => (v - c).abs()))[:])
   }
-  let r = anova_core(devs[:], Pooled, "Levene's test")
+  let r = anova_core(devs[:], pooled=true, "Levene's test")
   { ..r, effect: None, }
 }
 
@@ -644,7 +617,7 @@ pub fn bartlett(
     chi,
     Greater,
     df=Some(kd - 1.0),
-    p_kind=Asymptotic,
+    p_kind=AsymptoticNull,
     procedure="Bartlett's test",
   )
 }
@@ -660,13 +633,16 @@ pub(all) enum PostHoc {
 }
 
 ///|
+/// One `Comparison` per pair of groups, each naming its pair.
 pub fn post_hoc(
   groups : ArrayView[ArrayView[Double]],
   how : PostHoc,
   level~ : Double,
-) -> Array[TestResult] raise QuestionError {
+) -> Array[Comparison] raise QuestionError {
   ignore((groups, how, level))
-  raise Unsupported(reason="post-hoc comparisons need the studentized range")
+  raise NotImplemented(
+    what="post-hoc comparisons (they need the studentized range)",
+  )
 }
 
 // ---------------------------------------------------------------------------
@@ -739,7 +715,7 @@ pub fn mann_whitney(
   let exact = match exactness {
     Exact => {
       if ties > 0.0 {
-        raise Unsupported(reason="exact Mann-Whitney null with ties")
+        raise NotImplemented(what="exact Mann-Whitney null with ties")
       }
       true
     }
@@ -747,42 +723,13 @@ pub fn mann_whitney(
     ExactUpTo(k) => ties == 0.0 && n1 <= k && n2 <= k
   }
   if exact {
-    let null_dist = mann_whitney_null(n1, n2)
-    let k = @math.round(u1).to_int64()
-    let (upper, lower) = discrete_tails(null_dist, k)
-    let p = match alternative {
-      Greater => upper
-      Less => lower
-      TwoSided => {
-        let p = 2.0 * (if upper < lower { upper } else { lower })
-        if p > 1.0 {
-          1.0
-        } else {
-          p
-        }
-      }
-    }
-    return {
-      statistic: u1,
-      p_value: p,
-      log_p_value: @math.ln(p),
-      df: None,
-      df2: None,
-      alternative,
-      estimate: None,
-      null_value: None,
-      interval: None,
-      effect: Some(effect),
-      p_kind: Exact,
-      null_model: Some({
-        observed: u1,
-        null_dist,
-        two_sided: Doubling,
-        p_kind: Exact,
-        procedure: "Mann-Whitney U test",
-      }),
-      procedure: "Mann-Whitney U test",
-    }
+    let nm = NullModel::new(
+      observed=u1,
+      null_dist=mann_whitney_null(n1, n2),
+      p_kind=ExactNull,
+      procedure="Mann-Whitney U test",
+    )
+    return discrete_result(u1, nm, alternative, effect=Some(effect))
   }
   let n = (n1 + n2).to_double()
   let mu = nn / 2.0
@@ -816,7 +763,7 @@ pub fn mann_whitney(
     null_value: None,
     interval: None,
     effect: Some(effect),
-    p_kind: Asymptotic,
+    p_kind: AsymptoticNull,
     null_model: None,
     procedure: "Mann-Whitney U test",
   }
@@ -832,7 +779,7 @@ pub fn wilcoxon_signed_rank(
   continuity~ : Bool,
 ) -> TestResult raise QuestionError {
   ignore((x, y, alternative, zeros, exactness, continuity))
-  raise Unsupported(reason="wilcoxon_signed_rank is not implemented yet")
+  raise NotImplemented(what="wilcoxon_signed_rank")
 }
 
 ///|
@@ -866,7 +813,7 @@ pub fn kruskal_wallis(
     chi,
     Greater,
     df=Some((k - 1).to_double()),
-    p_kind=Asymptotic,
+    p_kind=AsymptoticNull,
     procedure="Kruskal-Wallis test",
   )
 }
@@ -874,7 +821,7 @@ pub fn kruskal_wallis(
 ///|
 pub fn friedman(blocks : @data.Blocks) -> TestResult raise QuestionError {
   ignore(blocks)
-  raise Unsupported(reason="friedman is not implemented yet")
+  raise NotImplemented(what="friedman")
 }
 
 // ---------------------------------------------------------------------------
@@ -890,7 +837,7 @@ pub fn ks_one(
   exactness~ : Exactness,
 ) -> TestResult raise QuestionError {
   ignore((x, null_dist, alternative, exactness))
-  raise Unsupported(reason="ks_one is not implemented yet")
+  raise NotImplemented(what="ks_one")
 }
 
 ///|
@@ -901,13 +848,13 @@ pub fn ks_two(
   exactness~ : Exactness,
 ) -> TestResult raise QuestionError {
   ignore((x, y, alternative, exactness))
-  raise Unsupported(reason="ks_two is not implemented yet")
+  raise NotImplemented(what="ks_two")
 }
 
 ///|
 pub fn shapiro_wilk(x : ArrayView[Double]) -> TestResult raise QuestionError {
   ignore(x)
-  raise Unsupported(reason="shapiro_wilk is not implemented yet")
+  raise NotImplemented(what="shapiro_wilk")
 }
 
 ///|
@@ -916,7 +863,7 @@ pub fn anderson_darling(
   null_dist : &@dist.Univariate,
 ) -> TestResult raise QuestionError {
   ignore((x, null_dist))
-  raise Unsupported(reason="anderson_darling is not implemented yet")
+  raise NotImplemented(what="anderson_darling")
 }
 
 // ---------------------------------------------------------------------------
@@ -949,8 +896,7 @@ pub fn correlation_test(
     Pearson => (xy.x, xy.y)
     Spearman =>
       (@describe.ranks(xy.x[:], Average), @describe.ranks(xy.y[:], Average))
-    KendallTauB =>
-      raise Unsupported(reason="Kendall's tau test is not implemented yet")
+    KendallTauB => raise NotImplemented(what="Kendall's tau test")
   }
   let mut c = @describe.Comoment::empty()
   for i in 0..<n {
@@ -986,7 +932,7 @@ pub fn correlation_test(
     null_value=Some(0.0),
     interval~,
     effect=Some({ kind: R, value: r, interval: None, }),
-    p_kind=if kind == Pearson { Exact } else { Asymptotic },
+    p_kind=if kind == Pearson { ExactNull } else { AsymptoticNull },
     procedure~,
   )
   res
@@ -996,19 +942,19 @@ pub fn correlation_test(
 /// Likelihood ratio test of nested models: 2(ℓ₁ − ℓ₀) against χ² with the
 /// difference in free parameters.
 pub fn likelihood_ratio(
-  loglik_null : Double,
-  loglik_alt : Double,
-  df : Int32,
+  loglik_null~ : Double,
+  loglik_alt~ : Double,
+  df~ : Int32,
 ) -> TestResult raise QuestionError {
   let chi = @dist.ChiSquared::new(df.to_double()) catch {
-    _ => raise Degenerate(reason="df must be positive")
+    _ => raise InvalidArgument(name="df", reason="must be positive")
   }
   continuous_result(
     2.0 * (loglik_alt - loglik_null),
     chi,
     Greater,
     df=Some(df.to_double()),
-    p_kind=Asymptotic,
+    p_kind=AsymptoticNull,
     procedure="likelihood ratio test",
   )
 }

@@ -86,7 +86,7 @@ pub fn adjust(p : ArrayView[Double], how : Adjust) -> FixedArray[Double] {
 /// Which hypotheses are rejected at level `alpha` after adjustment.
 pub fn reject(
   p : ArrayView[Double],
-  alpha : Double,
+  alpha~ : Double,
   how : Adjust,
 ) -> FixedArray[Bool] {
   let adj = adjust(p, how)
@@ -114,6 +114,7 @@ pub(all) enum EffectKind {
 }
 
 ///|
+#derive(Eq, Debug)
 pub struct Effect {
   kind : EffectKind
   value : Double
@@ -121,36 +122,30 @@ pub struct Effect {
 }
 
 ///|
-/// Power analysis solves for exactly one unknown: give three of sample
-/// size, effect, significance level and power, leave the fourth `None`.
-pub struct PowerQuery {
-  n : Double?
-  effect : Double?
-  alpha : Double?
-  power : Double?
+/// Power analysis solves for exactly one unknown among sample size, effect
+/// size, significance level and power. Each case names the unknown and
+/// takes the other three, so a query with two unknowns, or none, cannot be
+/// written.
+#derive(Eq, Debug)
+pub(all) enum PowerQuery {
+  /// The sample size (per group for two-sample designs) that reaches
+  /// `power`.
+  SampleSize(effect~ : Double, alpha~ : Double, power~ : Double)
+  /// The power at sample size `n`.
+  Power(n~ : Double, effect~ : Double, alpha~ : Double)
+  /// The smallest effect detected with `power` at sample size `n`.
+  Effect(n~ : Double, alpha~ : Double, power~ : Double)
+  /// The significance level that gives `power` at sample size `n`.
+  Alpha(n~ : Double, effect~ : Double, power~ : Double)
 }
 
 ///|
 #derive(Debug)
 pub(all) suberror PowerError {
-  /// Not exactly one of the four quantities was left open.
-  UnknownCount(Int32)
+  /// A quantity outside its range (a power outside (0, 1)).
+  InvalidArgument(name~ : String, reason~ : String)
   /// No value of the unknown achieves the others.
   Unreachable
-}
-
-///|
-pub fn PowerQuery::new(
-  n? : Double,
-  effect? : Double,
-  alpha? : Double,
-  power? : Double,
-) -> PowerQuery raise PowerError {
-  let open = [n, effect, alpha, power].iter().filter(v => v is None).count()
-  if open != 1 {
-    raise UnknownCount(open)
-  }
-  { n, effect, alpha, power, }
 }
 
 ///|
