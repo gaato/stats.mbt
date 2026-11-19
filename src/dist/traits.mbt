@@ -197,6 +197,7 @@ pub(open) trait Shape {
 }
 
 ///|
+/// Distributions with a closed-form entropy.
 pub(open) trait Entropy {
   /// Differential entropy for densities, Shannon entropy for masses, in nats.
   fn entropy(Self) -> Double

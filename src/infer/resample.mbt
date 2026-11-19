@@ -41,6 +41,8 @@ pub(all) enum PermutationScheme {
 }
 
 ///|
+/// A bootstrap estimate with its interval, standard error and the
+/// resampled values.
 #derive(Debug)
 pub struct BootstrapResult {
   estimate : Double

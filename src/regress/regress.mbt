@@ -48,6 +48,8 @@ pub struct Design {
 }
 
 ///|
+/// Checks that every per-row input has one value per row of `x`; names
+/// default to "x0", "x1", ….
 pub fn Design::new(
   x : @data.DataMatrix,
   intercept~ : Bool,
@@ -80,6 +82,7 @@ pub fn Design::new(
 }
 
 ///|
+/// One row of an analysis-of-variance table.
 #derive(Eq, Debug)
 pub struct AnovaRow {
   source : String
@@ -153,6 +156,7 @@ pub fn gls(
 }
 
 ///|
+/// The link between the mean and the linear predictor of a GLM.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Link {
@@ -191,6 +195,8 @@ pub(all) enum GlmResponse {
 }
 
 ///|
+/// A generalised linear model fit, by iteratively reweighted least
+/// squares.
 #derive(Eq, Debug)
 pub struct GlmFit {
   names : Array[String]
@@ -227,6 +233,7 @@ pub fn glm(
 }
 
 ///|
+/// The penalty of a penalised least-squares fit.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Penalty {

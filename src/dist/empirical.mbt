@@ -75,6 +75,7 @@ pub fn Empirical::mass(self : Empirical, x : Double) -> Double {
 }
 
 ///|
+/// P(X ≤ x).
 pub impl Cdf for Empirical with fn cdf(self, x) {
   count_below(self.sorted, x, strict=false).to_double() /
   self.sorted.length().to_double()
@@ -115,9 +116,11 @@ pub impl Sample for Empirical with fn sample(self, rng) {
 }
 
 ///|
+/// Usable wherever a `&Univariate` is taken.
 pub impl Univariate for Empirical
 
 ///|
+/// The mean, or `None` when it does not exist.
 pub impl Moments for Empirical with fn mean(self) {
   let mut s = @num.CompensatedSum::zero()
   for x in self.sorted {
@@ -138,28 +141,35 @@ pub impl Moments for Empirical with fn variance(self) {
 }
 
 ///|
+/// The lower end of the support.
 pub impl Support for Empirical with fn support_lower(self) {
   self.sorted[0]
 }
 
 ///|
+/// The upper end of the support.
 pub impl Support for Empirical with fn support_upper(self) {
   self.sorted[self.sorted.length() - 1]
 }
 
 ///|
+/// Dot syntax for `Cdf`: `d.cdf`, `d.sf`, `d.logcdf`, `d.logsf`, `d.sf_at_least`.
 pub extend Empirical with Cdf::{cdf, sf, logcdf, logsf, sf_at_least}
 
 ///|
+/// Dot syntax for `Quantile`: `d.quantile`, `d.isf`.
 pub extend Empirical with Quantile::{quantile, isf}
 
 ///|
+/// Dot syntax for `Sample`: `d.sample`, `d.sample_into`.
 pub extend Empirical with Sample::{sample, sample_into}
 
 ///|
+/// Dot syntax for `Moments`: `d.mean`, `d.variance`.
 pub extend Empirical with Moments::{mean, variance}
 
 ///|
+/// Dot syntax for `Support`: `d.support_lower`, `d.support_upper`.
 pub extend Empirical with Support::{support_lower, support_upper}
 
 ///|
@@ -215,6 +225,8 @@ pub struct FiniteDiscrete {
 }
 
 ///|
+/// Probabilities of the integers offset, offset + 1, …; they must be
+/// non-negative and sum to 1.
 pub fn FiniteDiscrete::new(
   offset : Int64,
   probs : ArrayView[Double],
@@ -296,27 +308,32 @@ fn FiniteDiscrete::lattice_sf(self : FiniteDiscrete, k : Double) -> Double {
 }
 
 ///|
+/// P(X = k).
 pub impl Mass for FiniteDiscrete with fn pmf(self, k) {
   self.lattice_pmf(k.to_double())
 }
 
 ///|
+/// P(X ≤ k).
 pub impl IntCdf for FiniteDiscrete with fn cdf_int(self, k) {
   self.lattice_cdf(k.to_double())
 }
 
 ///|
+/// P(X > k).
 pub impl IntCdf for FiniteDiscrete with fn sf_int(self, k) {
   self.lattice_sf(k.to_double())
 }
 
 ///|
+/// The smallest k with P(X ≤ k) ≥ p.
 pub impl IntQuantile for FiniteDiscrete with fn quantile_int(self, p) {
   self.offset +
   first_index(self.lower.length(), i => self.lower[i] >= p).to_int64()
 }
 
 ///|
+/// One draw from `rng`.
 pub impl SampleInt for FiniteDiscrete with fn sample_int(self, rng) {
   IntQuantile::quantile_int(self, @num.uniform_open(rng))
 }
@@ -328,16 +345,19 @@ pub impl Cdf for FiniteDiscrete with fn cdf(self, x) {
 }
 
 ///|
+/// P(X > x).
 pub impl Cdf for FiniteDiscrete with fn sf(self, x) {
   self.lattice_sf(@math.floor(x))
 }
 
 ///|
+/// P(X ≥ x).
 pub impl Cdf for FiniteDiscrete with fn sf_at_least(self, x) {
   self.lattice_sf(@math.ceil(x) - 1.0)
 }
 
 ///|
+/// The smallest x with P(X ≤ x) ≥ p.
 pub impl Quantile for FiniteDiscrete with fn quantile(self, p) {
   if p.is_nan() {
     return p
@@ -357,11 +377,13 @@ pub impl Quantile for FiniteDiscrete with fn isf(self, q) {
 }
 
 ///|
+/// One draw from `rng`.
 pub impl Sample for FiniteDiscrete with fn sample(self, rng) {
   Quantile::quantile(self, @num.uniform_open(rng))
 }
 
 ///|
+/// Usable wherever a `&Univariate` is taken.
 pub impl Univariate for FiniteDiscrete
 
 ///|
@@ -385,27 +407,35 @@ pub impl Support for FiniteDiscrete with fn support_upper(self) {
 }
 
 ///|
+/// Dot syntax for `Mass`: `d.pmf`, `d.logpmf`.
 pub extend FiniteDiscrete with Mass::{pmf, logpmf}
 
 ///|
+/// Dot syntax for `IntCdf`: `d.cdf_int`, `d.sf_int`.
 pub extend FiniteDiscrete with IntCdf::{cdf_int, sf_int}
 
 ///|
+/// Dot syntax for `IntQuantile`: `d.quantile_int`.
 pub extend FiniteDiscrete with IntQuantile::{quantile_int}
 
 ///|
+/// Dot syntax for `SampleInt`: `d.sample_int`.
 pub extend FiniteDiscrete with SampleInt::{sample_int}
 
 ///|
+/// Dot syntax for `Cdf`: `d.cdf`, `d.sf`, `d.logcdf`, `d.logsf`, `d.sf_at_least`.
 pub extend FiniteDiscrete with Cdf::{cdf, sf, logcdf, logsf, sf_at_least}
 
 ///|
+/// Dot syntax for `Quantile`: `d.quantile`, `d.isf`.
 pub extend FiniteDiscrete with Quantile::{quantile, isf}
 
 ///|
+/// Dot syntax for `Sample`: `d.sample`, `d.sample_into`.
 pub extend FiniteDiscrete with Sample::{sample, sample_into}
 
 ///|
+/// Dot syntax for `Support`: `d.support_lower`, `d.support_upper`.
 pub extend FiniteDiscrete with Support::{support_lower, support_upper}
 
 ///|
@@ -561,6 +591,7 @@ pub fn Atoms::mass(self : Atoms, x : Double) -> Double {
 }
 
 ///|
+/// P(X ≤ x).
 pub impl Cdf for Atoms with fn cdf(self, x) {
   let k = count_below(self.values, x, strict=false)
   if k == 0 {
@@ -573,6 +604,7 @@ pub impl Cdf for Atoms with fn cdf(self, x) {
 }
 
 ///|
+/// P(X > x).
 pub impl Cdf for Atoms with fn sf(self, x) {
   let k = count_below(self.values, x, strict=false)
   if k == 0 {
@@ -594,6 +626,7 @@ pub impl Cdf for Atoms with fn sf_at_least(self, x) {
 }
 
 ///|
+/// The smallest x with P(X ≤ x) ≥ p.
 pub impl Quantile for Atoms with fn quantile(self, p) {
   if p.is_nan() {
     return p
@@ -602,6 +635,7 @@ pub impl Quantile for Atoms with fn quantile(self, p) {
 }
 
 ///|
+/// The smallest x with P(X > x) ≤ q.
 pub impl Quantile for Atoms with fn isf(self, q) {
   if q.is_nan() {
     return q
@@ -610,14 +644,17 @@ pub impl Quantile for Atoms with fn isf(self, q) {
 }
 
 ///|
+/// One draw from `rng`.
 pub impl Sample for Atoms with fn sample(self, rng) {
   Quantile::quantile(self, @num.uniform_open(rng))
 }
 
 ///|
+/// Usable wherever a `&Univariate` is taken.
 pub impl Univariate for Atoms
 
 ///|
+/// The mean, or `None` when it does not exist.
 pub impl Moments for Atoms with fn mean(self) {
   let mut s = @num.CompensatedSum::zero()
   for i, v in self.values {
@@ -627,6 +664,7 @@ pub impl Moments for Atoms with fn mean(self) {
 }
 
 ///|
+/// The variance, or `None` when it does not exist.
 pub impl Moments for Atoms with fn variance(self) {
   let m = Moments::mean(self).unwrap()
   let mut s = @num.CompensatedSum::zero()
@@ -637,26 +675,33 @@ pub impl Moments for Atoms with fn variance(self) {
 }
 
 ///|
+/// The lower end of the support.
 pub impl Support for Atoms with fn support_lower(self) {
   self.values[0]
 }
 
 ///|
+/// The upper end of the support.
 pub impl Support for Atoms with fn support_upper(self) {
   self.values[self.values.length() - 1]
 }
 
 ///|
+/// Dot syntax for `Cdf`: `d.cdf`, `d.sf`, `d.logcdf`, `d.logsf`, `d.sf_at_least`.
 pub extend Atoms with Cdf::{cdf, sf, logcdf, logsf, sf_at_least}
 
 ///|
+/// Dot syntax for `Quantile`: `d.quantile`, `d.isf`.
 pub extend Atoms with Quantile::{quantile, isf}
 
 ///|
+/// Dot syntax for `Sample`: `d.sample`, `d.sample_into`.
 pub extend Atoms with Sample::{sample, sample_into}
 
 ///|
+/// Dot syntax for `Moments`: `d.mean`, `d.variance`.
 pub extend Atoms with Moments::{mean, variance}
 
 ///|
+/// Dot syntax for `Support`: `d.support_lower`, `d.support_upper`.
 pub extend Atoms with Support::{support_lower, support_upper}

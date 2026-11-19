@@ -5,6 +5,9 @@
 set -eu
 cd "$(dirname "$0")/.."
 moon fmt --check
+# The documentation rules shared by every gaato MoonBit repository; the
+# self-test first checks that the audit still catches what it should.
+moon run scripts/docs_audit.mbtx --self-test
 moon check --target all
 for target in wasm-gc js native wasm; do
   moon test --target "$target"

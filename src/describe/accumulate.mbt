@@ -20,11 +20,13 @@ pub struct MeanVar {
 }
 
 ///|
+/// The accumulator of no values.
 pub impl Accumulator for MeanVar with fn empty() {
   { n: 0, mean: 0.0, m2: 0.0, }
 }
 
 ///|
+/// Adds one value (Welford's update).
 pub impl Accumulator for MeanVar with fn push(self, x) {
   let n = self.n + 1
   let d = x - self.mean
@@ -33,6 +35,8 @@ pub impl Accumulator for MeanVar with fn push(self, x) {
 }
 
 ///|
+/// Combines two accumulators as if their values had been pushed into one
+/// (Chan et al.).
 pub impl Accumulator for MeanVar with fn merge(a, b) {
   if a.n == 0 {
     return b
@@ -47,11 +51,13 @@ pub impl Accumulator for MeanVar with fn merge(a, b) {
 }
 
 ///|
+/// The number of values pushed.
 pub fn MeanVar::count(self : MeanVar) -> Int64 {
   self.n
 }
 
 ///|
+/// The mean, or `None` before any value.
 pub fn MeanVar::mean(self : MeanVar) -> Double? {
   if self.n == 0 {
     None
@@ -88,11 +94,13 @@ pub struct Extremes {
 }
 
 ///|
+/// The accumulator of no values.
 pub impl Accumulator for Extremes with fn empty() {
   { n: 0, lo: 1.0 / 0.0, hi: -1.0 / 0.0, }
 }
 
 ///|
+/// Adds one value.
 pub impl Accumulator for Extremes with fn push(self, x) {
   {
     n: self.n + 1,
@@ -110,6 +118,7 @@ pub impl Accumulator for Extremes with fn push(self, x) {
 }
 
 ///|
+/// Combines two accumulators as if their values had been pushed into one.
 pub impl Accumulator for Extremes with fn merge(a, b) {
   {
     n: a.n + b.n,
@@ -127,9 +136,11 @@ pub impl Accumulator for Extremes with fn merge(a, b) {
 }
 
 ///|
+/// Dot syntax for `Accumulator`: `d.empty`, `d.push`, `d.merge`.
 pub extend Extremes with Accumulator::{empty, push, merge}
 
 ///|
+/// The number of values pushed.
 pub fn Extremes::count(self : Extremes) -> Int64 {
   self.n
 }
@@ -145,6 +156,7 @@ pub fn Extremes::min(self : Extremes) -> Double? {
 }
 
 ///|
+/// The largest value, or `None` before any value.
 pub fn Extremes::max(self : Extremes) -> Double? {
   if self.n == 0 {
     None

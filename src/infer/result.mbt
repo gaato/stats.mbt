@@ -4,6 +4,8 @@
 /// never travels alone.
 
 ///|
+/// The alternative hypothesis: the parameter differs from, is below, or is
+/// above its null value.
 #derive(Eq, Debug)
 pub(all) enum Alternative {
   TwoSided
@@ -24,15 +26,18 @@ pub struct Assumed[A] {
 }
 
 ///|
+/// The caller's statement that the assumption holds, made explicitly.
 pub fn[A] Assumed::postulate() -> Assumed[A] {
   { _phantom: (), }
 }
 
 ///|
+/// The assumption that the data come from a normal distribution.
 #derive(Eq, Debug)
 pub(all) enum Normality {}
 
 ///|
+/// The assumption that the groups share one variance.
 #derive(Eq, Debug)
 pub(all) enum EqualVariance {}
 

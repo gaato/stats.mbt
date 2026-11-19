@@ -35,6 +35,7 @@ pub(all) enum MissingPolicy {
 }
 
 ///|
+/// Why data could not be accepted: what was wrong and where.
 #non_exhaustive
 #derive(Debug)
 pub(all) suberror DataError {
@@ -92,6 +93,7 @@ pub fn Weights::new(
 }
 
 ///|
+/// The number of weights.
 pub fn Weights::length(self : Weights) -> Int32 {
   self.values.length()
 }
@@ -105,6 +107,8 @@ pub struct Weighted {
 }
 
 ///|
+/// Values paired with one weight each; raises `LengthMismatch` when the
+/// counts differ.
 pub fn Weighted::new(
   values : ArrayView[Double],
   weights : Weights,
@@ -126,6 +130,8 @@ pub struct Table {
 }
 
 ///|
+/// A table of `rows` × `cols` counts, row-major; the counts must be
+/// non-negative and fill the table exactly.
 pub fn Table::new(
   rows : Int32,
   cols : Int32,
@@ -189,6 +195,7 @@ pub fn Table::at(self : Table, row : Int32, col : Int32) -> Int64 {
 }
 
 ///|
+/// The sum of all counts.
 pub fn Table::total(self : Table) -> Int64 {
   let mut s = 0L
   for c in self.counts {

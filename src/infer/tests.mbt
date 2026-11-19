@@ -43,6 +43,8 @@ fn t_from(
 }
 
 ///|
+/// The one-sample t test of mean `mu`, under an explicit normality
+/// assumption.
 pub fn t_test_one(
   x : ArrayView[Double],
   mu~ : Double,
@@ -294,6 +296,8 @@ pub fn proportion_test(
 }
 
 ///|
+/// The chi-square goodness-of-fit test of category counts, with
+/// `fitted_params` degrees of freedom taken off for estimated parameters.
 pub fn chi_square_goodness_of_fit(
   counts : @data.CategoryCounts,
   fitted_params~ : Int32,
@@ -425,6 +429,7 @@ pub fn fisher_exact(
 }
 
 ///|
+/// McNemar's test of a 2 × 2 table of paired outcomes.
 pub fn mcnemar(
   table : @data.Table,
   exactness~ : Exactness,
@@ -582,6 +587,8 @@ pub fn levene(
 }
 
 ///|
+/// Bartlett's test that the groups share one variance, under an explicit
+/// normality assumption.
 pub fn bartlett(
   groups : ArrayView[ArrayView[Double]],
   normality~ : Assumed[Normality],
@@ -772,6 +779,8 @@ pub fn mann_whitney(
 }
 
 ///|
+/// The Wilcoxon signed-rank test of `x`, or of `x - y` when `y` is given,
+/// with an explicit rule for zero differences.
 pub fn wilcoxon_signed_rank(
   x : ArrayView[Double],
   y? : ArrayView[Double],
@@ -821,6 +830,7 @@ pub fn kruskal_wallis(
 }
 
 ///|
+/// The Friedman test of treatments within blocks.
 pub fn friedman(blocks : @data.Blocks) -> TestResult raise QuestionError {
   ignore(blocks)
   raise NotImplemented(what="friedman")
@@ -843,6 +853,7 @@ pub fn ks_one(
 }
 
 ///|
+/// The two-sample Kolmogorov–Smirnov test.
 pub fn ks_two(
   x : ArrayView[Double],
   y : ArrayView[Double],
@@ -854,12 +865,15 @@ pub fn ks_two(
 }
 
 ///|
+/// The Shapiro–Wilk test of normality.
 pub fn shapiro_wilk(x : ArrayView[Double]) -> TestResult raise QuestionError {
   ignore(x)
   raise NotImplemented(what="shapiro_wilk")
 }
 
 ///|
+/// The Anderson–Darling test of `x` against a fully specified
+/// distribution.
 pub fn anderson_darling(
   x : ArrayView[Double],
   null_dist : &@dist.Univariate,
@@ -873,6 +887,7 @@ pub fn anderson_darling(
 // ---------------------------------------------------------------------------
 
 ///|
+/// Which correlation coefficient to compute or test.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum CorrelationKind {

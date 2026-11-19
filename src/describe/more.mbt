@@ -19,11 +19,13 @@ pub struct Comoment {
 }
 
 ///|
+/// The accumulator of no pairs.
 pub fn Comoment::empty() -> Comoment {
   { n: 0, kx: 0.0, ky: 0.0, mx: 0.0, my: 0.0, m2x: 0.0, m2y: 0.0, cxy: 0.0, }
 }
 
 ///|
+/// Adds one pair, shifted by the first pair to keep the sums small.
 pub fn Comoment::push(self : Comoment, x : Double, y : Double) -> Comoment {
   let (kx, ky) = if self.n == 0 { (x, y) } else { (self.kx, self.ky) }
   let u = x - kx
@@ -76,6 +78,7 @@ pub fn Comoment::merge(a : Comoment, b : Comoment) -> Comoment {
 }
 
 ///|
+/// The mean of x, or `None` before any pair.
 pub fn Comoment::mean_x(self : Comoment) -> Double? {
   if self.n == 0 {
     None
@@ -85,6 +88,7 @@ pub fn Comoment::mean_x(self : Comoment) -> Double? {
 }
 
 ///|
+/// The mean of y, or `None` before any pair.
 pub fn Comoment::mean_y(self : Comoment) -> Double? {
   if self.n == 0 {
     None
@@ -111,6 +115,8 @@ pub fn Comoment::variance_x(self : Comoment, ddof~ : Int32) -> Double? {
 }
 
 ///|
+/// The variance of y with n - ddof in the denominator, or `None` when
+/// that is not positive.
 pub fn Comoment::variance_y(self : Comoment, ddof~ : Int32) -> Double? {
   let d = self.n - ddof.to_int64()
   if d <= 0 {
@@ -121,6 +127,8 @@ pub fn Comoment::variance_y(self : Comoment, ddof~ : Int32) -> Double? {
 }
 
 ///|
+/// The covariance with n - ddof in the denominator, or `None` when that
+/// is not positive.
 pub fn Comoment::covariance(self : Comoment, ddof~ : Int32) -> Double? {
   let d = self.n - ddof.to_int64()
   if d <= 0 {
@@ -153,6 +161,7 @@ pub struct WeightedMeanVar {
 }
 
 ///|
+/// The accumulator of no values, for weights of the given kind.
 pub fn WeightedMeanVar::empty(kind : @data.WeightKind) -> WeightedMeanVar {
   { kind, w: 0.0, w2: 0.0, mean: 0.0, s: 0.0, }
 }
@@ -210,6 +219,7 @@ pub fn WeightedMeanVar::sum_weights(self : WeightedMeanVar) -> Double {
 }
 
 ///|
+/// The weighted mean, or `None` while the weights sum to zero.
 pub fn WeightedMeanVar::mean(self : WeightedMeanVar) -> Double? {
   if self.w == 0.0 {
     None
@@ -238,23 +248,28 @@ pub struct Moments4 {
 }
 
 ///|
+/// The accumulator of no values.
 pub fn Moments4::empty() -> Moments4 {
   { n: 0, mean: 0.0, m2: 0.0, m3: 0.0, m4: 0.0, }
 }
 
 ///|
+/// Adds one value.
 pub fn Moments4::push(self : Moments4, x : Double) -> Moments4 {
   ignore((self, x))
   ...
 }
 
 ///|
+/// Combines two accumulators as if their values had been pushed into one.
 pub fn Moments4::merge(a : Moments4, b : Moments4) -> Moments4 {
   ignore((a, b))
   ...
 }
 
 ///|
+/// The skewness, with the sample correction when `bias_corrected`; `None`
+/// with too few values or zero variance.
 pub fn Moments4::skewness(self : Moments4, bias_corrected~ : Bool) -> Double? {
   ignore((self, bias_corrected))
   ...
@@ -271,16 +286,19 @@ pub fn Moments4::excess_kurtosis(
 }
 
 ///|
+/// The accumulator of no values.
 pub impl Accumulator for Moments4 with fn empty() {
   Moments4::empty()
 }
 
 ///|
+/// Adds one value.
 pub impl Accumulator for Moments4 with fn push(self, x) {
   Moments4::push(self, x)
 }
 
 ///|
+/// Combines two accumulators as if their values had been pushed into one.
 pub impl Accumulator for Moments4 with fn merge(a, b) {
   Moments4::merge(a, b)
 }

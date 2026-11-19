@@ -4,6 +4,7 @@
 /// special function) can refuse to report a value it could not justify.
 
 ///|
+/// How an iterative solver stopped.
 #derive(Eq, Debug)
 pub(all) enum Status {
   Converged
@@ -15,6 +16,7 @@ pub(all) enum Status {
 }
 
 ///|
+/// What a solver found, with how it stopped and how far it may be off.
 pub struct Solution {
   value : Double
   status : Status
@@ -380,11 +382,13 @@ pub struct CompensatedSum {
 }
 
 ///|
+/// The sum of no values.
 pub fn CompensatedSum::zero() -> CompensatedSum {
   { sum: 0.0, c: 0.0, }
 }
 
 ///|
+/// Adds one value (Neumaier's compensated update).
 pub fn CompensatedSum::add(self : CompensatedSum, x : Double) -> CompensatedSum {
   let t = self.sum + x
   let c = if self.sum.abs() >= x.abs() {
@@ -396,6 +400,7 @@ pub fn CompensatedSum::add(self : CompensatedSum, x : Double) -> CompensatedSum 
 }
 
 ///|
+/// Combines two sums as if their values had been added into one.
 pub fn CompensatedSum::merge(
   self : CompensatedSum,
   other : CompensatedSum,
@@ -405,6 +410,7 @@ pub fn CompensatedSum::merge(
 }
 
 ///|
+/// The sum, with its compensation applied.
 pub fn CompensatedSum::value(self : CompensatedSum) -> Double {
   self.sum + self.c
 }

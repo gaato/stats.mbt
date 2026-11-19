@@ -9,16 +9,19 @@
 /// provides a matrix type.
 
 ///|
+/// Multivariate distributions over vectors of a fixed length.
 pub(open) trait Dimension {
   fn dim(Self) -> Int32
 }
 
 ///|
+/// Multivariate distributions with a density.
 pub(open) trait MvDensity: Dimension {
   fn logpdf(Self, ArrayView[Double]) -> Double
 }
 
 ///|
+/// Multivariate distributions over vectors of integers.
 pub(open) trait MvMass: Dimension {
   fn logpmf(Self, ArrayView[Int64]) -> Double
 }
@@ -65,6 +68,8 @@ pub struct MvNormal {
 }
 
 ///|
+/// The multivariate normal with this mean and a symmetric positive
+/// definite covariance of matching size.
 pub fn MvNormal::new(
   mean : ArrayView[Double],
   covariance : @data.DataMatrix,
@@ -81,23 +86,27 @@ pub fn MvNormal::new(
 }
 
 ///|
+/// The length of the vectors.
 pub impl Dimension for MvNormal with fn dim(self) {
   self.d
 }
 
 ///|
+/// The log density at x.
 pub impl MvDensity for MvNormal with fn logpdf(self, x) {
   ignore((self, x))
   ...
 }
 
 ///|
+/// Writes one draw from `rng` into `out`.
 pub impl MvSample for MvNormal with fn sample_into(self, rng, out) {
   ignore((self, rng, out))
   ...
 }
 
 ///|
+/// The mean, or `None` when it does not exist.
 pub impl MvMoments for MvNormal with fn mean(self) {
   Some(self.mean.copy())
 }
@@ -116,6 +125,7 @@ pub struct Dirichlet {
 }
 
 ///|
+/// The Dirichlet distribution with positive concentrations `alpha`.
 pub fn Dirichlet::new(
   alpha : ArrayView[Double],
 ) -> Dirichlet raise @dist.ParamError {
@@ -128,17 +138,20 @@ pub fn Dirichlet::new(
 }
 
 ///|
+/// The length of the vectors.
 pub impl Dimension for Dirichlet with fn dim(self) {
   self.alpha.length()
 }
 
 ///|
+/// The log density at x.
 pub impl MvDensity for Dirichlet with fn logpdf(self, x) {
   ignore((self, x))
   ...
 }
 
 ///|
+/// Writes one draw from `rng` into `out`.
 pub impl MvSample for Dirichlet with fn sample_into(self, rng, out) {
   ignore((self, rng, out))
   ...
@@ -152,6 +165,8 @@ pub struct Multinomial {
 }
 
 ///|
+/// The multinomial distribution of `n` trials over categories with
+/// probabilities `p`.
 pub fn Multinomial::new(
   n : Int64,
   p : ArrayView[Double],
@@ -168,11 +183,13 @@ pub fn Multinomial::new(
 }
 
 ///|
+/// The number of categories.
 pub impl Dimension for Multinomial with fn dim(self) {
   self.p.length()
 }
 
 ///|
+/// ln P(X = k) for a vector of counts.
 pub impl MvMass for Multinomial with fn logpmf(self, k) {
   ignore((self, k))
   ...
@@ -194,6 +211,7 @@ pub struct GaussianCopula {
 }
 
 ///|
+/// The Gaussian copula with a correlation matrix.
 pub fn GaussianCopula::new(
   correlation : @data.DataMatrix,
 ) -> GaussianCopula raise @dist.ParamError {
@@ -202,17 +220,20 @@ pub fn GaussianCopula::new(
 }
 
 ///|
+/// The number of variables.
 pub impl Dimension for GaussianCopula with fn dim(self) {
   self.mvn.d
 }
 
 ///|
+/// C(u), the joint CDF of the uniform margins.
 pub impl Copula for GaussianCopula with fn copula_cdf(self, u) {
   ignore((self, u))
   ...
 }
 
 ///|
+/// Writes one draw of uniform margins from `rng` into `out`.
 pub impl Copula for GaussianCopula with fn sample_uniform_into(self, rng, out) {
   ignore((self, rng, out))
   ...
@@ -226,6 +247,7 @@ pub struct Joint[C] {
 }
 
 ///|
+/// The joint distribution of a copula and one marginal per variable.
 pub fn[C : Copula] Joint::new(
   copula : C,
   marginals : Array[&@dist.Univariate],
@@ -241,6 +263,7 @@ pub fn[C : Copula] Joint::new(
 }
 
 ///|
+/// The number of variables.
 pub impl[C : Copula] Dimension for Joint[C] with fn dim(self) {
   self.marginals.length()
 }
@@ -256,40 +279,53 @@ pub impl[C : Copula] MvSample for Joint[C] with fn sample_into(self, rng, out) {
 }
 
 ///|
+/// Dot syntax for `Dimension`: `d.dim`.
 pub extend MvNormal with Dimension::{dim}
 
 ///|
+/// Dot syntax for `MvDensity`: `d.logpdf`.
 pub extend MvNormal with MvDensity::{logpdf}
 
 ///|
+/// Dot syntax for `MvSample`: `d.sample_into`, `d.sample`.
 pub extend MvNormal with MvSample::{sample_into, sample}
 
 ///|
+/// Dot syntax for `MvMoments`: `d.mean`, `d.covariance`.
 pub extend MvNormal with MvMoments::{mean, covariance}
 
 ///|
+/// Dot syntax for `Dimension`: `d.dim`.
 pub extend Dirichlet with Dimension::{dim}
 
 ///|
+/// Dot syntax for `MvDensity`: `d.logpdf`.
 pub extend Dirichlet with MvDensity::{logpdf}
 
 ///|
+/// Dot syntax for `MvSample`: `d.sample_into`, `d.sample`.
 pub extend Dirichlet with MvSample::{sample_into, sample}
 
 ///|
+/// Dot syntax for `Dimension`: `d.dim`.
 pub extend Multinomial with Dimension::{dim}
 
 ///|
+/// Dot syntax for `MvMass`: `d.logpmf`.
 pub extend Multinomial with MvMass::{logpmf}
 
 ///|
+/// Dot syntax for `Dimension`: `d.dim`.
 pub extend GaussianCopula with Dimension::{dim}
 
 ///|
+/// Dot syntax for `Copula`: `d.copula_cdf`, `d.sample_uniform_into`.
 pub extend GaussianCopula with Copula::{copula_cdf, sample_uniform_into}
 
 ///|
+/// Dot syntax for `Dimension`: `d.dim`.
 pub extend Joint with Dimension::{dim}
 
 ///|
+/// Dot syntax for `MvSample`: `d.sample_into`, `d.sample`.
 pub extend Joint with MvSample::{sample_into, sample}

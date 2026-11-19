@@ -138,6 +138,7 @@ priv struct NullModelSummary {
 }
 
 ///|
+/// Shows what the null model was built from, not its internal tables.
 pub impl Debug for NullModel with fn to_repr(self) {
   let summary : NullModelSummary = {
     observed: self.observed,

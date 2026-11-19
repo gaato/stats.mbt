@@ -94,6 +94,8 @@ pub struct MixtureFit {
 }
 
 ///|
+/// Fits a mixture of `components` normals to `x` by EM, from starting
+/// points drawn with `rng`, for at most `max_iterations` steps.
 pub fn em_normal_mixture(
   x : ArrayView[Double],
   components~ : Int32,

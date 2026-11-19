@@ -26,6 +26,7 @@ pub(all) enum Constraint {
 }
 
 ///|
+/// Whether x satisfies the constraint.
 pub fn Constraint::contains(self : Constraint, x : Double) -> Bool {
   match self {
     Real => !x.is_nan() && !x.is_inf()
@@ -54,6 +55,8 @@ pub fn Constraint::to_unconstrained(self : Constraint, x : Double) -> Double {
 }
 
 ///|
+/// The value the constraint maps an unconstrained y to, for optimisers
+/// that search all reals.
 pub fn Constraint::from_unconstrained(self : Constraint, y : Double) -> Double {
   match self {
     Real => y
@@ -66,6 +69,7 @@ pub fn Constraint::from_unconstrained(self : Constraint, y : Double) -> Double {
 }
 
 ///|
+/// A free parameter of a family: its name and where it may lie.
 #derive(Eq, Debug)
 pub(all) struct ParamSpec {
   name : String
@@ -85,6 +89,7 @@ pub(all) struct Family[D] {
 }
 
 ///|
+/// The number of free parameters.
 pub fn[D] Family::dim(self : Family[D]) -> Int32 {
   self.specs.length()
 }
@@ -209,6 +214,7 @@ pub fn[D : Density] loglik(d : D, data : ArrayView[Double]) -> Double {
 }
 
 ///|
+/// The log-likelihood of integer data, by a compensated sum of `logpmf`.
 pub fn[D : Mass] loglik_int(d : D, data : ArrayView[Int64]) -> Double {
   let mut sum = 0.0
   let mut c = 0.0

@@ -4,6 +4,7 @@
 /// for dense linear algebra. Failures are `@regress.ModelError`.
 
 ///|
+/// Whether a method works on covariances or correlations.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Scaling {
@@ -25,6 +26,7 @@ pub struct Pca {
 }
 
 ///|
+/// Principal components of `x` (observations × variables).
 pub fn pca(
   x : @data.DataMatrix,
   scaling : Scaling,
@@ -34,6 +36,7 @@ pub fn pca(
 }
 
 ///|
+/// How factor loadings are rotated after fitting.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Rotation {
@@ -43,6 +46,7 @@ pub(all) enum Rotation {
 }
 
 ///|
+/// A factor-analysis fit: loadings, uniquenesses and the log-likelihood.
 #derive(Eq, Debug)
 pub struct FactorFit {
   loadings : @data.DataMatrix
@@ -105,6 +109,7 @@ pub struct Roc {
 }
 
 ///|
+/// The ROC curve of `scores` against the true labels `positive`.
 pub fn roc(
   scores : ArrayView[Double],
   positive : ArrayView[Bool],
@@ -116,6 +121,8 @@ pub fn roc(
 }
 
 ///|
+/// A k-means clustering: centres, a label per row and the within-cluster
+/// sums of squares.
 #derive(Eq, Debug)
 pub struct KMeans {
   centers : @data.DataMatrix
@@ -137,6 +144,7 @@ pub fn kmeans(
 }
 
 ///|
+/// How the distance between two clusters is measured.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Linkage {
@@ -165,6 +173,7 @@ pub struct Dendrogram {
 }
 
 ///|
+/// Agglomerative clustering of a distance matrix.
 pub fn hierarchical(
   distances : @data.DataMatrix,
   linkage : Linkage,
@@ -207,6 +216,7 @@ pub struct Correspondence {
 }
 
 ///|
+/// Correspondence analysis of a contingency table, to `dims` axes.
 pub fn correspondence(
   table : @data.Table,
   dims~ : Int32,

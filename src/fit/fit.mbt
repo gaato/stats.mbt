@@ -5,6 +5,8 @@
 /// asymptotic covariance when it is available.
 
 ///|
+/// A maximum-likelihood fit: the distribution, its log-likelihood, and
+/// what model comparison needs.
 #derive(Debug)
 pub struct MleResult[D] {
   dist : D
@@ -106,6 +108,7 @@ pub(all) struct Candidate {
 }
 
 ///|
+/// The fit as a candidate for comparison by AIC and BIC.
 pub fn[D] MleResult::candidate(self : MleResult[D]) -> Candidate {
   { family: self.family, aic: self.aic(), bic: self.bic(), k: self.k, }
 }

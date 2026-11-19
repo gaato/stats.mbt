@@ -48,6 +48,8 @@ pub(all) enum Samples {
 }
 
 ///|
+/// What to estimate or test, about which samples; built by
+/// `Question::new`, which refuses pairs that have no meaning.
 pub struct Question {
   estimand : Estimand
   sample : Samples

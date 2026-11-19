@@ -50,6 +50,7 @@ pub struct Bivariate {
 }
 
 ///|
+/// Pairs (x[i], y[i]); raises `LengthMismatch` when the lengths differ.
 pub fn Bivariate::new(
   x : ArrayView[Double],
   y : ArrayView[Double],
@@ -77,6 +78,7 @@ pub struct Grouped {
 }
 
 ///|
+/// Values with a group label each, in `0 ..< groups`.
 pub fn Grouped::new(
   values : ArrayView[Double],
   labels : ArrayView[Int32],
@@ -139,6 +141,8 @@ pub fn Blocks::new(
 }
 
 ///|
+/// The value of a treatment in a block; aborts outside the layout, as
+/// array indexing does.
 pub fn Blocks::at(self : Blocks, block : Int32, treatment : Int32) -> Double {
   guard block >= 0 &&
     block < self.blocks &&
@@ -202,6 +206,8 @@ pub fn SurvivalRecord::new(
 }
 
 ///|
+/// The record as an observation: exact when the event happened, right
+/// censored at its time otherwise.
 pub fn SurvivalRecord::to_observation(self : SurvivalRecord) -> Observation {
   if self.event {
     Exact(self.time)
@@ -222,6 +228,7 @@ pub struct DataMatrix {
 }
 
 ///|
+/// A `rows` × `cols` matrix from row-major values that fill it exactly.
 pub fn DataMatrix::new(
   rows : Int32,
   cols : Int32,

@@ -145,6 +145,7 @@ pub(all) enum MadScale {
 }
 
 ///|
+/// The median absolute deviation from the median, scaled as `scale` says.
 pub fn mad(
   data : ArrayView[Double],
   scale : MadScale,
@@ -210,6 +211,7 @@ pub(all) enum Bins {
 }
 
 ///|
+/// Counts of values per bin, between consecutive edges.
 pub struct Histogram {
   edges : FixedArray[Double]
   counts : FixedArray[Int64]
@@ -219,6 +221,7 @@ pub struct Histogram {
 }
 
 ///|
+/// Counts `data` into the bins `bins` describes.
 pub fn histogram(
   data : ArrayView[Double],
   bins : Bins,

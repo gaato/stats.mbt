@@ -38,6 +38,8 @@ fn splitmix64(state : UInt64) -> (UInt64, UInt64) {
 }
 
 ///|
+/// A generator whose state is expanded from one seed by SplitMix64, as the
+/// xoshiro authors recommend.
 pub fn Xoshiro256::seed(seed : UInt64) -> Xoshiro256 {
   let (a, s0) = splitmix64(seed)
   let (b, s1) = splitmix64(a)
@@ -64,6 +66,7 @@ pub fn Xoshiro256::from_state(
 }
 
 ///|
+/// The next 64 random bits.
 pub impl RandomSource for Xoshiro256 with fn next_u64(self) {
   let result = rotl(self.s1 * 5, 7) * 9
   let t = self.s1 << 17
@@ -121,12 +124,14 @@ pub(all) enum NormalMethod {
 }
 
 ///|
+/// One draw from the standard normal, by the method given.
 pub fn standard_normal(rng : &RandomSource, how : NormalMethod) -> Double {
   ignore((rng, how))
   ...
 }
 
 ///|
+/// How standard exponential draws are made.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum ExponentialMethod {
@@ -135,6 +140,7 @@ pub(all) enum ExponentialMethod {
 }
 
 ///|
+/// One draw from the standard exponential, by the method given.
 pub fn standard_exponential(
   rng : &RandomSource,
   how : ExponentialMethod,
@@ -146,6 +152,7 @@ pub fn standard_exponential(
 }
 
 ///|
+/// How gamma draws are made.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum GammaMethod {
@@ -154,6 +161,7 @@ pub(all) enum GammaMethod {
 }
 
 ///|
+/// One draw from the gamma distribution with this shape and scale 1.
 pub fn standard_gamma(
   rng : &RandomSource,
   shape : Double,
@@ -188,6 +196,7 @@ pub(open) trait Jump {
 }
 
 ///|
+/// Advances the state by 2^128 draws.
 pub impl Jump for Xoshiro256 with fn jump(self) {
   ignore(self)
   ...

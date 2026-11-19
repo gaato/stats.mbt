@@ -10,6 +10,14 @@ and Wasm GC.
 > oracles. The model layers are signatures only. The [roadmap](#roadmap)
 > lists both.
 
+## Install
+
+Once the module is published:
+
+```sh
+moon add gaato/stats
+```
+
 ## Example
 
 A distribution is a value. Each tail has its own formula, so the upper tail
@@ -120,7 +128,7 @@ test "a Welch t test" {
 - **Accuracy is measured.** Every implemented body is tested against an
   oracle on all four backends: mpmath at high precision for numerics,
   SciPy and NumPy for conventions, published reference outputs for the
-  generator. [DESIGN.md](DESIGN.md) lists the worst error measured for
+  generator. The repository's DESIGN.md lists the worst error measured for
   each special function.
 
 ## Packages
@@ -143,7 +151,7 @@ Each package imports only packages above it in this table.
 
 A ticked item is implemented and tested against an oracle. An unticked one
 is not written yet; most have their signatures in place, and calling one
-fails rather than approximates. [DESIGN.md](DESIGN.md) has the type and
+fails rather than approximates. The repository's DESIGN.md has the type and
 status of every concept.
 
 - [ ] `num`

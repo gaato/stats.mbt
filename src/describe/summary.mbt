@@ -28,6 +28,7 @@ pub fn sum(data : ArrayView[Double]) -> Double raise @data.DataError {
 }
 
 ///|
+/// The mean, from a compensated sum; raises for empty data or a NaN.
 pub fn mean(data : ArrayView[Double]) -> Double raise @data.DataError {
   checked_sum(data) / data.length().to_double()
 }

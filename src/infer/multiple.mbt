@@ -95,6 +95,7 @@ pub fn reject(
 }
 
 ///|
+/// Which effect size a value is.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum EffectKind {
@@ -116,6 +117,7 @@ pub(all) enum EffectKind {
 }
 
 ///|
+/// An effect size with its kind and, when known, its interval.
 #derive(Eq, Debug)
 pub struct Effect {
   kind : EffectKind
@@ -142,6 +144,7 @@ pub(all) enum PowerQuery {
 }
 
 ///|
+/// Why a power calculation has no answer.
 #non_exhaustive
 #derive(Debug)
 pub(all) suberror PowerError {
@@ -152,6 +155,7 @@ pub(all) suberror PowerError {
 }
 
 ///|
+/// The design a power calculation is for.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum PowerDesign {

@@ -78,6 +78,7 @@ pub fn log_rank(
 }
 
 ///|
+/// How tied event times enter the Cox partial likelihood.
 #non_exhaustive
 #derive(Eq, Debug)
 pub(all) enum Ties {
@@ -86,6 +87,7 @@ pub(all) enum Ties {
 }
 
 ///|
+/// A Cox proportional hazards fit.
 #derive(Eq, Debug)
 pub struct CoxFit {
   names : Array[String]

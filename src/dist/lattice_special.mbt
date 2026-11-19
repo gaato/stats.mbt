@@ -75,11 +75,13 @@ fn Binomial::lattice_support(self : Binomial) -> (Double, Double) {
 }
 
 ///|
+/// The mean, or `None` when it does not exist.
 pub impl Moments for Binomial with fn mean(self) {
   Some(self.n.to_double() * self.p)
 }
 
 ///|
+/// The variance, or `None` when it does not exist.
 pub impl Moments for Binomial with fn variance(self) {
   Some(self.n.to_double() * self.p * (1.0 - self.p))
 }
@@ -161,11 +163,13 @@ fn Poisson::lattice_support(_self : Poisson) -> (Double, Double) {
 }
 
 ///|
+/// The mean, or `None` when it does not exist.
 pub impl Moments for Poisson with fn mean(self) {
   Some(self.mu)
 }
 
 ///|
+/// The variance, or `None` when it does not exist.
 pub impl Moments for Poisson with fn variance(self) {
   Some(self.mu)
 }
@@ -284,6 +288,7 @@ fn Hypergeometric::lattice_support(self : Hypergeometric) -> (Double, Double) {
 }
 
 ///|
+/// The mean, or `None` when it does not exist.
 pub impl Moments for Hypergeometric with fn mean(self) {
   Some(
     self.draws.to_double() *
@@ -293,6 +298,7 @@ pub impl Moments for Hypergeometric with fn mean(self) {
 }
 
 ///|
+/// The variance, or `None` when it does not exist.
 pub impl Moments for Hypergeometric with fn variance(self) {
   let population = self.population.to_double()
   if population <= 1.0 {

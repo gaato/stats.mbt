@@ -29,3 +29,11 @@
   release. Callers then get a warning instead of a build failure; the
   CHANGELOG still lists the change with its migration note. A renamed or
   removed function keeps a `#deprecated` alias for the same period.
+- The README is `src/overview.mbt.md`, with `README.md` linked to it, and
+  every `pub` declaration has a `///` comment: `scripts/docs_audit.mbtx`
+  checks these rules, which every gaato MoonBit repository shares so each
+  mooncakes.io page reads the same. The script is a byte-for-byte copy of
+  gaato/discord.mbt's; put this repository's settings in
+  `scripts/docs_audit.json` and `scripts/docs_audit.allow`, never in the
+  script. Generated files say `DO NOT EDIT` on their first line, and the
+  audit leaves their docs to the generator.

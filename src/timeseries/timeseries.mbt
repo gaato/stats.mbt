@@ -57,6 +57,7 @@ pub struct Spectrum {
 }
 
 ///|
+/// The periodogram of a series after the taper, in cycles per unit time.
 pub fn periodogram(
   ts : @data.TimeSeries,
   taper : Taper,
@@ -115,6 +116,8 @@ pub fn ArimaOrder::new(
 }
 
 ///|
+/// A fitted ARIMA model: coefficients, their standard errors, the
+/// innovation variance and the residuals.
 #derive(Eq, Debug)
 pub struct ArimaFit {
   order : ArimaOrder
@@ -152,6 +155,7 @@ pub struct Forecast {
 }
 
 ///|
+/// Forecasts `steps` ahead with prediction intervals at `level`.
 pub fn ArimaFit::forecast(
   self : ArimaFit,
   steps~ : Int32,
@@ -213,6 +217,7 @@ pub struct KalmanResult {
 }
 
 ///|
+/// The Kalman filter of `y` through a state-space model.
 pub fn kalman_filter(
   model : StateSpace,
   y : ArrayView[Double],
