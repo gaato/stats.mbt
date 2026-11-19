@@ -19,15 +19,14 @@ test "mixture of point masses" {
 
 ///|
 test "mixture weights are checked, not renormalised" {
-  let bad = try {
+  let bad = try
     @dist.Mixture::new([0.3, 0.3], [
       @dist.PointMass::new(0.0) as &@dist.Univariate,
       @dist.PointMass::new(1.0),
     ])
-    |> ignore
-    false
-  } catch {
+  catch {
     @dist.InvalidParam(name~, ..) => name == "weights"
+  } noraise {
     _ => false
   }
   assert_true(bad)
@@ -95,4 +94,18 @@ test "cantor moments exist without a density" {
   let c = @dist.Cantor::new()
   assert_eq(@dist.Moments::mean(c), Some(0.5))
   assert_eq(@dist.Moments::variance(c), Some(0.125))
+}
+
+///|
+/// A permutation-style null is discrete: the p-value must count the
+/// observed value, so P(X >= 1) here is 0.75, not P(X > 1) = 0.5.
+test "upper tail including the atom" {
+  let m = @dist.Mixture::new([0.25, 0.25, 0.5], [
+    @dist.PointMass::new(0.0) as &@dist.Univariate,
+    @dist.PointMass::new(1.0),
+    @dist.PointMass::new(2.0),
+  ])
+  assert_eq(@dist.Cdf::sf(m, 1.0), 0.5)
+  assert_eq(@dist.Cdf::sf_at_least(m, 1.0), 0.75)
+  assert_eq(@dist.Cdf::sf_at_least(m, 1.5), 0.5)
 }

@@ -150,3 +150,8 @@ pub impl Cdf for FiniteDiscrete with cdf(self, x) {
 pub impl Cdf for FiniteDiscrete with sf(self, x) {
   IntCdf::sf_int(self, @math.floor(x).to_int())
 }
+
+///|
+pub impl Cdf for FiniteDiscrete with sf_at_least(self, x) {
+  IntCdf::sf_int(self, @math.ceil(x).to_int() - 1)
+}

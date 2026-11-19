@@ -7,9 +7,18 @@ import {
 }
 
 // Values
+pub fn estimate(Question, Method, level~ : Double, rng~ : &@dist.RandomSource) -> Estimate raise QuestionError
+
+pub fn null_model(Question, Hypothesis, Method, rng~ : &@dist.RandomSource) -> NullModel raise QuestionError
+
 pub fn welch_t_test(ArrayView[Double], ArrayView[Double], alternative? : Alternative, normality~ : Assumed[Normality]) -> TestResult raise @dist.ParamError
 
 // Errors
+#derive(@debug.Debug)
+pub(all) suberror QuestionError {
+  ShapeMismatch(estimand~ : Estimand)
+  TooFewPoints(needed~ : Int32, got~ : Int32)
+}
 
 // Types and methods
 #derive(Eq, @debug.Debug)
@@ -27,12 +36,30 @@ pub fn[A] Assumed::postulate() -> Self[A]
 pub(all) enum EqualVariance {
 }
 
+#derive(Eq, @debug.Debug)
+pub(all) enum Estimand {
+  Mean
+  Median
+  Quantile(Double)
+  Variance
+  Proportion
+  MeanDifference
+  MedianDifference
+  MeanRatio
+  Correlation
+}
+
 pub struct Estimate {
   value : Double
   se : Double?
   interval : Interval?
   n : Int64
   procedure : String
+}
+
+pub(all) enum Hypothesis {
+  Point(Double)
+  Independence
 }
 
 pub struct Interval {
@@ -42,7 +69,32 @@ pub struct Interval {
   procedure : String
 }
 
+pub(all) enum Method {
+  Analytic
+  Bootstrap(reps~ : Int32)
+  Permutation(reps~ : Int32)
+}
+
 pub(all) enum Normality {
+}
+
+pub(all) struct NullModel {
+  observed : Double
+  null_dist : &@dist.Univariate
+  procedure : String
+}
+pub fn NullModel::p_value(Self, Alternative) -> Double
+
+pub struct Question {
+  estimand : Estimand
+  sample : Sample
+}
+pub fn Question::new(Estimand, Sample) -> Self raise QuestionError
+
+pub(all) enum Sample {
+  One(ArrayView[Double])
+  Two(ArrayView[Double], ArrayView[Double])
+  Paired(ArrayView[Double], ArrayView[Double])
 }
 
 pub struct TestResult {

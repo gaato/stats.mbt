@@ -38,6 +38,15 @@ pub impl Cdf for PointMass with sf(self, x) {
 }
 
 ///|
+pub impl Cdf for PointMass with sf_at_least(self, x) {
+  if x <= self.at {
+    1.0
+  } else {
+    0.0
+  }
+}
+
+///|
 pub impl Quantile for PointMass with quantile(self, _p) {
   self.at
 }
@@ -115,6 +124,15 @@ pub impl Cdf for Mixture with sf(self, x) {
 }
 
 ///|
+pub impl Cdf for Mixture with sf_at_least(self, x) {
+  let mut s = 0.0
+  for i, c in self.components {
+    s = s + self.weights[i] * Cdf::sf_at_least(c, x)
+  }
+  s
+}
+
+///|
 /// No closed form in general: bracketing on the distribution function.
 pub impl Quantile for Mixture with quantile(self, p) {
   ignore((self, p))
@@ -160,6 +178,11 @@ pub impl[D : Cdf] Cdf for Affine[D] with cdf(self, x) {
 ///|
 pub impl[D : Cdf] Cdf for Affine[D] with sf(self, x) {
   self.base.sf((x - self.loc) / self.scale)
+}
+
+///|
+pub impl[D : Cdf] Cdf for Affine[D] with sf_at_least(self, x) {
+  self.base.sf_at_least((x - self.loc) / self.scale)
 }
 
 ///|

@@ -27,8 +27,14 @@ pub fn Normal::new(
 
 ///|
 pub impl Density for Normal with pdf(self, x) {
-  ignore((self, x))
-  ...
+  @math.exp(Density::logpdf(self, x))
+}
+
+///|
+/// Closed form, so the far tails stay finite on the log scale.
+pub impl Density for Normal with logpdf(self, x) {
+  let z = (x - self.mu) / self.sigma
+  -0.5 * z * z - @math.ln(self.sigma) - 0.5 * @math.ln(2.0 * @math.PI)
 }
 
 ///|
@@ -311,6 +317,12 @@ pub impl Cdf for Binomial with cdf(self, x) {
 ///|
 pub impl Cdf for Binomial with sf(self, x) {
   IntCdf::sf_int(self, @math.floor(x).to_int())
+}
+
+///|
+/// P(X >= x) = P(X > ceil(x) - 1).
+pub impl Cdf for Binomial with sf_at_least(self, x) {
+  IntCdf::sf_int(self, @math.ceil(x).to_int() - 1)
 }
 
 ///|

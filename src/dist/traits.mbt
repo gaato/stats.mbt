@@ -51,6 +51,15 @@ pub(open) trait Cdf {
   sf(Self, Double) -> Double = _
   logcdf(Self, Double) -> Double = _
   logsf(Self, Double) -> Double = _
+  /// P(X >= x). Equal to `sf` unless x is an atom; a p-value from a
+  /// discrete or randomisation null must count the observed value itself,
+  /// so distributions with atoms override this.
+  sf_at_least(Self, Double) -> Double = _
+}
+
+///|
+impl Cdf with sf_at_least(self, x) {
+  self.sf(x)
 }
 
 ///|

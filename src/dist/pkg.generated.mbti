@@ -6,6 +6,9 @@ import {
 }
 
 // Values
+pub fn[D : Density] loglik(D, ArrayView[Double]) -> Double
+
+pub fn[D : Mass] loglik_int(D, ArrayView[Int32]) -> Double
 
 // Errors
 #derive(@debug.Debug)
@@ -33,6 +36,8 @@ pub impl[D : Sample] Sample for Affine[D]
 pub struct Binomial {
   // private fields
 }
+pub fn Binomial::exp_family(n~ : Int32) -> ExpFamily[Self]
+pub fn Binomial::family(n~ : Int32) -> Family[Self]
 pub fn Binomial::new(Int32, Double) -> Self raise ParamError
 pub impl Cdf for Binomial
 pub impl Characteristic for Binomial
@@ -61,6 +66,23 @@ pub struct Censored[D] {
 pub fn[D] Censored::new(D, lo~ : Double, hi~ : Double) -> Self[D] raise ParamError
 pub impl[D : Cdf] Cdf for Censored[D]
 
+pub struct Conjugate[P, D] {
+  name : String
+  update : (P, ArrayView[Double]) -> P raise ParamError
+  likelihood : (ArrayView[Double]) -> D raise ParamError
+}
+
+#derive(Eq, @debug.Debug)
+pub(all) enum Constraint {
+  Real
+  Positive
+  UnitInterval
+  Interval(lo~ : Double, hi~ : Double)
+}
+pub fn Constraint::contains(Self, Double) -> Bool
+pub fn Constraint::from_unconstrained(Self, Double) -> Double
+pub fn Constraint::to_unconstrained(Self, Double) -> Double
+
 pub struct Empirical {
   // private fields
 }
@@ -70,6 +92,25 @@ pub impl Moments for Empirical
 pub impl Quantile for Empirical
 pub impl Sample for Empirical
 pub impl Univariate for Empirical
+
+pub struct ExpFamily[D] {
+  family : Family[D]
+  natural_dim : Int32
+  natural : (D) -> FixedArray[Double]
+  sufficient : (Double) -> FixedArray[Double]
+  log_partition : (D) -> Double
+  log_base : (Double) -> Double
+  from_mean_sufficient : (ArrayView[Double]) -> D raise FitError
+}
+
+pub struct Family[D] {
+  name : String
+  specs : Array[ParamSpec]
+  make : (ArrayView[Double]) -> D raise ParamError
+  params : (D) -> FixedArray[Double]
+}
+pub fn[D] Family::dim(Self[D]) -> Int32
+pub fn[D] Family::from_unconstrained(Self[D], ArrayView[Double]) -> D raise ParamError
 
 pub struct FiniteDiscrete {
   // private fields
@@ -83,6 +124,8 @@ pub impl Mass for FiniteDiscrete
 pub struct Gamma {
   // private fields
 }
+pub fn Gamma::family_rate() -> Family[Self]
+pub fn Gamma::family_scale() -> Family[Self]
 pub fn Gamma::with_rate(Double, Double) -> Self raise ParamError
 pub fn Gamma::with_scale(Double, Double) -> Self raise ParamError
 pub impl Cdf for Gamma
@@ -100,6 +143,9 @@ pub impl Univariate for Mixture
 pub struct Normal {
   // private fields
 }
+pub fn Normal::exp_family() -> ExpFamily[Self]
+pub fn Normal::family() -> Family[Self]
+pub fn Normal::known_variance_prior(Double) -> Conjugate[Self, Self]
 pub fn Normal::new(mu? : Double, sigma? : Double) -> Self raise ParamError
 pub impl Cdf for Normal
 pub impl Characteristic for Normal
@@ -110,6 +156,11 @@ pub impl Moments for Normal
 pub impl Quantile for Normal
 pub impl Sample for Normal
 pub impl Univariate for Normal
+
+pub struct ParamSpec {
+  name : String
+  constraint : Constraint
+}
 
 pub struct PointMass {
   // private fields
@@ -137,6 +188,7 @@ pub(all) enum QuantileMethod {
 pub struct StudentT {
   // private fields
 }
+pub fn StudentT::family() -> Family[Self]
 pub fn StudentT::new(Double) -> Self raise ParamError
 pub impl Cdf for StudentT
 pub impl Characteristic for StudentT
@@ -160,6 +212,7 @@ pub(open) trait Cdf {
   fn sf(Self, Double) -> Double = _
   fn logcdf(Self, Double) -> Double = _
   fn logsf(Self, Double) -> Double = _
+  fn sf_at_least(Self, Double) -> Double = _
 }
 
 pub(open) trait Characteristic {
@@ -218,6 +271,10 @@ pub(open) trait Sample {
 
 pub(open) trait SampleInt {
   fn sample_int(Self, &RandomSource) -> Int32
+}
+
+pub(open) trait Score {
+  fn score_into(Self, Double, FixedArray[Double]) -> Unit
 }
 
 pub(open) trait Shape {

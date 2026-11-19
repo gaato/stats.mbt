@@ -1,0 +1,42 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gaato/stats/fit"
+
+import {
+  "gaato/stats/dist",
+}
+
+// Values
+pub fn akaike_weights(ArrayView[Candidate]) -> FixedArray[Double]
+
+pub fn[D : @dist.Density] fit_exp_family(@dist.ExpFamily[D], ArrayView[Double]) -> MleResult[D] raise @dist.FitError
+
+pub fn[D : @dist.Density + @dist.Score] fit_mle(@dist.Family[D], ArrayView[Double], start~ : ArrayView[Double], max_iterations? : Int32) -> MleResult[D] raise @dist.FitError
+
+// Errors
+
+// Types and methods
+pub(all) struct Candidate {
+  family : String
+  aic : Double
+  bic : Double
+  k : Int32
+}
+
+pub struct MleResult[D] {
+  dist : D
+  loglik : Double
+  k : Int32
+  n : Int32
+  covariance : FixedArray[Double]?
+  converged : Bool
+  iterations : Int32
+  family : String
+}
+pub fn[D] MleResult::aic(Self[D]) -> Double
+pub fn[D] MleResult::aicc(Self[D]) -> Double?
+pub fn[D] MleResult::bic(Self[D]) -> Double
+pub fn[D] MleResult::candidate(Self[D]) -> Candidate
+
+// Type aliases
+
+// Traits
