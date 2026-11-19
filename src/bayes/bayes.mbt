@@ -15,8 +15,8 @@ pub fn metropolis(
   log_density : (ArrayView[Double]) -> Double,
   start : ArrayView[Double],
   step : ArrayView[Double],
-  draws~ : Int,
-  burn_in~ : Int,
+  draws~ : Int32,
+  burn_in~ : Int32,
   rng~ : &@num.RandomSource,
 ) -> Chain {
   ignore((log_density, start, step, draws, burn_in, rng))
@@ -27,10 +27,10 @@ pub fn metropolis(
 /// Gibbs sampling from full conditionals: `update(i, state, rng)` returns
 /// a draw of coordinate i given the rest.
 pub fn gibbs(
-  update : (Int, ArrayView[Double], &@num.RandomSource) -> Double,
+  update : (Int32, ArrayView[Double], &@num.RandomSource) -> Double,
   start : ArrayView[Double],
-  draws~ : Int,
-  burn_in~ : Int,
+  draws~ : Int32,
+  burn_in~ : Int32,
   rng~ : &@num.RandomSource,
 ) -> Chain {
   ignore((update, start, draws, burn_in, rng))
@@ -54,7 +54,11 @@ pub fn diagnose(chains : ArrayView[Chain]) -> Diagnostics {
 ///|
 /// Posterior summary of one parameter: mean, sd and a credible interval
 /// (an `Interval` of kind `Credible`).
-pub fn summarize(chain : Chain, param : Int, level : Double) -> @infer.Estimate {
+pub fn summarize(
+  chain : Chain,
+  param : Int32,
+  level : Double,
+) -> @infer.Estimate {
   ignore((chain, param, level))
   ...
 }
@@ -66,16 +70,16 @@ pub struct MixtureFit {
   means : FixedArray[Double]
   sds : FixedArray[Double]
   loglik : Double
-  iterations : Int
+  iterations : Int32
   converged : Bool
 }
 
 ///|
 pub fn em_normal_mixture(
   x : ArrayView[Double],
-  components : Int,
+  components : Int32,
   rng~ : &@num.RandomSource,
-  max_iterations? : Int = 500,
+  max_iterations~ : Int32 = 500,
 ) -> MixtureFit {
   ignore((x, components, rng, max_iterations))
   ...

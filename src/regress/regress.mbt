@@ -51,29 +51,32 @@ pub struct LinearFit {
   sigma : Double
   r_squared : Double
   adj_r_squared : Double
-  df_residual : Int
+  df_residual : Int32
   anova : Array[AnovaRow]
   loglik : Double
   aic : Double
   bic : Double
   diagnostics : LinearDiagnostics
   /// The design was rank-deficient; aliased columns have `NaN` coefficients.
-  rank : Int
+  rank : Int32
 }
 
 ///|
 #derive(Debug)
 pub(all) suberror ModelError {
-  TooFewObservations(needed~ : Int, got~ : Int)
-  NotConverged(iterations~ : Int)
+  TooFewObservations(needed~ : Int32, got~ : Int32)
+  NotConverged(iterations~ : Int32)
   Separation
-  BadResponse(index~ : Int, value~ : Double)
+  BadResponse(index~ : Int32, value~ : Double)
 }
 
 ///|
 /// Ordinary or weighted least squares by QR, never by the normal
 /// equations (whose condition number is the square of the design's).
-pub fn ols(y : ArrayView[Double], design : Design) -> LinearFit raise ModelError {
+pub fn ols(
+  y : ArrayView[Double],
+  design : Design,
+) -> LinearFit raise ModelError {
   ignore((y, design))
   ...
 }
@@ -126,7 +129,7 @@ pub struct GlmFit {
   loglik : Double
   aic : Double
   bic : Double
-  iterations : Int
+  iterations : Int32
   converged : Bool
   /// Deviance and Pearson residuals.
   deviance_residuals : FixedArray[Double]
@@ -140,7 +143,7 @@ pub fn glm(
   design : Design,
   family : GlmFamily,
   link : Link,
-  max_iterations? : Int = 50,
+  max_iterations~ : Int32 = 50,
 ) -> GlmFit raise ModelError {
   ignore((y, design, family, link, max_iterations))
   ...
@@ -171,7 +174,7 @@ pub fn cross_validate(
   y : ArrayView[Double],
   design : Design,
   fit : (ArrayView[Double], Design) -> LinearFit raise ModelError,
-  folds~ : Int,
+  folds~ : Int32,
   rng~ : &@num.RandomSource,
 ) -> @infer.Estimate raise ModelError {
   ignore((y, design, fit, folds, rng))

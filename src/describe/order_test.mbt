@@ -4,7 +4,15 @@
 test "nine quantile definitions agree with NumPy" {
   let xs = [3.1, 1.2, 7.7, 4.4, 9.0, 2.5, 6.3, 5.8, 8.1, 0.4, 4.4]
   let methods : Array[@data.QuantileMethod] = [
-    Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8, Type9,
+    Type1,
+    Type2,
+    Type3,
+    Type4,
+    Type5,
+    Type6,
+    Type7,
+    Type8,
+    Type9,
   ]
   let expected : Array[(Double, Array[Double])] = [
     (0.0, [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4]),

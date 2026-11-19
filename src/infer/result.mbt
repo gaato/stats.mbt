@@ -22,7 +22,7 @@ pub struct Assumed[A] {
 
 ///|
 pub fn[A] Assumed::postulate() -> Assumed[A] {
-  { _phantom: () }
+  { _phantom: (), }
 }
 
 ///|
@@ -101,18 +101,16 @@ fn _usage_sketch() -> Unit {
   let b = [6.2, 6.4, 5.9, 6.8, 7.1]
   // The assumption is visible at the call site.
   let normality : Assumed[Normality] = Assumed::postulate()
-  let r = try
-    Some(
-      t_test_two(
-        a[:],
-        b[:],
-        variances=Welch,
-        alternative=TwoSided,
-        level=0.95,
-        normality~,
-      ),
-    )
-  catch {
+  let r = Some(
+    t_test_two(
+      a[:],
+      b[:],
+      variances=Welch,
+      alternative=TwoSided,
+      level=0.95,
+      normality~,
+    ),
+  ) catch {
     _ => None
   }
   ignore(r)
@@ -123,6 +121,6 @@ fn _usage_sketch() -> Unit {
   let both = left.merge(right)
   ignore(both.variance(ddof=1))
   // Reference distributions are ordinary distributions.
-  let t = try Some(@dist.StudentT::new(8.0)) catch { _ => None }
+  let t = Some(@dist.StudentT::new(8.0)) catch { _ => None }
   ignore(t)
 }

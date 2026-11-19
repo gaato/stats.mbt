@@ -7,25 +7,25 @@ pub struct Cantor {}
 
 ///|
 pub fn Cantor::new() -> Cantor {
-  Cantor::{  }
+  Cantor::{ }
 }
 
 ///|
 /// The Cantor function, evaluated digit by digit in base 3.
-pub impl Cdf for Cantor with cdf(self, x) {
+pub impl Cdf for Cantor with fn cdf(self, x) {
   ignore((self, x))
   ...
 }
 
 ///|
-pub impl Quantile for Cantor with quantile(self, p) {
+pub impl Quantile for Cantor with fn quantile(self, p) {
   ignore((self, p))
   ...
 }
 
 ///|
 /// Random base-3 digits from {0, 2}.
-pub impl Sample for Cantor with sample(self, rng) {
+pub impl Sample for Cantor with fn sample(self, rng) {
   ignore((self, rng))
   ...
 }
@@ -35,18 +35,18 @@ pub impl Univariate for Cantor
 
 ///|
 /// Mean 1/2 and variance 1/8, although there is no density to integrate.
-pub impl Moments for Cantor with mean(_self) {
+pub impl Moments for Cantor with fn mean(_self) {
   Some(0.5)
 }
 
 ///|
-pub impl Moments for Cantor with variance(_self) {
+pub impl Moments for Cantor with fn variance(_self) {
   Some(0.125)
 }
 
 ///|
 /// φ(t) = exp(it/2) Π cos(t / 3^k), k >= 1.
-pub impl Characteristic for Cantor with cf(self, t) {
+pub impl Characteristic for Cantor with fn cf(self, t) {
   ignore((self, t))
   ...
 }

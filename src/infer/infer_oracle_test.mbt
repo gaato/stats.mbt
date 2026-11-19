@@ -6,7 +6,10 @@ fn assert_close(got : Double, want : Double, what : String) -> Unit raise {
     return
   }
   let err = (got - want).abs() / (want.abs() + 1.0e-300)
-  assert_true(err <= 1.0e-10, msg="\{what}: \{got} vs \{want} (relative \{err})")
+  assert_true(
+    err <= 1.0e-10,
+    msg="\{what}: \{got} vs \{want} (relative \{err})",
+  )
 }
 
 ///|
@@ -16,10 +19,24 @@ fn normality() -> @infer.Assumed[@infer.Normality] {
 
 ///|
 test "infer: one-sample t (two-sided)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_one(x[:], mu=4.5, alternative=TwoSided, level=0.9, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_one(
+    x[:],
+    mu=4.5,
+    alternative=TwoSided,
+    level=0.9,
+    normality=normality(),
+  )
   assert_close(r.statistic, -1.0896640182725332, "statistic")
   assert_close(r.p_value, 0.2942623762018409, "p")
   assert_close(r.df.unwrap(), 14.0, "df")
@@ -30,10 +47,25 @@ test "infer: one-sample t (two-sided)" {
 
 ///|
 test "infer: two-sample t Welch (two-sided)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_two(x[:], y[:], variances=Welch, alternative=TwoSided, level=0.95, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_two(
+    x[:],
+    y[:],
+    variances=Welch,
+    alternative=TwoSided,
+    level=0.95,
+    normality=normality(),
+  )
   assert_close(r.statistic, -3.7417938624492857, "statistic")
   assert_close(r.p_value, 0.0010236619841167372, "p")
   assert_close(r.df.unwrap(), 23.73112548419474, "df")
@@ -44,10 +76,26 @@ test "infer: two-sample t Welch (two-sided)" {
 
 ///|
 test "infer: two-sample t Pooled (two-sided)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_two(x[:], y[:], variances=Pooled, alternative=TwoSided, level=0.95, normality=normality(), equal_variance=@infer.Assumed::postulate())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_two(
+    x[:],
+    y[:],
+    variances=Pooled,
+    alternative=TwoSided,
+    level=0.95,
+    normality=normality(),
+    equal_variance=@infer.Assumed::postulate(),
+  )
   assert_close(r.statistic, -3.741115981240007, "statistic")
   assert_close(r.p_value, 0.0009602258033190143, "p")
   assert_close(r.df.unwrap(), 25.0, "df")
@@ -58,10 +106,24 @@ test "infer: two-sample t Pooled (two-sided)" {
 
 ///|
 test "infer: paired t (two-sided)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_paired(x[:], z[:], alternative=TwoSided, level=0.95, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_paired(
+    x[:],
+    z[:],
+    alternative=TwoSided,
+    level=0.95,
+    normality=normality(),
+  )
   assert_close(r.statistic, -2.4854187889625976, "statistic")
   assert_close(r.p_value, 0.02619382424426099, "p")
   assert_close(r.df.unwrap(), 14.0, "df")
@@ -72,10 +134,24 @@ test "infer: paired t (two-sided)" {
 
 ///|
 test "infer: one-sample t (greater)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_one(x[:], mu=4.5, alternative=Greater, level=0.9, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_one(
+    x[:],
+    mu=4.5,
+    alternative=Greater,
+    level=0.9,
+    normality=normality(),
+  )
   assert_close(r.statistic, -1.0896640182725332, "statistic")
   assert_close(r.p_value, 0.8528688118990795, "p")
   assert_close(r.df.unwrap(), 14.0, "df")
@@ -86,10 +162,25 @@ test "infer: one-sample t (greater)" {
 
 ///|
 test "infer: two-sample t Welch (greater)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_two(x[:], y[:], variances=Welch, alternative=Greater, level=0.95, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_two(
+    x[:],
+    y[:],
+    variances=Welch,
+    alternative=Greater,
+    level=0.95,
+    normality=normality(),
+  )
   assert_close(r.statistic, -3.7417938624492857, "statistic")
   assert_close(r.p_value, 0.9994881690079417, "p")
   assert_close(r.df.unwrap(), 23.73112548419474, "df")
@@ -100,10 +191,26 @@ test "infer: two-sample t Welch (greater)" {
 
 ///|
 test "infer: two-sample t Pooled (greater)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_two(x[:], y[:], variances=Pooled, alternative=Greater, level=0.95, normality=normality(), equal_variance=@infer.Assumed::postulate())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_two(
+    x[:],
+    y[:],
+    variances=Pooled,
+    alternative=Greater,
+    level=0.95,
+    normality=normality(),
+    equal_variance=@infer.Assumed::postulate(),
+  )
   assert_close(r.statistic, -3.741115981240007, "statistic")
   assert_close(r.p_value, 0.9995198870983405, "p")
   assert_close(r.df.unwrap(), 25.0, "df")
@@ -114,10 +221,24 @@ test "infer: two-sample t Pooled (greater)" {
 
 ///|
 test "infer: paired t (greater)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_paired(x[:], z[:], alternative=Greater, level=0.95, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_paired(
+    x[:],
+    z[:],
+    alternative=Greater,
+    level=0.95,
+    normality=normality(),
+  )
   assert_close(r.statistic, -2.4854187889625976, "statistic")
   assert_close(r.p_value, 0.9869030878778695, "p")
   assert_close(r.df.unwrap(), 14.0, "df")
@@ -128,10 +249,24 @@ test "infer: paired t (greater)" {
 
 ///|
 test "infer: one-sample t (less)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_one(x[:], mu=4.5, alternative=Less, level=0.9, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_one(
+    x[:],
+    mu=4.5,
+    alternative=Less,
+    level=0.9,
+    normality=normality(),
+  )
   assert_close(r.statistic, -1.0896640182725332, "statistic")
   assert_close(r.p_value, 0.14713118810092046, "p")
   assert_close(r.df.unwrap(), 14.0, "df")
@@ -142,10 +277,25 @@ test "infer: one-sample t (less)" {
 
 ///|
 test "infer: two-sample t Welch (less)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_two(x[:], y[:], variances=Welch, alternative=Less, level=0.95, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_two(
+    x[:],
+    y[:],
+    variances=Welch,
+    alternative=Less,
+    level=0.95,
+    normality=normality(),
+  )
   assert_close(r.statistic, -3.7417938624492857, "statistic")
   assert_close(r.p_value, 0.0005118309920583686, "p")
   assert_close(r.df.unwrap(), 23.73112548419474, "df")
@@ -156,10 +306,26 @@ test "infer: two-sample t Welch (less)" {
 
 ///|
 test "infer: two-sample t Pooled (less)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_two(x[:], y[:], variances=Pooled, alternative=Less, level=0.95, normality=normality(), equal_variance=@infer.Assumed::postulate())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_two(
+    x[:],
+    y[:],
+    variances=Pooled,
+    alternative=Less,
+    level=0.95,
+    normality=normality(),
+    equal_variance=@infer.Assumed::postulate(),
+  )
   assert_close(r.statistic, -3.741115981240007, "statistic")
   assert_close(r.p_value, 0.00048011290165950714, "p")
   assert_close(r.df.unwrap(), 25.0, "df")
@@ -170,10 +336,24 @@ test "infer: two-sample t Pooled (less)" {
 
 ///|
 test "infer: paired t (less)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.t_test_paired(x[:], z[:], alternative=Less, level=0.95, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.t_test_paired(
+    x[:],
+    z[:],
+    alternative=Less,
+    level=0.95,
+    normality=normality(),
+  )
   assert_close(r.statistic, -2.4854187889625976, "statistic")
   assert_close(r.p_value, 0.013096912122130495, "p")
   assert_close(r.df.unwrap(), 14.0, "df")
@@ -184,17 +364,41 @@ test "infer: paired t (less)" {
 
 ///|
 test "infer: t from summaries (Welch)" {
-  let r = @infer.t_test_summary({ n: 20, mean: 5.1, sd: 1.9 }, { n: 25, mean: 6.3, sd: 2.7 }, variances=Welch, alternative=TwoSided, level=0.95, normality=normality())
+  let r = @infer.t_test_summary(
+    { n: 20, mean: 5.1, sd: 1.9, },
+    { n: 25, mean: 6.3, sd: 2.7, },
+    variances=Welch,
+    alternative=TwoSided,
+    level=0.95,
+    normality=normality(),
+  )
   assert_close(r.statistic, -1.7464825302742863, "statistic")
   assert_close(r.p_value, 0.08797042967759434, "p")
 }
 
 ///|
 test "infer: pooled t without the certificate is an error" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let refused = try @infer.t_test_two(x[:], y[:], variances=Pooled, alternative=TwoSided, level=0.95, normality=normality()) catch {
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let refused = try
+    @infer.t_test_two(
+      x[:],
+      y[:],
+      variances=Pooled,
+      alternative=TwoSided,
+      level=0.95,
+      normality=normality(),
+    )
+  catch {
     MissingAssumption(name~) => name == "EqualVariance"
     _ => false
   } noraise {
@@ -205,7 +409,13 @@ test "infer: pooled t without the certificate is an error" {
 
 ///|
 test "infer: binomial k=7 n=20 p=0.3 (two-sided)" {
-  let r = @infer.binomial_test({ successes: 7, trials: 20 }, p0=0.3, alternative=TwoSided, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 7, trials: 20, },
+    p0=0.3,
+    alternative=TwoSided,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.6294979666766769, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.15390920478454118, "ci lo")
@@ -214,7 +424,13 @@ test "infer: binomial k=7 n=20 p=0.3 (two-sided)" {
 
 ///|
 test "infer: binomial k=7 n=20 p=0.3 (greater)" {
-  let r = @infer.binomial_test({ successes: 7, trials: 20 }, p0=0.3, alternative=Greater, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 7, trials: 20, },
+    p0=0.3,
+    alternative=Greater,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.3919901877990756, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.17731091757444917, "ci lo")
@@ -223,7 +439,13 @@ test "infer: binomial k=7 n=20 p=0.3 (greater)" {
 
 ///|
 test "infer: binomial k=7 n=20 p=0.3 (less)" {
-  let r = @infer.binomial_test({ successes: 7, trials: 20 }, p0=0.3, alternative=Less, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 7, trials: 20, },
+    p0=0.3,
+    alternative=Less,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.7722717974181608, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.0, "ci lo")
@@ -232,7 +454,13 @@ test "infer: binomial k=7 n=20 p=0.3 (less)" {
 
 ///|
 test "infer: binomial k=2 n=25 p=0.35 (two-sided)" {
-  let r = @infer.binomial_test({ successes: 2, trials: 25 }, p0=0.35, alternative=TwoSided, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 2, trials: 25, },
+    p0=0.35,
+    alternative=TwoSided,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.0029257897453341462, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.009839590018797513, "ci lo")
@@ -241,7 +469,13 @@ test "infer: binomial k=2 n=25 p=0.35 (two-sided)" {
 
 ///|
 test "infer: binomial k=2 n=25 p=0.35 (greater)" {
-  let r = @infer.binomial_test({ successes: 2, trials: 25 }, p0=0.35, alternative=Greater, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 2, trials: 25, },
+    p0=0.35,
+    alternative=Greater,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.9996958775972414, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.014403197979173672, "ci lo")
@@ -250,7 +484,13 @@ test "infer: binomial k=2 n=25 p=0.35 (greater)" {
 
 ///|
 test "infer: binomial k=2 n=25 p=0.35 (less)" {
-  let r = @infer.binomial_test({ successes: 2, trials: 25 }, p0=0.35, alternative=Less, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 2, trials: 25, },
+    p0=0.35,
+    alternative=Less,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.00213333652737008, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.0, "ci lo")
@@ -259,7 +499,13 @@ test "infer: binomial k=2 n=25 p=0.35 (less)" {
 
 ///|
 test "infer: binomial k=40 n=50 p=0.6 (two-sided)" {
-  let r = @infer.binomial_test({ successes: 40, trials: 50 }, p0=0.6, alternative=TwoSided, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 40, trials: 50, },
+    p0=0.6,
+    alternative=TwoSided,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.003570906449261748, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.6628168916165121, "ci lo")
@@ -268,7 +514,13 @@ test "infer: binomial k=40 n=50 p=0.6 (two-sided)" {
 
 ///|
 test "infer: binomial k=40 n=50 p=0.6 (greater)" {
-  let r = @infer.binomial_test({ successes: 40, trials: 50 }, p0=0.6, alternative=Greater, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 40, trials: 50, },
+    p0=0.6,
+    alternative=Greater,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.0021971447572466827, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.6844039385799862, "ci lo")
@@ -277,7 +529,13 @@ test "infer: binomial k=40 n=50 p=0.6 (greater)" {
 
 ///|
 test "infer: binomial k=40 n=50 p=0.6 (less)" {
-  let r = @infer.binomial_test({ successes: 40, trials: 50 }, p0=0.6, alternative=Less, two_sided=MinLikelihood, level=0.95)
+  let r = @infer.binomial_test(
+    { successes: 40, trials: 50, },
+    p0=0.6,
+    alternative=Less,
+    two_sided=MinLikelihood,
+    level=0.95,
+  )
   assert_close(r.p_value, 0.9992427034170903, "p")
   let iv = r.interval.unwrap()
   assert_close(iv.lo, 0.0, "ci lo")
@@ -286,14 +544,20 @@ test "infer: binomial k=40 n=50 p=0.6 (less)" {
 
 ///|
 test "infer: chi-square goodness of fit, uniform" {
-  let r = @infer.chi_square_goodness_of_fit({ counts: [18L, 22L, 30L, 30L], null_probs: None }, fitted_params=0)
+  let r = @infer.chi_square_goodness_of_fit(
+    { counts: [18L, 22L, 30L, 30L], null_probs: None, },
+    fitted_params=0,
+  )
   assert_close(r.statistic, 4.32, "statistic")
   assert_close(r.p_value, 0.22891886433610517, "p")
 }
 
 ///|
 test "infer: chi-square goodness of fit, probabilities, one fitted" {
-  let r = @infer.chi_square_goodness_of_fit({ counts: [18L, 22L, 30L, 30L], null_probs: Some([0.1, 0.2, 0.3, 0.4]) }, fitted_params=1)
+  let r = @infer.chi_square_goodness_of_fit(
+    { counts: [18L, 22L, 30L, 30L], null_probs: Some([0.1, 0.2, 0.3, 0.4]), },
+    fitted_params=1,
+  )
   assert_close(r.statistic, 9.100000000000001, "statistic")
   assert_close(r.p_value, 0.010567204383852648, "p")
 }
@@ -399,32 +663,70 @@ test "infer: fisher exact [20, 15, 11, 30] (less)" {
 
 ///|
 test "infer: one-way ANOVA" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let w : Array[Double] = [2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427]
-  let r = @infer.anova_one_way([x[:], y[:], w[:]][:], variances=Pooled, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let w : Array[Double] = [
+    2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427,
+  ]
+  let r = @infer.anova_one_way(
+    [x[:], y[:], w[:]][:],
+    variances=Pooled,
+    normality=normality(),
+  )
   assert_close(r.statistic, 7.047812280399403, "statistic")
   assert_close(r.p_value, 0.0027500900866407243, "p")
 }
 
 ///|
 test "infer: Welch's ANOVA" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let w : Array[Double] = [2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427]
-  let r = @infer.anova_one_way([x[:], y[:], w[:]][:], variances=Welch, normality=normality())
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let w : Array[Double] = [
+    2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427,
+  ]
+  let r = @infer.anova_one_way(
+    [x[:], y[:], w[:]][:],
+    variances=Welch,
+    normality=normality(),
+  )
   assert_close(r.statistic, 7.1340980976431725, "statistic")
   assert_close(r.p_value, 0.004367943197029296, "p")
 }
 
 ///|
 test "infer: Levene (mean)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let w : Array[Double] = [2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let w : Array[Double] = [
+    2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427,
+  ]
   let r = @infer.levene([x[:], y[:], w[:]][:], center=Mean)
   assert_close(r.statistic, 0.15482492846321252, "statistic")
   assert_close(r.p_value, 0.8571655906814135, "p")
@@ -432,10 +734,20 @@ test "infer: Levene (mean)" {
 
 ///|
 test "infer: Levene (median)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let w : Array[Double] = [2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let w : Array[Double] = [
+    2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427,
+  ]
   let r = @infer.levene([x[:], y[:], w[:]][:], center=Median)
   assert_close(r.statistic, 0.05311190200738918, "statistic")
   assert_close(r.p_value, 0.9483524078917532, "p")
@@ -443,10 +755,20 @@ test "infer: Levene (median)" {
 
 ///|
 test "infer: Levene (trimmed)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let w : Array[Double] = [2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let w : Array[Double] = [
+    2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427,
+  ]
   let r = @infer.levene([x[:], y[:], w[:]][:], center=Trimmed(0.1))
   assert_close(r.statistic, 0.14298407787264567, "statistic")
   assert_close(r.p_value, 0.8672863142312972, "p")
@@ -454,10 +776,20 @@ test "infer: Levene (trimmed)" {
 
 ///|
 test "infer: Bartlett" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let w : Array[Double] = [2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let w : Array[Double] = [
+    2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427,
+  ]
   let r = @infer.bartlett([x[:], y[:], w[:]][:], normality=normality())
   assert_close(r.statistic, 0.1019642229189465, "statistic")
   assert_close(r.p_value, 0.9502956697829819, "p")
@@ -465,10 +797,20 @@ test "infer: Bartlett" {
 
 ///|
 test "infer: Kruskal-Wallis" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let w : Array[Double] = [2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let w : Array[Double] = [
+    2.692, 6.103, 5.856, 3.836, 5.913, 8.15, 6.326, 5.188, 0.126, 1.427,
+  ]
   let r = @infer.kruskal_wallis([x[:], y[:], w[:]][:])
   assert_close(r.statistic, 11.62759601706972, "statistic")
   assert_close(r.p_value, 0.0029860673987528483, "p")
@@ -476,9 +818,17 @@ test "infer: Kruskal-Wallis" {
 
 ///|
 test "infer: Pearson (two-sided)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
   let xy = @data.Bivariate::new(x[:], z[:])
   let r = @infer.correlation_test(xy, Pearson, alternative=TwoSided, level=0.95)
   assert_close(r.estimate.unwrap(), 0.9111051482962785, "r")
@@ -490,20 +840,41 @@ test "infer: Pearson (two-sided)" {
 
 ///|
 test "infer: Spearman (two-sided)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
   let xy = @data.Bivariate::new(x[:], z[:])
-  let r = @infer.correlation_test(xy, Spearman, alternative=TwoSided, level=0.95)
+  let r = @infer.correlation_test(
+    xy,
+    Spearman,
+    alternative=TwoSided,
+    level=0.95,
+  )
   assert_close(r.estimate.unwrap(), 0.8892857142857141, "rho")
   assert_close(r.p_value, 9.192974758842262e-06, "p")
 }
 
 ///|
 test "infer: Pearson (greater)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
   let xy = @data.Bivariate::new(x[:], z[:])
   let r = @infer.correlation_test(xy, Pearson, alternative=Greater, level=0.95)
   assert_close(r.estimate.unwrap(), 0.9111051482962785, "r")
@@ -515,9 +886,17 @@ test "infer: Pearson (greater)" {
 
 ///|
 test "infer: Spearman (greater)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
   let xy = @data.Bivariate::new(x[:], z[:])
   let r = @infer.correlation_test(xy, Spearman, alternative=Greater, level=0.95)
   assert_close(r.estimate.unwrap(), 0.8892857142857141, "rho")
@@ -526,9 +905,17 @@ test "infer: Spearman (greater)" {
 
 ///|
 test "infer: Pearson (less)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
   let xy = @data.Bivariate::new(x[:], z[:])
   let r = @infer.correlation_test(xy, Pearson, alternative=Less, level=0.95)
   assert_close(r.estimate.unwrap(), 0.9111051482962785, "r")
@@ -540,9 +927,17 @@ test "infer: Pearson (less)" {
 
 ///|
 test "infer: Spearman (less)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
   let xy = @data.Bivariate::new(x[:], z[:])
   let r = @infer.correlation_test(xy, Spearman, alternative=Less, level=0.95)
   assert_close(r.estimate.unwrap(), 0.8892857142857141, "rho")
@@ -551,79 +946,160 @@ test "infer: Spearman (less)" {
 
 ///|
 test "infer: Mann-Whitney exact (two-sided)" {
-  let a : Array[Double] = [-0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296]
+  let a : Array[Double] = [
+    -0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296,
+  ]
   let b : Array[Double] = [1.3303, -0.4381, 0.8508, 1.5719, 1.5202, 2.7292]
-  let r = @infer.mann_whitney(a[:], b[:], alternative=TwoSided, exactness=Exact, continuity=false)
+  let r = @infer.mann_whitney(
+    a[:],
+    b[:],
+    alternative=TwoSided,
+    exactness=Exact,
+    continuity=false,
+  )
   assert_close(r.statistic, 3.0, "statistic")
   assert_close(r.p_value, 0.008158508158508158, "p")
 }
 
 ///|
 test "infer: Mann-Whitney asymptotic (two-sided)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.mann_whitney(x[:], y[:], alternative=TwoSided, exactness=Asymptotic, continuity=true)
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.mann_whitney(
+    x[:],
+    y[:],
+    alternative=TwoSided,
+    exactness=Asymptotic,
+    continuity=true,
+  )
   assert_close(r.statistic, 25.0, "statistic")
   assert_close(r.p_value, 0.0016479834444807768, "p")
 }
 
 ///|
 test "infer: Mann-Whitney exact (greater)" {
-  let a : Array[Double] = [-0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296]
+  let a : Array[Double] = [
+    -0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296,
+  ]
   let b : Array[Double] = [1.3303, -0.4381, 0.8508, 1.5719, 1.5202, 2.7292]
-  let r = @infer.mann_whitney(a[:], b[:], alternative=Greater, exactness=Exact, continuity=false)
+  let r = @infer.mann_whitney(
+    a[:],
+    b[:],
+    alternative=Greater,
+    exactness=Exact,
+    continuity=false,
+  )
   assert_close(r.statistic, 3.0, "statistic")
   assert_close(r.p_value, 0.9976689976689977, "p")
 }
 
 ///|
 test "infer: Mann-Whitney asymptotic (greater)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.mann_whitney(x[:], y[:], alternative=Greater, exactness=Asymptotic, continuity=true)
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.mann_whitney(
+    x[:],
+    y[:],
+    alternative=Greater,
+    exactness=Asymptotic,
+    continuity=true,
+  )
   assert_close(r.statistic, 25.0, "statistic")
   assert_close(r.p_value, 0.999303440069194, "p")
 }
 
 ///|
 test "infer: Mann-Whitney exact (less)" {
-  let a : Array[Double] = [-0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296]
+  let a : Array[Double] = [
+    -0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296,
+  ]
   let b : Array[Double] = [1.3303, -0.4381, 0.8508, 1.5719, 1.5202, 2.7292]
-  let r = @infer.mann_whitney(a[:], b[:], alternative=Less, exactness=Exact, continuity=false)
+  let r = @infer.mann_whitney(
+    a[:],
+    b[:],
+    alternative=Less,
+    exactness=Exact,
+    continuity=false,
+  )
   assert_close(r.statistic, 3.0, "statistic")
   assert_close(r.p_value, 0.004079254079254079, "p")
 }
 
 ///|
 test "infer: Mann-Whitney asymptotic (less)" {
-  let x : Array[Double] = [1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077, 2.002, -1.135, 5.757]
-  let y : Array[Double] = [6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238]
-  let z : Array[Double] = [3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436, 3.649, 1.362, 0.043, 7.542]
-  let r = @infer.mann_whitney(x[:], y[:], alternative=Less, exactness=Asymptotic, continuity=true)
+  let x : Array[Double] = [
+    1.68, 6.505, 3.783, 2.31, 3.69, 4.709, 7.37, 5.803, 4.942, 2.571, 5.811, 2.077,
+    2.002, -1.135, 5.757,
+  ]
+  let y : Array[Double] = [
+    6.55, 4.346, 9.253, 6.73, 5.361, 2.468, 8.783, 8.235, 10.758, 7.649, 8.556, 7.238,
+  ]
+  let z : Array[Double] = [
+    3.251, 6.597, 2.214, 3.573, 3.581, 4.084, 8.472, 6.649, 5.985, 3.946, 6.436,
+    3.649, 1.362, 0.043, 7.542,
+  ]
+  let r = @infer.mann_whitney(
+    x[:],
+    y[:],
+    alternative=Less,
+    exactness=Asymptotic,
+    continuity=true,
+  )
   assert_close(r.statistic, 25.0, "statistic")
   assert_close(r.p_value, 0.0008239917222403884, "p")
 }
 
 ///|
 test "infer: exact permutation test of a mean difference" {
-  let a : Array[Double] = [-0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296]
+  let a : Array[Double] = [
+    -0.9345, -1.1189, 0.1382, -1.3971, -0.996, 0.0748, 0.8296,
+  ]
   let b : Array[Double] = [1.3303, -0.4381, 0.8508, 1.5719, 1.5202, 2.7292]
   let q = @infer.Question::new(MeanDifference, Two(a[:], b[:]))
   let rng = @num.Xoshiro256::seed(1)
-  let stat = (s : @infer.Sample) => match s {
-    Two(u, v) => {
-      let mut su = 0.0
-      let mut sv = 0.0
-      for t in u { su = su + t }
-      for t in v { sv = sv + t }
-      su / u.length().to_double() - sv / v.length().to_double()
+  let stat = (s : @infer.Sample) => {
+    match s {
+      Two(u, v) => {
+        let mut su = 0.0
+        let mut sv = 0.0
+        for t in u {
+          su = su + t
+        }
+        for t in v {
+          sv = sv + t
+        }
+        su / u.length().to_double() - sv / v.length().to_double()
+      }
+      _ => 0.0
     }
-    _ => 0.0
   }
   ignore(q)
-  let m = @infer.permutation_test(Two(a[:], b[:]), stat, scheme=Independent, reps=None, ties={ relative: 1.0e-12 }, rng~)
+  let m = @infer.permutation_test(
+    Two(a[:], b[:]),
+    stat,
+    scheme=Independent,
+    reps=None,
+    ties={ relative: 1.0e-12, },
+    rng~,
+  )
   assert_close(m.p_value(TwoSided), 0.009324009324009324, "p")
 }
 

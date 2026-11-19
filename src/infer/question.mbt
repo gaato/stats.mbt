@@ -56,7 +56,7 @@ pub struct Question {
 #derive(Debug)
 pub(all) suberror QuestionError {
   ShapeMismatch(estimand~ : Estimand)
-  TooFewPoints(needed~ : Int, got~ : Int)
+  TooFewPoints(needed~ : Int32, got~ : Int32)
   /// A procedure that relies on an assumption was called without its
   /// certificate (a pooled t test without `Assumed[EqualVariance]`).
   MissingAssumption(name~ : String)
@@ -83,7 +83,7 @@ pub fn Question::new(
   if !ok {
     raise ShapeMismatch(estimand~)
   }
-  { estimand, sample }
+  { estimand, sample, }
 }
 
 ///|
@@ -92,8 +92,8 @@ pub fn Question::new(
 pub(all) enum Method {
   /// The textbook sampling distribution, under the assumptions it needs.
   Analytic
-  Bootstrap(reps~ : Int)
-  Permutation(reps~ : Int)
+  Bootstrap(reps~ : Int32)
+  Permutation(reps~ : Int32)
 }
 
 ///|
@@ -118,7 +118,14 @@ pub fn estimate(
     Analytic => analytic_estimate(q, level)
     Bootstrap(reps~) => {
       let stat = estimand_statistic(q.estimand)
-      let b = bootstrap(q.sample, stat, reps~, level~, interval=Percentile, rng~)
+      let b = bootstrap(
+        q.sample,
+        stat,
+        reps~,
+        level~,
+        interval=Percentile,
+        rng~,
+      )
       {
         value: b.estimate,
         se: Some(b.se),
@@ -128,7 +135,9 @@ pub fn estimate(
       }
     }
     Permutation(..) =>
-      raise Unsupported(reason="permutation gives tests, not intervals; use null_model")
+      raise Unsupported(
+        reason="permutation gives tests, not intervals; use null_model",
+      )
   }
 }
 
@@ -201,20 +210,18 @@ fn estimand_statistic(e : Estimand) -> Statistic {
 ///|
 /// The textbook intervals: t for means and mean differences, χ² for a
 /// variance, Clopper–Pearson for a proportion, Fisher z for a correlation.
-fn analytic_estimate(q : Question, level : Double) -> Estimate raise QuestionError {
+fn analytic_estimate(
+  q : Question,
+  level : Double,
+) -> Estimate raise QuestionError {
   let normality : Assumed[Normality] = Assumed::postulate()
   let from_test = (r : TestResult, n : Int64, procedure : String) => {
     let se = match (r.estimate, r.null_value) {
-      (Some(e), Some(v)) if r.statistic != 0.0 => Some(((e - v) / r.statistic).abs())
+      (Some(e), Some(v)) if r.statistic != 0.0 =>
+        Some(((e - v) / r.statistic).abs())
       _ => None
     }
-    {
-      value: r.estimate.unwrap(),
-      se,
-      interval: r.interval,
-      n,
-      procedure,
-    }
+    { value: r.estimate.unwrap(), se, interval: r.interval, n, procedure, }
   }
   match (q.estimand, q.sample) {
     (Mean, One(x)) => {
@@ -222,7 +229,14 @@ fn analytic_estimate(q : Question, level : Double) -> Estimate raise QuestionErr
       from_test(r, x.length().to_int64(), "t interval")
     }
     (MeanDifference, Two(x, y)) => {
-      let r = t_test_two(x, y, variances=Welch, alternative=TwoSided, level~, normality~)
+      let r = t_test_two(
+        x,
+        y,
+        variances=Welch,
+        alternative=TwoSided,
+        level~,
+        normality~,
+      )
       from_test(r, (x.length() + y.length()).to_int64(), "Welch t interval")
     }
     (MeanDifference, Paired(x, y)) => {
@@ -320,7 +334,7 @@ pub fn null_model(
         stat,
         scheme=Independent,
         reps=Some(reps),
-        ties={ relative: 1.0e-12 },
+        ties={ relative: 1.0e-12, },
         rng~,
       )
     (Permutation(reps~), Independence, Paired(_, _)) =>
@@ -329,7 +343,7 @@ pub fn null_model(
         stat,
         scheme=if q.estimand == Correlation { Pairings } else { WithinPairs },
         reps=Some(reps),
-        ties={ relative: 1.0e-12 },
+        ties={ relative: 1.0e-12, },
         rng~,
       )
     _ =>
@@ -344,7 +358,10 @@ pub fn null_model(
 /// randomisation tests. Each tail includes the observed value itself
 /// (P(T >= t), P(T <= t)), which matters for discrete and permutation nulls,
 /// and neither tail is computed as 1 minus the other.
-pub fn NullModel::p_value(self : NullModel, alternative : Alternative) -> Double {
+pub fn NullModel::p_value(
+  self : NullModel,
+  alternative : Alternative,
+) -> Double {
   let upper = @dist.Cdf::sf_at_least(self.null_dist, self.observed)
   let lower = @dist.Cdf::cdf(self.null_dist, self.observed)
   match alternative {

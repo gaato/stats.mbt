@@ -33,7 +33,9 @@ fn t_from(
     df=Some(df),
     estimate=Some(est),
     null_value=Some(null_value),
-    interval=Some(pivot_interval(null_dist, est, se, level, alternative, procedure)),
+    interval=Some(
+      pivot_interval(null_dist, est, se, level, alternative, procedure),
+    ),
     effect~,
     p_kind=Exact,
     procedure~,
@@ -55,7 +57,7 @@ pub fn t_test_one(
     raise TooFewPoints(needed=2, got=n)
   }
   let sd = v.sqrt()
-  let effect : Effect = { kind: CohenD, value: (m - mu) / sd, interval: None }
+  let effect : Effect = { kind: CohenD, value: (m - mu) / sd, interval: None, }
   t_from(
     m,
     sd / n.to_double().sqrt(),
@@ -70,10 +72,10 @@ pub fn t_test_one(
 
 ///|
 fn two_sample_t(
-  n1 : Int,
+  n1 : Int32,
   m1 : Double,
   v1 : Double,
-  n2 : Int,
+  n2 : Int32,
   m2 : Double,
   v2 : Double,
   variances : Variances,
@@ -112,7 +114,8 @@ fn two_sample_t(
     Welch => {
       let a = v1 / n1.to_double()
       let b = v2 / n2.to_double()
-      let df = (a + b) * (a + b) /
+      let df = (a + b) *
+        (a + b) /
         (a * a / (n1 - 1).to_double() + b * b / (n2 - 1).to_double())
       t_from(
         m1 - m2,
@@ -143,7 +146,9 @@ pub fn t_test_two(
   ignore(normality)
   let (n1, m1, v1) = summarize(x)
   let (n2, m2, v2) = summarize(y)
-  two_sample_t(n1, m1, v1, n2, m2, v2, variances, alternative, level, equal_variance)
+  two_sample_t(
+    n1, m1, v1, n2, m2, v2, variances, alternative, level, equal_variance,
+  )
 }
 
 ///|
@@ -159,7 +164,7 @@ pub fn t_test_paired(
   }
   let d = FixedArray::makei(x.length(), i => x[i] - y[i])
   let r = t_test_one(d[:], mu=0.0, alternative~, level~, normality~)
-  { ..r, procedure: "paired t test" }
+  { ..r, procedure: "paired t test", }
 }
 
 ///|
@@ -203,33 +208,39 @@ fn clopper_pearson(
   let alpha = 1.0 - level
   let kd = k.to_double()
   let nd = n.to_double()
-  let lower = (tail : Double) => if k == 0L {
-    0.0
-  } else {
-    let b = @dist.Beta::new(kd, nd - kd + 1.0) catch {
-      _ => raise Degenerate(reason="bad counts")
+  let lower = (tail : Double) => {
+    if k == 0L {
+      0.0
+    } else {
+      let b = @dist.Beta::new(kd, nd - kd + 1.0) catch {
+        _ => raise Degenerate(reason="bad counts")
+      }
+      @dist.Quantile::quantile(b, tail)
     }
-    @dist.Quantile::quantile(b, tail)
   }
-  let upper = (tail : Double) => if k == n {
-    1.0
-  } else {
-    let b = @dist.Beta::new(kd + 1.0, nd - kd) catch {
-      _ => raise Degenerate(reason="bad counts")
+  let upper = (tail : Double) => {
+    if k == n {
+      1.0
+    } else {
+      let b = @dist.Beta::new(kd + 1.0, nd - kd) catch {
+        _ => raise Degenerate(reason="bad counts")
+      }
+      @dist.Quantile::isf(b, tail)
     }
-    @dist.Quantile::isf(b, tail)
   }
   let procedure = "Clopper-Pearson"
   match alternative {
-    TwoSided => {
-      lo: lower(0.5 * alpha),
-      hi: upper(0.5 * alpha),
-      level,
-      kind: Confidence,
-      procedure,
-    }
-    Greater => { lo: lower(alpha), hi: 1.0, level, kind: Confidence, procedure }
-    Less => { lo: 0.0, hi: upper(alpha), level, kind: Confidence, procedure }
+    TwoSided =>
+      {
+        lo: lower(0.5 * alpha),
+        hi: upper(0.5 * alpha),
+        level,
+        kind: Confidence,
+        procedure,
+      }
+    Greater =>
+      { lo: lower(alpha), hi: 1.0, level, kind: Confidence, procedure, }
+    Less => { lo: 0.0, hi: upper(alpha), level, kind: Confidence, procedure, }
   }
 }
 
@@ -300,7 +311,7 @@ pub fn proportion_test(
 ///|
 pub fn chi_square_goodness_of_fit(
   counts : @data.CategoryCounts,
-  fitted_params~ : Int,
+  fitted_params~ : Int32,
 ) -> TestResult raise QuestionError {
   let k = counts.counts.length()
   if k < 2 {
@@ -427,7 +438,7 @@ pub fn fisher_exact(
     estimate: Some(odds),
     null_value: Some(1.0),
     interval: None,
-    effect: Some({ kind: OddsRatio, value: odds, interval: None }),
+    effect: Some({ kind: OddsRatio, value: odds, interval: None, }),
     p_kind: Exact,
     null_model: Some({
       observed: a.to_double(),
@@ -441,7 +452,10 @@ pub fn fisher_exact(
 }
 
 ///|
-pub fn mcnemar(table : @data.Table, exactness~ : Exactness) -> TestResult raise QuestionError {
+pub fn mcnemar(
+  table : @data.Table,
+  exactness~ : Exactness,
+) -> TestResult raise QuestionError {
   ignore((table, exactness))
   raise Unsupported(reason="mcnemar is not implemented yet")
 }
@@ -501,7 +515,11 @@ fn anova_core(
         Greater,
         df=Some(df1),
         df2=Some(df2),
-        effect=Some({ kind: EtaSquared, value: ssb / (ssb + ssw), interval: None }),
+        effect=Some({
+          kind: EtaSquared,
+          value: ssb / (ssb + ssw),
+          interval: None,
+        }),
         p_kind=Exact,
         procedure~,
       )
@@ -585,7 +603,7 @@ pub fn levene(
     devs.push(FixedArray::from_iter(g.iter().map(v => (v - c).abs()))[:])
   }
   let r = anova_core(devs[:], Pooled, "Levene's test")
-  { ..r, effect: None }
+  { ..r, effect: None, }
 }
 
 ///|
@@ -635,7 +653,7 @@ pub fn bartlett(
 #derive(Eq, Debug)
 pub(all) enum PostHoc {
   TukeyHsd
-  Dunnett(control~ : Int)
+  Dunnett(control~ : Int32)
   /// Pairwise t tests with a p-value adjustment.
   Pairwise(Adjust)
 }
@@ -659,14 +677,17 @@ pub fn post_hoc(
 /// and n without ties: the coefficients of the Gaussian binomial
 /// [m+n choose m]_q, built by multiplying by (1 - q^(n+i)) and dividing by
 /// (1 - q^i) for i = 1..m.
-fn mann_whitney_null(m : Int, n : Int) -> @dist.FiniteDiscrete raise QuestionError {
+fn mann_whitney_null(
+  m : Int32,
+  n : Int32,
+) -> @dist.FiniteDiscrete raise QuestionError {
   let deg = m * n
   // after multiplying by (1 - q^(n+i)) and before dividing by (1 - q^i) the
   // degree is i(n + 1), up to m more than the final mn
   let c = FixedArray::make(deg + m + 1, 0.0)
   c[0] = 1.0
   let mut top = 0
-  for i in 1..=m {
+  for i in 1..<=m {
     // multiply by (1 - q^(n+i)); the degree grows by n + i
     let shift = n + i
     let new_top = top + shift
@@ -675,13 +696,13 @@ fn mann_whitney_null(m : Int, n : Int) -> @dist.FiniteDiscrete raise QuestionErr
     }
     top = new_top
     // divide by (1 - q^i): g[j] = f[j] + g[j - i]
-    for j in i..=top {
+    for j in i..<=top {
       c[j] = c[j] + c[j - i]
     }
     top = top - i
   }
   let mut total = 0.0
-  for j in 0..=deg {
+  for j in 0..<=deg {
     total = total + c[j]
   }
   let probs = FixedArray::makei(deg + 1, j => c[j] / total)
@@ -709,7 +730,11 @@ pub fn mann_whitney(
   let (sums, ties) = combined_ranks([x, y][:])
   let u1 = sums[0] - (n1 * (n1 + 1)).to_double() / 2.0
   let nn = (n1 * n2).to_double()
-  let effect : Effect = { kind: RankBiserial, value: 2.0 * u1 / nn - 1.0, interval: None }
+  let effect : Effect = {
+    kind: RankBiserial,
+    value: 2.0 * u1 / nn - 1.0,
+    interval: None,
+  }
   let exact = match exactness {
     Exact => {
       if ties > 0.0 {
@@ -921,8 +946,10 @@ pub fn correlation_test(
   }
   let (xs, ys) = match kind {
     Pearson => (xy.x, xy.y)
-    Spearman => (@describe.ranks(xy.x[:], Average), @describe.ranks(xy.y[:], Average))
-    KendallTauB => raise Unsupported(reason="Kendall's tau test is not implemented yet")
+    Spearman =>
+      (@describe.ranks(xy.x[:], Average), @describe.ranks(xy.y[:], Average))
+    KendallTauB =>
+      raise Unsupported(reason="Kendall's tau test is not implemented yet")
   }
   let mut c = @describe.Comoment::empty()
   for i in 0..<n {
@@ -941,7 +968,7 @@ pub fn correlation_test(
       let se = 1.0 / (n - 3).to_double().sqrt()
       let normal = @dist.Normal::new() catch { _ => panic() }
       let iv = pivot_interval(normal, z, se, level, alternative, "Fisher z")
-      Some({ ..iv, lo: @math.tanh(iv.lo), hi: @math.tanh(iv.hi) })
+      Some({ ..iv, lo: @math.tanh(iv.lo), hi: @math.tanh(iv.hi), })
     }
     _ => None
   }
@@ -957,7 +984,7 @@ pub fn correlation_test(
     estimate=Some(r),
     null_value=Some(0.0),
     interval~,
-    effect=Some({ kind: R, value: r, interval: None }),
+    effect=Some({ kind: R, value: r, interval: None, }),
     p_kind=if kind == Pearson { Exact } else { Asymptotic },
     procedure~,
   )
@@ -970,7 +997,7 @@ pub fn correlation_test(
 pub fn likelihood_ratio(
   loglik_null : Double,
   loglik_alt : Double,
-  df : Int,
+  df : Int32,
 ) -> TestResult raise QuestionError {
   let chi = @dist.ChiSquared::new(df.to_double()) catch {
     _ => raise Degenerate(reason="df must be positive")

@@ -55,7 +55,12 @@ test "brent and bracketed newton find x = cos x" {
   let r = @num.find_root(x => x - @math.cos(x), 0.0, 1.0)
   assert_eq(r.status, Converged)
   assert_true((r.value - 0.7390851332151607).abs() < 2.0e-16)
-  let n = @num.find_root_newton(x => (x - @math.cos(x), 1.0 + @math.sin(x)), 0.0, 1.0, 0.5)
+  let n = @num.find_root_newton(
+    x => (x - @math.cos(x), 1.0 + @math.sin(x)),
+    0.0,
+    1.0,
+    0.5,
+  )
   assert_eq(n.status, Converged)
   assert_true((n.value - 0.7390851332151607).abs() < 2.0e-16)
   assert_eq(@num.find_root(x => x * x + 1.0, -1.0, 1.0).status, NoBracket)
@@ -66,7 +71,7 @@ test "series and continued fraction" {
   // e = Σ 1/n!
   let s = @num.sum_series(n => {
     let mut f = 1.0
-    for i in 1..=n {
+    for i in 1..<=n {
       f = f * i.to_double()
     }
     1.0 / f
@@ -77,7 +82,10 @@ test "series and continued fraction" {
   assert_eq(cf.status, Converged)
   // Lentz multiplies one rounded ratio per term, so the error grows with the
   // number of terms: 22 terms here, about 5 ulp
-  assert_true((cf.value - 1.4142135623730951).abs() < 1.0e-15, msg="\{cf.value} after \{cf.iterations}")
+  assert_true(
+    (cf.value - 1.4142135623730951).abs() < 1.0e-15,
+    msg="\{cf.value} after \{cf.iterations}",
+  )
 }
 
 ///|

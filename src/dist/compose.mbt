@@ -20,7 +20,7 @@ pub fn PointMass::new(at : Double) -> PointMass raise ParamError {
 }
 
 ///|
-pub impl Cdf for PointMass with cdf(self, x) {
+pub impl Cdf for PointMass with fn cdf(self, x) {
   if x < self.at {
     0.0
   } else {
@@ -29,7 +29,7 @@ pub impl Cdf for PointMass with cdf(self, x) {
 }
 
 ///|
-pub impl Cdf for PointMass with sf(self, x) {
+pub impl Cdf for PointMass with fn sf(self, x) {
   if x < self.at {
     1.0
   } else {
@@ -38,7 +38,7 @@ pub impl Cdf for PointMass with sf(self, x) {
 }
 
 ///|
-pub impl Cdf for PointMass with sf_at_least(self, x) {
+pub impl Cdf for PointMass with fn sf_at_least(self, x) {
   if x <= self.at {
     1.0
   } else {
@@ -47,12 +47,12 @@ pub impl Cdf for PointMass with sf_at_least(self, x) {
 }
 
 ///|
-pub impl Quantile for PointMass with quantile(self, _p) {
+pub impl Quantile for PointMass with fn quantile(self, _p) {
   self.at
 }
 
 ///|
-pub impl Sample for PointMass with sample(self, _rng) {
+pub impl Sample for PointMass with fn sample(self, _rng) {
   self.at
 }
 
@@ -60,12 +60,12 @@ pub impl Sample for PointMass with sample(self, _rng) {
 pub impl Univariate for PointMass
 
 ///|
-pub impl Moments for PointMass with mean(self) {
+pub impl Moments for PointMass with fn mean(self) {
   Some(self.at)
 }
 
 ///|
-pub impl Moments for PointMass with variance(_self) {
+pub impl Moments for PointMass with fn variance(_self) {
   Some(0.0)
 }
 
@@ -101,11 +101,11 @@ pub fn Mixture::new(
   if (total - 1.0).abs() > 1.0e-12 {
     raise InvalidParam(name="weights", value=total, reason="must sum to 1")
   }
-  { weights: FixedArray::from_iter(weights.iter()), components }
+  { weights: FixedArray::from_iter(weights.iter()), components, }
 }
 
 ///|
-pub impl Cdf for Mixture with cdf(self, x) {
+pub impl Cdf for Mixture with fn cdf(self, x) {
   let mut s = 0.0
   for i, c in self.components {
     s = s + self.weights[i] * Cdf::cdf(c, x)
@@ -115,7 +115,7 @@ pub impl Cdf for Mixture with cdf(self, x) {
 
 ///|
 /// Each component's own upper tail, so the mixture keeps their accuracy.
-pub impl Cdf for Mixture with sf(self, x) {
+pub impl Cdf for Mixture with fn sf(self, x) {
   let mut s = 0.0
   for i, c in self.components {
     s = s + self.weights[i] * Cdf::sf(c, x)
@@ -124,7 +124,7 @@ pub impl Cdf for Mixture with sf(self, x) {
 }
 
 ///|
-pub impl Cdf for Mixture with sf_at_least(self, x) {
+pub impl Cdf for Mixture with fn sf_at_least(self, x) {
   let mut s = 0.0
   for i, c in self.components {
     s = s + self.weights[i] * Cdf::sf_at_least(c, x)
@@ -134,14 +134,14 @@ pub impl Cdf for Mixture with sf_at_least(self, x) {
 
 ///|
 /// No closed form in general: bracketing on the distribution function.
-pub impl Quantile for Mixture with quantile(self, p) {
+pub impl Quantile for Mixture with fn quantile(self, p) {
   ignore((self, p))
   ...
 }
 
 ///|
 /// Pick a component by weight, then sample from it.
-pub impl Sample for Mixture with sample(self, rng) {
+pub impl Sample for Mixture with fn sample(self, rng) {
   ignore((self, rng))
   ...
 }
@@ -167,36 +167,36 @@ pub fn[D] Affine::new(
   if !(scale > 0.0) {
     raise InvalidParam(name="scale", value=scale, reason="must be > 0")
   }
-  { base, loc, scale }
+  { base, loc, scale, }
 }
 
 ///|
-pub impl[D : Cdf] Cdf for Affine[D] with cdf(self, x) {
+pub impl[D : Cdf] Cdf for Affine[D] with fn cdf(self, x) {
   self.base.cdf((x - self.loc) / self.scale)
 }
 
 ///|
-pub impl[D : Cdf] Cdf for Affine[D] with sf(self, x) {
+pub impl[D : Cdf] Cdf for Affine[D] with fn sf(self, x) {
   self.base.sf((x - self.loc) / self.scale)
 }
 
 ///|
-pub impl[D : Cdf] Cdf for Affine[D] with sf_at_least(self, x) {
+pub impl[D : Cdf] Cdf for Affine[D] with fn sf_at_least(self, x) {
   self.base.sf_at_least((x - self.loc) / self.scale)
 }
 
 ///|
-pub impl[D : Quantile] Quantile for Affine[D] with quantile(self, p) {
+pub impl[D : Quantile] Quantile for Affine[D] with fn quantile(self, p) {
   self.loc + self.scale * self.base.quantile(p)
 }
 
 ///|
-pub impl[D : Density] Density for Affine[D] with pdf(self, x) {
+pub impl[D : Density] Density for Affine[D] with fn pdf(self, x) {
   self.base.pdf((x - self.loc) / self.scale) / self.scale
 }
 
 ///|
-pub impl[D : Sample] Sample for Affine[D] with sample(self, rng) {
+pub impl[D : Sample] Sample for Affine[D] with fn sample(self, rng) {
   self.loc + self.scale * self.base.sample(rng)
 }
 
@@ -223,11 +223,11 @@ pub fn[D : Cdf] Truncated::new(
   if !(mass > 0.0) {
     raise InvalidParam(name="lo", value=lo, reason="interval has no mass")
   }
-  { base, lo, hi, mass }
+  { base, lo, hi, mass, }
 }
 
 ///|
-pub impl[D : Cdf] Cdf for Truncated[D] with cdf(self, x) {
+pub impl[D : Cdf] Cdf for Truncated[D] with fn cdf(self, x) {
   if x <= self.lo {
     0.0
   } else if x >= self.hi {
@@ -256,11 +256,11 @@ pub fn[D] Censored::new(
   if !(lo < hi) {
     raise InvalidParam(name="hi", value=hi, reason="must be > lo")
   }
-  { base, lo, hi }
+  { base, lo, hi, }
 }
 
 ///|
-pub impl[D : Cdf] Cdf for Censored[D] with cdf(self, x) {
+pub impl[D : Cdf] Cdf for Censored[D] with fn cdf(self, x) {
   if x < self.lo {
     0.0
   } else if x >= self.hi {

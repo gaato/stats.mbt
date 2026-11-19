@@ -24,7 +24,7 @@ pub(all) enum PValueKind {
   Asymptotic
   /// From random draws of the null, with the (k + 1)/(N + 1) correction
   /// when `plus_one` is set, which keeps the p-value valid.
-  MonteCarlo(draws~ : Int, plus_one~ : Bool)
+  MonteCarlo(draws~ : Int32, plus_one~ : Bool)
 }
 
 ///|
@@ -36,7 +36,7 @@ pub(all) enum Exactness {
   Asymptotic
   /// Exact when the larger sample has at most this many observations and
   /// there are no ties.
-  ExactUpTo(Int)
+  ExactUpTo(Int32)
 }
 
 ///|

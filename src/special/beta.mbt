@@ -30,7 +30,11 @@ fn beta_prefix(a : Double, b : Double, x : Double, y : Double) -> Double {
     }
     (a * b / (2.0 * @math.PI * (a + b))).sqrt() *
     @math.exp(
-      a * ta + b * tb + stirling_delta(a + b) - stirling_delta(a) - stirling_delta(b),
+      a * ta +
+      b * tb +
+      stirling_delta(a + b) -
+      stirling_delta(a) -
+      stirling_delta(b),
     )
   } else {
     let lx = if x < 0.5 { @math.ln(x) } else { @math.ln_1p(-y) }
@@ -69,7 +73,7 @@ fn ibeta_series(a : Double, b : Double, x : Double, y : Double) -> Double? {
   let pre = beta_prefix(a, b, x, y) / @math.exp(b * ly)
   let mut c = 1.0
   let mut sum = 1.0 / a
-  for n in 1..=100000 {
+  for n in 1..<=100000 {
     let nd = n.to_double()
     c = c * (nd - b) * x / nd
     let t = c / (a + nd)
@@ -86,7 +90,12 @@ fn ibeta_series(a : Double, b : Double, x : Double, y : Double) -> Double? {
 /// caller who knows 1 - x exactly (a t distribution's x²/(ν + x²)) keeps it.
 /// The continued fraction is evaluated on whichever side converges, and the
 /// complement taken on the other.
-pub fn betainc_pair(a : Double, b : Double, x : Double, y : Double) -> (Double, Double) {
+pub fn betainc_pair(
+  a : Double,
+  b : Double,
+  x : Double,
+  y : Double,
+) -> (Double, Double) {
   if a.is_nan() || b.is_nan() || x.is_nan() || a <= 0.0 || b <= 0.0 {
     return (0.0 / 0.0, 0.0 / 0.0)
   }
@@ -135,7 +144,12 @@ pub fn betaincc(a : Double, b : Double, x : Double) -> Double {
 /// the power-law tails when a or b is below 1), then Newton steps on the
 /// logarithm of the smaller tail inside [0, 1].
 pub fn betaincinv(a : Double, b : Double, p : Double) -> Double {
-  if a.is_nan() || b.is_nan() || p.is_nan() || a <= 0.0 || b <= 0.0 || p < 0.0 ||
+  if a.is_nan() ||
+    b.is_nan() ||
+    p.is_nan() ||
+    a <= 0.0 ||
+    b <= 0.0 ||
+    p < 0.0 ||
     p > 1.0 {
     return 0.0 / 0.0
   }
@@ -180,14 +194,7 @@ pub fn betaincinv(a : Double, b : Double, p : Double) -> Double {
   // Work in the variable that is small at the solution: x for the lower
   // tail, y = 1 - x for the upper, and in u = ln of it for the Newton steps.
   let lt = @math.ln(target)
-  let at = (s : Double) => {
-    // s is x (lower) or y (upper); returns (x, y)
-    if upper {
-      (1.0 - s, s)
-    } else {
-      (s, 1.0 - s)
-    }
-  }
+  let at = (s : Double) => if upper { (1.0 - s, s) } else { (s, 1.0 - s) }
   let value = (s : Double) => {
     let (x, y) = at(s)
     let (i, ic) = betainc_pair(a, b, x, y)
@@ -223,7 +230,13 @@ pub fn betaincinv(a : Double, b : Double, p : Double) -> Double {
     lo = lo * 0.5
     rounds = rounds + 1
   }
-  let r = @num.find_root_newton(g, @math.ln(lo), @math.ln(hi), @math.ln(s0), max_iterations=300)
+  let r = @num.find_root_newton(
+    g,
+    @math.ln(lo),
+    @math.ln(hi),
+    @math.ln(s0),
+    max_iterations=300,
+  )
   let mut s = @math.exp(r.value)
   for _ in 0..<4 {
     let step = (value(s) - target) / density(s)
@@ -297,7 +310,7 @@ pub fn kolmogorov_sf(x : Double) -> Double {
     // P(K <= x) = √(2π)/x Σ exp(-(2k-1)²π²/(8x²))
     let c = @math.PI * @math.PI / (8.0 * x * x)
     let mut s = 0.0
-    for k in 1..=20 {
+    for k in 1..<=20 {
       let m = (2 * k - 1).to_double()
       let t = @math.exp(-m * m * c)
       s = s + t
@@ -309,7 +322,7 @@ pub fn kolmogorov_sf(x : Double) -> Double {
   } else {
     let mut s = 0.0
     let mut sign = 1.0
-    for k in 1..=100 {
+    for k in 1..<=100 {
       let kd = k.to_double()
       let t = @math.exp(-2.0 * kd * kd * x * x)
       s = s + sign * t

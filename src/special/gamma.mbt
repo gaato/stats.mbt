@@ -175,7 +175,8 @@ pub fn lbeta(a : Double, b : Double) -> Double {
   let (big, small) = if a >= b { (a, b) } else { (b, a) }
   if small >= 8.0 {
     // ln √(2π) - ln √small + (big - 1/2) ln(big/(a+b)) + small ln(small/(a+b))
-    ln_sqrt_2pi - 0.5 * @math.ln(small) -
+    ln_sqrt_2pi -
+    0.5 * @math.ln(small) -
     (big - 0.5) * @math.ln_1p(small / big) -
     small * @math.ln_1p(big / small) +
     stirling_delta(big) +
@@ -183,7 +184,8 @@ pub fn lbeta(a : Double, b : Double) -> Double {
     stirling_delta(big + small)
   } else if big >= 8.0 {
     // ln Γ(small) + [ln Γ(big) - ln Γ(big + small)]
-    lgamma(small) - small * @math.ln(big) -
+    lgamma(small) -
+    small * @math.ln(big) -
     (big + small - 0.5) * @math.ln_1p(small / big) +
     small +
     stirling_delta(big) -

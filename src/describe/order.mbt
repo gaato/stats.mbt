@@ -15,7 +15,9 @@ pub fn quantile_sorted(
 ) -> Double {
   let n = sorted.length()
   // x(k) for 1-based k, clamped to [1, n]
-  let at = (k : Int) => sorted[(if k < 1 { 1 } else if k > n { n } else { k }) - 1]
+  let at = (k : Int32) => {
+    sorted[(if k < 1 { 1 } else if k > n { n } else { k }) - 1]
+  }
   let np = n.to_double() * p
   match how {
     Type1 => {
@@ -82,7 +84,10 @@ pub fn quantile(
 
 ///|
 /// Ranks starting at 1, with the tie rule given by the caller.
-pub fn ranks(data : ArrayView[Double], ties : @data.RankTies) -> FixedArray[Double] {
+pub fn ranks(
+  data : ArrayView[Double],
+  ties : @data.RankTies,
+) -> FixedArray[Double] {
   let n = data.length()
   let order = FixedArray::makei(n, i => i)
   order.sort_by((a, b) => {
@@ -102,7 +107,7 @@ pub fn ranks(data : ArrayView[Double], ties : @data.RankTies) -> FixedArray[Doub
       j = j + 1
     }
     dense = dense + 1
-    for k in i..=j {
+    for k in i..<=j {
       out[order[k]] = match ties {
         Average => 0.5 * ((i + 1).to_double() + (j + 1).to_double())
         Min => (i + 1).to_double()
@@ -180,7 +185,7 @@ pub(all) enum Bins {
   /// bin, the last edge is closed.
   Edges(FixedArray[Double])
   /// k equal-width bins over [lo, hi].
-  Uniform(k~ : Int, lo~ : Double, hi~ : Double)
+  Uniform(k~ : Int32, lo~ : Double, hi~ : Double)
   Sturges
   Scott
   FreedmanDiaconis

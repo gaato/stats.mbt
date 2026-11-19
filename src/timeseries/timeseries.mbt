@@ -3,14 +3,14 @@
 
 ///|
 /// Autocorrelations at lags 0 ..= max_lag (lag 0 is 1).
-pub fn acf(ts : @data.TimeSeries, max_lag : Int) -> FixedArray[Double] {
+pub fn acf(ts : @data.TimeSeries, max_lag : Int32) -> FixedArray[Double] {
   ignore((ts, max_lag))
   ...
 }
 
 ///|
 /// Partial autocorrelations by the Durbin–Levinson recursion.
-pub fn pacf(ts : @data.TimeSeries, max_lag : Int) -> FixedArray[Double] {
+pub fn pacf(ts : @data.TimeSeries, max_lag : Int32) -> FixedArray[Double] {
   ignore((ts, max_lag))
   ...
 }
@@ -19,8 +19,8 @@ pub fn pacf(ts : @data.TimeSeries, max_lag : Int) -> FixedArray[Double] {
 /// Ljung–Box test for autocorrelation up to a lag.
 pub fn ljung_box(
   residuals : ArrayView[Double],
-  lags : Int,
-  fitted_params~ : Int,
+  lags : Int32,
+  fitted_params~ : Int32,
 ) -> @infer.TestResult {
   ignore((residuals, lags, fitted_params))
   ...
@@ -50,13 +50,13 @@ pub fn periodogram(ts : @data.TimeSeries, taper : Taper) -> Spectrum {
 
 ///|
 pub struct ArimaOrder {
-  p : Int
-  d : Int
-  q : Int
-  seasonal_p : Int
-  seasonal_d : Int
-  seasonal_q : Int
-  period : Int
+  p : Int32
+  d : Int32
+  q : Int32
+  seasonal_p : Int32
+  seasonal_d : Int32
+  seasonal_q : Int32
+  period : Int32
 }
 
 ///|
@@ -72,7 +72,10 @@ pub struct ArimaFit {
 
 ///|
 /// Exact maximum likelihood through the state-space form.
-pub fn arima(ts : @data.TimeSeries, order : ArimaOrder) -> ArimaFit raise @regress.ModelError {
+pub fn arima(
+  ts : @data.TimeSeries,
+  order : ArimaOrder,
+) -> ArimaFit raise @regress.ModelError {
   ignore((ts, order))
   ...
 }
@@ -80,7 +83,7 @@ pub fn arima(ts : @data.TimeSeries, order : ArimaOrder) -> ArimaFit raise @regre
 ///|
 pub fn ArimaFit::forecast(
   self : ArimaFit,
-  steps : Int,
+  steps : Int32,
   level : Double,
 ) -> (FixedArray[Double], Array[@infer.Interval]) {
   ignore((self, steps, level))
@@ -109,7 +112,7 @@ pub fn kalman_filter(
 
 ///|
 /// Augmented Dickey–Fuller unit-root test.
-pub fn adf_test(ts : @data.TimeSeries, lags : Int) -> @infer.TestResult {
+pub fn adf_test(ts : @data.TimeSeries, lags : Int32) -> @infer.TestResult {
   ignore((ts, lags))
   ...
 }

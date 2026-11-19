@@ -49,7 +49,7 @@ pub fn Bivariate::new(
   if x.length() != y.length() {
     raise LengthMismatch(expected=x.length(), got=y.length())
   }
-  { x: FixedArray::from_iter(x.iter()), y: FixedArray::from_iter(y.iter()) }
+  { x: FixedArray::from_iter(x.iter()), y: FixedArray::from_iter(y.iter()), }
 }
 
 ///|
@@ -57,15 +57,15 @@ pub fn Bivariate::new(
 /// Labels are 0 ..< groups.
 pub struct Grouped {
   values : FixedArray[Double]
-  labels : FixedArray[Int]
-  groups : Int
+  labels : FixedArray[Int32]
+  groups : Int32
 }
 
 ///|
 pub fn Grouped::new(
   values : ArrayView[Double],
-  labels : ArrayView[Int],
-  groups~ : Int,
+  labels : ArrayView[Int32],
+  groups~ : Int32,
 ) -> Grouped raise DataError {
   if values.length() != labels.length() {
     raise LengthMismatch(expected=values.length(), got=labels.length())
@@ -76,7 +76,7 @@ pub fn Grouped::new(
 
 ///|
 /// The values of one group, in input order.
-pub fn Grouped::group(self : Grouped, g : Int) -> FixedArray[Double] {
+pub fn Grouped::group(self : Grouped, g : Int32) -> FixedArray[Double] {
   ignore((self, g))
   ...
 }
@@ -85,8 +85,8 @@ pub fn Grouped::group(self : Grouped, g : Int) -> FixedArray[Double] {
 /// k related measurements on each of n blocks (subjects), row-major
 /// n × k: the input of Friedman's test and repeated-measures ANOVA.
 pub struct Blocks {
-  blocks : Int
-  treatments : Int
+  blocks : Int32
+  treatments : Int32
   values : FixedArray[Double]
 }
 
@@ -94,7 +94,7 @@ pub struct Blocks {
 /// A sample known only through its summary, as in published tables.
 /// Tests that need nothing more (t tests, z tests) accept it.
 pub(all) struct Summary {
-  n : Int
+  n : Int32
   mean : Double
   sd : Double
 }
@@ -139,25 +139,25 @@ pub fn SurvivalRecord::to_observation(self : SurvivalRecord) -> Observation {
 /// container until a dense linear algebra module provides a matrix type;
 /// design matrices, multivariate samples and MCMC draws use it.
 pub struct DataMatrix {
-  rows : Int
-  cols : Int
+  rows : Int32
+  cols : Int32
   values : FixedArray[Double]
 }
 
 ///|
 pub fn DataMatrix::new(
-  rows : Int,
-  cols : Int,
+  rows : Int32,
+  cols : Int32,
   values : ArrayView[Double],
 ) -> DataMatrix raise DataError {
   if values.length() != rows * cols {
     raise LengthMismatch(expected=rows * cols, got=values.length())
   }
-  { rows, cols, values: FixedArray::from_iter(values.iter()) }
+  { rows, cols, values: FixedArray::from_iter(values.iter()), }
 }
 
 ///|
-pub fn DataMatrix::at(self : DataMatrix, i : Int, j : Int) -> Double {
+pub fn DataMatrix::at(self : DataMatrix, i : Int32, j : Int32) -> Double {
   self.values[i * self.cols + j]
 }
 
@@ -167,7 +167,7 @@ pub fn DataMatrix::at(self : DataMatrix, i : Int, j : Int) -> Double {
 pub(all) struct TimeSeries {
   values : FixedArray[Double]
   start : Double
-  frequency : Int
+  frequency : Int32
 }
 
 ///|

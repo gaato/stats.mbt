@@ -20,7 +20,7 @@ pub struct Comoment {
 
 ///|
 pub fn Comoment::empty() -> Comoment {
-  { n: 0, kx: 0.0, ky: 0.0, mx: 0.0, my: 0.0, m2x: 0.0, m2y: 0.0, cxy: 0.0 }
+  { n: 0, kx: 0.0, ky: 0.0, mx: 0.0, my: 0.0, m2x: 0.0, m2y: 0.0, cxy: 0.0, }
 }
 
 ///|
@@ -85,7 +85,7 @@ pub fn Comoment::mean_x(self : Comoment) -> Double? {
 }
 
 ///|
-pub fn Comoment::covariance(self : Comoment, ddof~ : Int) -> Double? {
+pub fn Comoment::covariance(self : Comoment, ddof~ : Int32) -> Double? {
   let d = self.n - ddof.to_int64()
   if d <= 0 {
     None
@@ -118,7 +118,7 @@ pub struct WeightedMeanVar {
 
 ///|
 pub fn WeightedMeanVar::empty(kind : @data.WeightKind) -> WeightedMeanVar {
-  { kind, w: 0.0, w2: 0.0, mean: 0.0, s: 0.0 }
+  { kind, w: 0.0, w2: 0.0, mean: 0.0, s: 0.0, }
 }
 
 ///|
@@ -173,7 +173,7 @@ pub struct Moments4 {
 
 ///|
 pub fn Moments4::empty() -> Moments4 {
-  { n: 0, mean: 0.0, m2: 0.0, m3: 0.0, m4: 0.0 }
+  { n: 0, mean: 0.0, m2: 0.0, m3: 0.0, m4: 0.0, }
 }
 
 ///|

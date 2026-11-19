@@ -48,7 +48,7 @@ pub struct FactorFit {
 /// Maximum-likelihood factor analysis.
 pub fn factor_analysis(
   x : @data.DataMatrix,
-  factors : Int,
+  factors : Int32,
   rotation : Rotation,
 ) -> FactorFit {
   ignore((x, factors, rotation))
@@ -65,7 +65,7 @@ pub(all) enum Discriminant {
 
 ///|
 pub struct Classifier {
-  classes : Int
+  classes : Int32
   /// Class probabilities for new rows.
   predict : (@data.DataMatrix) -> @data.DataMatrix
 }
@@ -73,7 +73,7 @@ pub struct Classifier {
 ///|
 pub fn discriminant(
   x : @data.DataMatrix,
-  labels : ArrayView[Int],
+  labels : ArrayView[Int32],
   kind : Discriminant,
 ) -> Classifier {
   ignore((x, labels, kind))
@@ -98,16 +98,16 @@ pub fn roc(scores : ArrayView[Double], positive : ArrayView[Bool]) -> Roc {
 ///|
 pub struct KMeans {
   centers : @data.DataMatrix
-  labels : FixedArray[Int]
+  labels : FixedArray[Int32]
   within_ss : FixedArray[Double]
-  iterations : Int
+  iterations : Int32
 }
 
 ///|
 /// k-means with k-means++ seeding.
 pub fn kmeans(
   x : @data.DataMatrix,
-  k : Int,
+  k : Int32,
   rng~ : &@num.RandomSource,
 ) -> KMeans {
   ignore((x, k, rng))
@@ -126,19 +126,22 @@ pub(all) enum Linkage {
 ///|
 /// Agglomerative clustering: the merge sequence and heights.
 pub struct Dendrogram {
-  merges : FixedArray[(Int, Int)]
+  merges : FixedArray[(Int32, Int32)]
   heights : FixedArray[Double]
 }
 
 ///|
-pub fn hierarchical(distances : @data.DataMatrix, linkage : Linkage) -> Dendrogram {
+pub fn hierarchical(
+  distances : @data.DataMatrix,
+  linkage : Linkage,
+) -> Dendrogram {
   ignore((distances, linkage))
   ...
 }
 
 ///|
 /// Classical multidimensional scaling to `dims` dimensions.
-pub fn mds(distances : @data.DataMatrix, dims : Int) -> @data.DataMatrix {
+pub fn mds(distances : @data.DataMatrix, dims : Int32) -> @data.DataMatrix {
   ignore((distances, dims))
   ...
 }
@@ -152,7 +155,10 @@ pub fn cca(x : @data.DataMatrix, y : @data.DataMatrix) -> FixedArray[Double] {
 
 ///|
 /// Correspondence analysis of a contingency table.
-pub fn correspondence(table : @data.Table, dims : Int) -> (@data.DataMatrix, @data.DataMatrix) {
+pub fn correspondence(
+  table : @data.Table,
+  dims : Int32,
+) -> (@data.DataMatrix, @data.DataMatrix) {
   ignore((table, dims))
   ...
 }

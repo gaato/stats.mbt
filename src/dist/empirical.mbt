@@ -26,12 +26,12 @@ pub fn Empirical::new(
   }
   let sorted = FixedArray::from_iter(data.iter())
   sorted.sort()
-  { sorted, quantile_method }
+  { sorted, quantile_method, }
 }
 
 ///|
 /// The number of values <= x, by binary search.
-fn Empirical::count_le(self : Empirical, x : Double) -> Int {
+fn Empirical::count_le(self : Empirical, x : Double) -> Int32 {
   let mut lo = 0
   let mut hi = self.sorted.length()
   while lo < hi {
@@ -46,19 +46,19 @@ fn Empirical::count_le(self : Empirical, x : Double) -> Int {
 }
 
 ///|
-pub impl Cdf for Empirical with cdf(self, x) {
+pub impl Cdf for Empirical with fn cdf(self, x) {
   self.count_le(x).to_double() / self.sorted.length().to_double()
 }
 
 ///|
-pub impl Cdf for Empirical with sf(self, x) {
+pub impl Cdf for Empirical with fn sf(self, x) {
   (self.sorted.length() - self.count_le(x)).to_double() /
   self.sorted.length().to_double()
 }
 
 ///|
 /// P(X >= x): the values not below x.
-pub impl Cdf for Empirical with sf_at_least(self, x) {
+pub impl Cdf for Empirical with fn sf_at_least(self, x) {
   let mut lo = 0
   let mut hi = self.sorted.length()
   while lo < hi {
@@ -73,18 +73,18 @@ pub impl Cdf for Empirical with sf_at_least(self, x) {
 }
 
 ///|
-pub impl Quantile for Empirical with quantile(self, p) {
+pub impl Quantile for Empirical with fn quantile(self, p) {
   @describe.quantile_sorted(self.sorted[:], p, self.quantile_method)
 }
 
 ///|
 /// Bootstrap resampling is sampling from the empirical distribution.
-pub impl Sample for Empirical with sample(self, rng) {
+pub impl Sample for Empirical with fn sample(self, rng) {
   self.sorted[@num.uniform_below(rng, self.sorted.length().to_uint64()).to_int()]
 }
 
 ///|
-pub impl Moments for Empirical with mean(self) {
+pub impl Moments for Empirical with fn mean(self) {
   let mut s = @num.CompensatedSum::zero()
   for x in self.sorted {
     s = s.add(x)
@@ -94,7 +94,7 @@ pub impl Moments for Empirical with mean(self) {
 
 ///|
 /// The variance of the distribution itself: divisor n.
-pub impl Moments for Empirical with variance(self) {
+pub impl Moments for Empirical with fn variance(self) {
   let m = Moments::mean(self).unwrap()
   let mut s = @num.CompensatedSum::zero()
   for x in self.sorted {
@@ -108,7 +108,7 @@ pub impl Moments for Empirical with variance(self) {
 /// Both prefix and suffix sums are kept, so `sf` far in the upper tail
 /// is a sum of small terms, not 1 minus a number close to 1.
 pub struct FiniteDiscrete {
-  priv offset : Int
+  priv offset : Int32
   priv probs : FixedArray[Double]
   priv lower : FixedArray[Double]
   priv upper : FixedArray[Double]
@@ -116,7 +116,7 @@ pub struct FiniteDiscrete {
 
 ///|
 pub fn FiniteDiscrete::new(
-  offset : Int,
+  offset : Int32,
   probs : ArrayView[Double],
 ) -> FiniteDiscrete raise ParamError {
   let n = probs.length()
@@ -131,7 +131,11 @@ pub fn FiniteDiscrete::new(
     total = total.add(q)
   }
   if (total.value() - 1.0).abs() > 1.0e-9 {
-    raise InvalidParam(name="probs", value=total.value(), reason="must sum to 1")
+    raise InvalidParam(
+      name="probs",
+      value=total.value(),
+      reason="must sum to 1",
+    )
   }
   let lower = FixedArray::make(n, 0.0)
   let upper = FixedArray::make(n, 0.0)
@@ -146,11 +150,11 @@ pub fn FiniteDiscrete::new(
     upper[i] = acc.value()
     acc = acc.add(probs[i])
   }
-  { offset, probs: FixedArray::from_iter(probs.iter()), lower, upper }
+  { offset, probs: FixedArray::from_iter(probs.iter()), lower, upper, }
 }
 
 ///|
-pub impl Mass for FiniteDiscrete with pmf(self, k) {
+pub impl Mass for FiniteDiscrete with fn pmf(self, k) {
   let i = k - self.offset
   if i < 0 || i >= self.probs.length() {
     0.0
@@ -160,7 +164,7 @@ pub impl Mass for FiniteDiscrete with pmf(self, k) {
 }
 
 ///|
-pub impl IntCdf for FiniteDiscrete with cdf_int(self, k) {
+pub impl IntCdf for FiniteDiscrete with fn cdf_int(self, k) {
   let i = k - self.offset
   if i < 0 {
     0.0
@@ -172,7 +176,7 @@ pub impl IntCdf for FiniteDiscrete with cdf_int(self, k) {
 }
 
 ///|
-pub impl IntCdf for FiniteDiscrete with sf_int(self, k) {
+pub impl IntCdf for FiniteDiscrete with fn sf_int(self, k) {
   let i = k - self.offset
   if i < 0 {
     1.0
@@ -184,7 +188,7 @@ pub impl IntCdf for FiniteDiscrete with sf_int(self, k) {
 }
 
 ///|
-pub impl IntQuantile for FiniteDiscrete with quantile_int(self, p) {
+pub impl IntQuantile for FiniteDiscrete with fn quantile_int(self, p) {
   let mut lo = 0
   let mut hi = self.lower.length() - 1
   while lo < hi {
@@ -199,12 +203,12 @@ pub impl IntQuantile for FiniteDiscrete with quantile_int(self, p) {
 }
 
 ///|
-pub impl Quantile for FiniteDiscrete with quantile(self, p) {
+pub impl Quantile for FiniteDiscrete with fn quantile(self, p) {
   IntQuantile::quantile_int(self, p).to_double()
 }
 
 ///|
-pub impl Sample for FiniteDiscrete with sample(self, rng) {
+pub impl Sample for FiniteDiscrete with fn sample(self, rng) {
   Quantile::quantile(self, @num.uniform_open(rng))
 }
 
@@ -216,16 +220,16 @@ pub impl Univariate for Empirical
 
 ///|
 /// On the real line the distribution function is the step function.
-pub impl Cdf for FiniteDiscrete with cdf(self, x) {
+pub impl Cdf for FiniteDiscrete with fn cdf(self, x) {
   IntCdf::cdf_int(self, @math.floor(x).to_int())
 }
 
 ///|
-pub impl Cdf for FiniteDiscrete with sf(self, x) {
+pub impl Cdf for FiniteDiscrete with fn sf(self, x) {
   IntCdf::sf_int(self, @math.floor(x).to_int())
 }
 
 ///|
-pub impl Cdf for FiniteDiscrete with sf_at_least(self, x) {
+pub impl Cdf for FiniteDiscrete with fn sf_at_least(self, x) {
   IntCdf::sf_int(self, @math.ceil(x).to_int() - 1)
 }

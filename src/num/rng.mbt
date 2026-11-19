@@ -11,7 +11,7 @@
 /// A source of uniform 64-bit words. Distributions take it as a trait
 /// object, so no global random state exists anywhere in the library.
 pub(open) trait RandomSource {
-  next_u64(Self) -> UInt64
+  fn next_u64(Self) -> UInt64
 }
 
 ///|
@@ -24,7 +24,7 @@ pub struct Xoshiro256 {
 }
 
 ///|
-fn rotl(x : UInt64, k : Int) -> UInt64 {
+fn rotl(x : UInt64, k : Int32) -> UInt64 {
   (x << k) | (x >> (64 - k))
 }
 
@@ -43,7 +43,7 @@ pub fn Xoshiro256::seed(seed : UInt64) -> Xoshiro256 {
   let (b, s1) = splitmix64(a)
   let (c, s2) = splitmix64(b)
   let (_, s3) = splitmix64(c)
-  { s0, s1, s2, s3 }
+  { s0, s1, s2, s3, }
 }
 
 ///|
@@ -54,11 +54,11 @@ pub fn Xoshiro256::from_state(
   s2 : UInt64,
   s3 : UInt64,
 ) -> Xoshiro256 {
-  { s0, s1, s2, s3 }
+  { s0, s1, s2, s3, }
 }
 
 ///|
-pub impl RandomSource for Xoshiro256 with next_u64(self) {
+pub impl RandomSource for Xoshiro256 with fn next_u64(self) {
   let result = rotl(self.s1 * 5, 7) * 9
   let t = self.s1 << 17
   self.s2 = self.s2 ^ self.s0
@@ -178,11 +178,11 @@ pub extend Xoshiro256 with RandomSource::{next_u64}
 /// advances the state by 2^128 draws (xoshiro256's jump polynomial), so
 /// each worker takes the next jumped copy.
 pub(open) trait Jump {
-  jump(Self) -> Unit
+  fn jump(Self) -> Unit
 }
 
 ///|
-pub impl Jump for Xoshiro256 with jump(self) {
+pub impl Jump for Xoshiro256 with fn jump(self) {
   ignore(self)
   ...
 }

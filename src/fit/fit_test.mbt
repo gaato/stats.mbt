@@ -21,7 +21,9 @@ test "exponential family fit of a normal" {
   }
   let sigma = (ss / n).sqrt()
   assert_true(near(@dist.Moments::mean(r.dist).unwrap(), mean, 1.0e-14))
-  assert_true(near(@dist.Moments::variance(r.dist).unwrap(), sigma * sigma, 1.0e-13))
+  assert_true(
+    near(@dist.Moments::variance(r.dist).unwrap(), sigma * sigma, 1.0e-13),
+  )
   // at the MLE, ln L = -n/2 (ln(2π σ²) + 1)
   let expected = -0.5 * n * (@math.ln(2.0 * @math.PI * sigma * sigma) + 1.0)
   assert_true(near(r.loglik, expected, 1.0e-13))
@@ -32,7 +34,9 @@ test "exponential family fit of a normal" {
 
 ///|
 test "a constant sample has no normal fit" {
-  let ok = try @fit.fit_exp_family(@dist.Normal::exp_family(), [1.0, 1.0, 1.0][:]) catch {
+  let ok = try
+    @fit.fit_exp_family(@dist.Normal::exp_family(), [1.0, 1.0, 1.0][:])
+  catch {
     _ => false
   } noraise {
     _ => true
@@ -43,8 +47,8 @@ test "a constant sample has no normal fit" {
 ///|
 test "akaike weights" {
   let w = @fit.akaike_weights([
-    { family: "a", aic: 10.0, bic: 0.0, k: 1 },
-    { family: "b", aic: 12.0, bic: 0.0, k: 2 },
+    { family: "a", aic: 10.0, bic: 0.0, k: 1, },
+    { family: "b", aic: 12.0, bic: 0.0, k: 2, },
   ])
   let e = @math.exp(-1.0)
   assert_true(near(w[0], 1.0 / (1.0 + e), 1.0e-15))

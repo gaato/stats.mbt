@@ -55,7 +55,11 @@ fn erfcx_cf(x : Double) -> Double {
   if x > 1.0e8 {
     return inv_sqrt_pi / x
   }
-  let r = @num.continued_fraction(x, n => (0.5 * n.to_double(), x), max_terms=2000)
+  let r = @num.continued_fraction(
+    x,
+    n => (0.5 * n.to_double(), x),
+    max_terms=2000,
+  )
   inv_sqrt_pi / r.value
 }
 

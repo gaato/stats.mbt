@@ -147,8 +147,7 @@ fn igam_invert(a : Double, target : Double, upper : Bool) -> Double {
   let p_lower = if upper { 1.0 - target } else { target }
   // start: Wilson–Hilferty for a >= 1, the small-x power law otherwise
   let z = ndtri(p_lower)
-  let wh = a *
-    @math.pow(1.0 - 1.0 / (9.0 * a) + z / (3.0 * a.sqrt()), 3.0)
+  let wh = a * @math.pow(1.0 - 1.0 / (9.0 * a) + z / (3.0 * a.sqrt()), 3.0)
   let power = @math.exp((@math.ln(p_lower) + lgamma(a + 1.0)) / a)
   let mut x0 = if a >= 1.0 && wh > 0.0 { wh } else { power }
   if !(x0 > 0.0) || x0.is_inf() {
@@ -178,7 +177,13 @@ fn igam_invert(a : Double, target : Double, upper : Bool) -> Double {
   // bracket the root around the start, multiplicatively
   let mut lo = x0
   let mut hi = x0
-  let below = (x : Double) => if upper { value(x) > target } else { value(x) < target }
+  let below = (x : Double) => {
+    if upper {
+      value(x) > target
+    } else {
+      value(x) < target
+    }
+  }
   let mut rounds = 0
   while below(hi) && rounds < 2100 {
     hi = hi * 2.0
@@ -189,7 +194,13 @@ fn igam_invert(a : Double, target : Double, upper : Bool) -> Double {
     lo = lo * 0.5
     rounds = rounds + 1
   }
-  let r = @num.find_root_newton(g, @math.ln(lo), @math.ln(hi), @math.ln(x0), max_iterations=200)
+  let r = @num.find_root_newton(
+    g,
+    @math.ln(lo),
+    @math.ln(hi),
+    @math.ln(x0),
+    max_iterations=200,
+  )
   // exp(u) turns the rounding of u into a relative error |u|·eps in x;
   // finish with Newton steps on the value itself in x
   let mut x = @math.exp(r.value)

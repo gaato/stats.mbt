@@ -36,11 +36,11 @@ pub(all) enum MissingPolicy {
 ///|
 #derive(Debug)
 pub(all) suberror DataError {
-  ContainsNaN(index~ : Int)
-  LengthMismatch(expected~ : Int, got~ : Int)
+  ContainsNaN(index~ : Int32)
+  LengthMismatch(expected~ : Int32, got~ : Int32)
   Empty
-  NegativeWeight(index~ : Int)
-  NegativeCount(row~ : Int, col~ : Int)
+  NegativeWeight(index~ : Int32)
+  NegativeCount(row~ : Int32, col~ : Int32)
 }
 
 ///|
@@ -87,15 +87,15 @@ pub fn Weighted::new(
 /// An r × c table of counts, row-major. Tests of independence, Fisher's
 /// exact test and measures of association take this, not raw labels.
 pub struct Table {
-  rows : Int
-  cols : Int
+  rows : Int32
+  cols : Int32
   counts : FixedArray[Int64]
 }
 
 ///|
 pub fn Table::new(
-  rows : Int,
-  cols : Int,
+  rows : Int32,
+  cols : Int32,
   counts : ArrayView[Int64],
 ) -> Table raise DataError {
   if counts.length() != rows * cols {
@@ -106,11 +106,11 @@ pub fn Table::new(
       raise NegativeCount(row=i / cols, col=i % cols)
     }
   }
-  { rows, cols, counts: FixedArray::from_iter(counts.iter()) }
+  { rows, cols, counts: FixedArray::from_iter(counts.iter()), }
 }
 
 ///|
-pub fn Table::at(self : Table, row : Int, col : Int) -> Int64 {
+pub fn Table::at(self : Table, row : Int32, col : Int32) -> Int64 {
   self.counts[row * self.cols + col]
 }
 
@@ -129,7 +129,7 @@ pub fn Table::total(self : Table) -> Int64 {
 pub fn clean(
   values : ArrayView[Double],
   policy : MissingPolicy,
-) -> (FixedArray[Double], Int) raise DataError {
+) -> (FixedArray[Double], Int32) raise DataError {
   match policy {
     Propagate => (FixedArray::from_iter(values.iter()), 0)
     Reject => {

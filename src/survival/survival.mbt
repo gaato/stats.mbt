@@ -8,8 +8,8 @@ pub struct SurvivalCurve {
   times : FixedArray[Double]
   survival : FixedArray[Double]
   se : FixedArray[Double]
-  at_risk : FixedArray[Int]
-  events : FixedArray[Int]
+  at_risk : FixedArray[Int32]
+  events : FixedArray[Int32]
 }
 
 ///|

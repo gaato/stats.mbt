@@ -5,7 +5,7 @@
 
 ///|
 /// (n, mean, variance with divisor n - 1), two-pass with compensated sums.
-fn summarize(x : ArrayView[Double]) -> (Int, Double, Double) {
+fn summarize(x : ArrayView[Double]) -> (Int32, Double, Double) {
   let n = x.length()
   let mut s = @num.CompensatedSum::zero()
   for v in x {
@@ -42,15 +42,21 @@ fn pivot_interval(
   match alternative {
     TwoSided => {
       let c = @dist.Quantile::isf(pivot, 0.5 * alpha)
-      { lo: est - c * se, hi: est + c * se, level, kind: Confidence, procedure }
+      {
+        lo: est - c * se,
+        hi: est + c * se,
+        level,
+        kind: Confidence,
+        procedure,
+      }
     }
     Greater => {
       let c = @dist.Quantile::isf(pivot, alpha)
-      { lo: est - c * se, hi: 1.0 / 0.0, level, kind: Confidence, procedure }
+      { lo: est - c * se, hi: 1.0 / 0.0, level, kind: Confidence, procedure, }
     }
     Less => {
       let c = @dist.Quantile::isf(pivot, alpha)
-      { lo: -1.0 / 0.0, hi: est + c * se, level, kind: Confidence, procedure }
+      { lo: -1.0 / 0.0, hi: est + c * se, level, kind: Confidence, procedure, }
     }
   }
 }
@@ -58,7 +64,11 @@ fn pivot_interval(
 ///|
 /// The log of a tail probability of a continuous null, through `logsf` so
 /// that p-values below 1e-308 are still reported on the log scale.
-fn log_tail(null_dist : &@dist.Univariate, observed : Double, alternative : Alternative) -> Double {
+fn log_tail(
+  null_dist : &@dist.Univariate,
+  observed : Double,
+  alternative : Alternative,
+) -> Double {
   match alternative {
     Greater => @dist.Cdf::logsf(null_dist, observed)
     Less => @dist.Cdf::logcdf(null_dist, observed)
@@ -83,11 +93,11 @@ fn continuous_result(
   null_dist : &@dist.Univariate,
   alternative : Alternative,
   df~ : Double?,
-  df2? : Double? = None,
-  estimate? : Double? = None,
-  null_value? : Double? = None,
-  interval? : Interval? = None,
-  effect? : Effect? = None,
+  df2~ : Double? = None,
+  estimate~ : Double? = None,
+  null_value~ : Double? = None,
+  interval~ : Interval? = None,
+  effect~ : Effect? = None,
   p_kind~ : PValueKind,
   procedure~ : String,
 ) -> TestResult {
@@ -122,9 +132,9 @@ fn continuous_result(
 /// in exact arithmetic are not split by rounding.
 fn[D : @dist.Mass + @dist.IntCdf] min_likelihood_p(
   d : D,
-  k : Int,
-  lo : Int,
-  hi : Int,
+  k : Int32,
+  lo : Int32,
+  hi : Int32,
   mode : Double,
 ) -> Double {
   let bound = @dist.Mass::pmf(d, k) * (1.0 + 1.0e-7)
@@ -153,7 +163,7 @@ fn[D : @dist.Mass + @dist.IntCdf] min_likelihood_p(
 
 ///|
 /// Tail p-values of a discrete null at k: (P(X >= k), P(X <= k)).
-fn[D : @dist.IntCdf] discrete_tails(d : D, k : Int) -> (Double, Double) {
+fn[D : @dist.IntCdf] discrete_tails(d : D, k : Int32) -> (Double, Double) {
   (@dist.IntCdf::sf_int(d, k - 1), @dist.IntCdf::cdf_int(d, k))
 }
 
@@ -161,9 +171,9 @@ fn[D : @dist.IntCdf] discrete_tails(d : D, k : Int) -> (Double, Double) {
 /// Choose the p-value of a discrete null for the alternative and rule.
 fn[D : @dist.Mass + @dist.IntCdf] discrete_p(
   d : D,
-  k : Int,
-  lo : Int,
-  hi : Int,
+  k : Int32,
+  lo : Int32,
+  hi : Int32,
   mode : Double,
   alternative : Alternative,
   rule : TwoSidedRule,
@@ -190,7 +200,9 @@ fn[D : @dist.Mass + @dist.IntCdf] discrete_p(
 ///|
 /// Combined ranks of several samples (average ties), the per-sample rank
 /// sums, and the tie term Σ (t³ - t) over tied groups.
-fn combined_ranks(groups : ArrayView[ArrayView[Double]]) -> (FixedArray[Double], Double) {
+fn combined_ranks(
+  groups : ArrayView[ArrayView[Double]],
+) -> (FixedArray[Double], Double) {
   let all = []
   for g in groups {
     for v in g {

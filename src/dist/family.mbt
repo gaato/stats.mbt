@@ -81,7 +81,7 @@ pub struct Family[D] {
 }
 
 ///|
-pub fn[D] Family::dim(self : Family[D]) -> Int {
+pub fn[D] Family::dim(self : Family[D]) -> Int32 {
   self.specs.length()
 }
 
@@ -107,7 +107,7 @@ pub fn[D] Family::from_unconstrained(
 pub struct ExpFamily[D] {
   family : Family[D]
   /// Length of η and T.
-  natural_dim : Int
+  natural_dim : Int32
   natural : (D) -> FixedArray[Double]
   sufficient : (Double) -> FixedArray[Double]
   log_partition : (D) -> Double
@@ -143,7 +143,7 @@ pub fn[D : Density] loglik(d : D, data : ArrayView[Double]) -> Double {
 }
 
 ///|
-pub fn[D : Mass] loglik_int(d : D, data : ArrayView[Int]) -> Double {
+pub fn[D : Mass] loglik_int(d : D, data : ArrayView[Int32]) -> Double {
   let mut sum = 0.0
   let mut c = 0.0
   for k in data {
@@ -160,7 +160,7 @@ pub fn[D : Mass] loglik_int(d : D, data : ArrayView[Int]) -> Double {
 /// family, written into `out`. Families provide it in closed form; it feeds
 /// optimisers and the observed information matrix.
 pub(open) trait Score {
-  score_into(Self, Double, FixedArray[Double]) -> Unit
+  fn score_into(Self, Double, FixedArray[Double]) -> Unit
 }
 
 // ---------------------------------------------------------------------------
@@ -179,8 +179,9 @@ pub fn Normal::exp_family() -> ExpFamily[Normal] {
       [d.loc / v, -0.5 / v]
     },
     sufficient: x => [x, x * x],
-    log_partition: d => d.loc * d.loc / (2.0 * d.scale * d.scale) +
-      @math.ln(d.scale),
+    log_partition: d => {
+      d.loc * d.loc / (2.0 * d.scale * d.scale) + @math.ln(d.scale)
+    },
     log_base: _ => -0.5 * @math.ln(2.0 * @math.PI),
     from_mean_sufficient: m => {
       let variance = m[1] - m[0] * m[0]
@@ -197,7 +198,9 @@ pub fn Normal::exp_family() -> ExpFamily[Normal] {
 ///|
 /// Normal mean with known variance and a normal prior on the mean: the
 /// posterior mean is the precision-weighted average.
-pub fn Normal::known_variance_prior(sigma : Double) -> Conjugate[Normal, Normal] {
+pub fn Normal::known_variance_prior(
+  sigma : Double,
+) -> Conjugate[Normal, Normal] {
   {
     name: "normal-normal (known variance)",
     update: (prior, data) => {
@@ -220,16 +223,18 @@ pub fn Normal::known_variance_prior(sigma : Double) -> Conjugate[Normal, Normal]
 
 ///|
 /// η = logit p, T(x) = x, A = n ln(1 + e^η), h(x) = ln C(n, x).
-pub fn Binomial::exp_family(n~ : Int) -> ExpFamily[Binomial] {
+pub fn Binomial::exp_family(n~ : Int32) -> ExpFamily[Binomial] {
   {
     family: Binomial::family(n~),
     natural_dim: 1,
     natural: d => [@math.ln(d.p / (1.0 - d.p))],
     sufficient: x => [x],
     log_partition: d => -n.to_double() * @math.ln(1.0 - d.p),
-    log_base: x => @special.lgamma(n.to_double() + 1.0) -
+    log_base: x => {
+      @special.lgamma(n.to_double() + 1.0) -
       @special.lgamma(x + 1.0) -
-      @special.lgamma(n.to_double() - x + 1.0),
+      @special.lgamma(n.to_double() - x + 1.0)
+    },
     from_mean_sufficient: m => {
       let p = m[0] / n.to_double()
       Binomial::new(n, p) catch {

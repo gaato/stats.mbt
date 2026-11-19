@@ -40,7 +40,9 @@ test "normal density in closed form" {
   assert_true(near(@dist.Density::pdf(d, 1.0), 0.19947114020071635, 1.0e-15))
   // the log density stays finite where the density underflows
   assert_true(@dist.Density::pdf(d, 1.0e3) == 0.0)
-  assert_true(near(@dist.Density::logpdf(d, 1.0e3), -124751.73708571376, 1.0e-15))
+  assert_true(
+    near(@dist.Density::logpdf(d, 1.0e3), -124751.73708571376, 1.0e-15),
+  )
 }
 
 ///|

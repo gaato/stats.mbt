@@ -9,13 +9,13 @@ pub struct MleResult[D] {
   dist : D
   loglik : Double
   /// Free parameters of the family.
-  k : Int
-  n : Int
+  k : Int32
+  n : Int32
   /// k * k, row-major, on the family's own parameter scale; `None` when
   /// the information matrix is singular or was not computed.
   covariance : FixedArray[Double]?
   converged : Bool
-  iterations : Int
+  iterations : Int32
   family : String
 }
 
@@ -86,7 +86,7 @@ pub fn[D : @dist.Density + @dist.Score] fit_mle(
   family : @dist.Family[D],
   data : ArrayView[Double],
   start~ : ArrayView[Double],
-  max_iterations? : Int = 200,
+  max_iterations~ : Int32 = 200,
 ) -> MleResult[D] raise @dist.FitError {
   ignore((family, data, start, max_iterations))
   ...
@@ -99,12 +99,12 @@ pub(all) struct Candidate {
   family : String
   aic : Double
   bic : Double
-  k : Int
+  k : Int32
 }
 
 ///|
 pub fn[D] MleResult::candidate(self : MleResult[D]) -> Candidate {
-  { family: self.family, aic: self.aic(), bic: self.bic(), k: self.k }
+  { family: self.family, aic: self.aic(), bic: self.bic(), k: self.k, }
 }
 
 ///|

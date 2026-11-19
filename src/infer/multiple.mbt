@@ -31,9 +31,10 @@ pub fn adjust(p : ArrayView[Double], how : Adjust) -> FixedArray[Double] {
   order.sort_by((a, b) => p[a].compare(p[b]))
   let clamp = (x : Double) => if x > 1.0 { 1.0 } else { x }
   match how {
-    Bonferroni => for i in 0..<n {
-      out[i] = clamp(fn_ * p[i])
-    }
+    Bonferroni =>
+      for i in 0..<n {
+        out[i] = clamp(fn_ * p[i])
+      }
     Holm => {
       // step-down: running maximum of (n - k) p_(k) over ascending p
       let mut run = 0.0
@@ -60,7 +61,7 @@ pub fn adjust(p : ArrayView[Double], how : Adjust) -> FixedArray[Double] {
       let c = match how {
         BenjaminiYekutieli => {
           let mut h = 0.0
-          for i in 1..=n {
+          for i in 1..<=n {
             h = h + 1.0 / i.to_double()
           }
           h
@@ -133,7 +134,7 @@ pub struct PowerQuery {
 #derive(Debug)
 pub(all) suberror PowerError {
   /// Not exactly one of the four quantities was left open.
-  UnknownCount(Int)
+  UnknownCount(Int32)
   /// No value of the unknown achieves the others.
   Unreachable
 }
@@ -149,7 +150,7 @@ pub fn PowerQuery::new(
   if open != 1 {
     raise UnknownCount(open)
   }
-  { n, effect, alpha, power }
+  { n, effect, alpha, power, }
 }
 
 ///|
@@ -160,8 +161,8 @@ pub(all) enum PowerDesign {
   PairedT
   OneProportion
   TwoProportions
-  OneWayAnova(groups~ : Int)
-  ChiSquare(df~ : Int)
+  OneWayAnova(groups~ : Int32)
+  ChiSquare(df~ : Int32)
 }
 
 ///|
