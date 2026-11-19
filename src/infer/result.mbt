@@ -57,18 +57,6 @@ pub struct TestResult {
 }
 
 ///|
-/// Welch's t test. Asks for normality; does not ask for equal variances.
-pub fn welch_t_test(
-  a : ArrayView[Double],
-  b : ArrayView[Double],
-  alternative? : Alternative = TwoSided,
-  normality~ : Assumed[Normality],
-) -> TestResult raise @dist.ParamError {
-  ignore((a, b, alternative, normality))
-  ...
-}
-
-///|
 /// A confidence interval carries its level and the method that produced
 /// it; there is no bare (lo, hi) pair in the public API.
 pub struct Interval {
@@ -113,7 +101,18 @@ fn _usage_sketch() -> Unit {
   let b = [6.2, 6.4, 5.9, 6.8, 7.1]
   // The assumption is visible at the call site.
   let normality : Assumed[Normality] = Assumed::postulate()
-  let r = try Some(welch_t_test(a[:], b[:], normality~)) catch {
+  let r = try
+    Some(
+      t_test_two(
+        a[:],
+        b[:],
+        variances=Welch,
+        alternative=TwoSided,
+        level=0.95,
+        normality~,
+      ),
+    )
+  catch {
     _ => None
   }
   ignore(r)

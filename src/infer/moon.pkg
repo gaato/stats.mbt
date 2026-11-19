@@ -3,4 +3,5 @@ import {
   "gaato/stats/describe",
   "gaato/stats/num",
   "gaato/stats/data",
+  "moonbitlang/core/math",
 }

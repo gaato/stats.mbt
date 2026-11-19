@@ -31,12 +31,12 @@ pub struct Blocks {
   values : FixedArray[Double]
 }
 
-pub struct CategoryCounts {
+pub(all) struct CategoryCounts {
   counts : FixedArray[Int64]
   null_probs : FixedArray[Double]?
 }
 
-pub struct Circular {
+pub(all) struct Circular {
   angles : FixedArray[Double]
 }
 
@@ -71,7 +71,7 @@ pub(all) enum Observation {
   IntervalCensored(lo~ : Double, hi~ : Double)
 }
 
-pub struct Proportion {
+pub(all) struct Proportion {
   successes : Int64
   trials : Int64
 }
@@ -98,13 +98,13 @@ pub(all) enum RankTies {
   Ordinal
 }
 
-pub struct Summary {
+pub(all) struct Summary {
   n : Int32
   mean : Double
   sd : Double
 }
 
-pub struct SurvivalRecord {
+pub(all) struct SurvivalRecord {
   time : Double
   event : Bool
   entry : Double
@@ -120,7 +120,7 @@ pub fn Table::at(Self, Int32, Int32) -> Int64
 pub fn Table::new(Int32, Int32, ArrayView[Int64]) -> Self raise DataError
 pub fn Table::total(Self) -> Int64
 
-pub struct TimeSeries {
+pub(all) struct TimeSeries {
   values : FixedArray[Double]
   start : Double
   frequency : Int32

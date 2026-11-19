@@ -131,18 +131,34 @@ pub fn mad(
   data : ArrayView[Double],
   scale : MadScale,
 ) -> Double raise @data.DataError {
-  ignore((data, scale))
-  ...
+  let m = quantile(data, 0.5, Type7)
+  let dev = FixedArray::from_iter(data.iter().map(x => (x - m).abs()))
+  let raw = quantile(dev[:], 0.5, Type7)
+  match scale {
+    Raw => raw
+    // 1/Φ⁻¹(3/4), so that the MAD estimates σ for normal data
+    Normal => 1.482602218505602 * raw
+  }
 }
 
 ///|
 /// Mean of the data with `proportion` cut from each end.
+/// floor(proportion · n) values are cut from each end, as SciPy's trim_mean.
 pub fn trimmed_mean(
   data : ArrayView[Double],
   proportion : Double,
 ) -> Double raise @data.DataError {
-  ignore((data, proportion))
-  ...
+  let (xs, _) = @data.clean(data, Reject)
+  if xs.length() == 0 {
+    raise @data.Empty
+  }
+  xs.sort()
+  let cut = @math.floor(proportion * xs.length().to_double()).to_int()
+  let mut s = @num.CompensatedSum::zero()
+  for i in cut..<(xs.length() - cut) {
+    s = s.add(xs[i])
+  }
+  s.value() / (xs.length() - 2 * cut).to_double()
 }
 
 ///|

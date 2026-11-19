@@ -198,24 +198,26 @@ normal); `fit_mle` (typed, needs an optimiser); `Candidate`,
 
 ## infer
 
+Implemented parts are checked against SciPy 1.18.1 by
+`scripts/gen_infer_tests.py` (statistics, p-values, degrees of freedom and
+intervals at 1e-10 relative, every alternative).
+
 | Concept | Type | Status |
 |---|---|---|
 | Question: estimand × data shape, checked | `Estimand`, `Sample`, `Question` | works |
-| Null model: observed statistic + null distribution | `NullModel` | p-values work (`Doubling`) |
-| Test result (union of htest, SciPy, HypothesisTests.jl fields) | `TestResult` | typed |
-| Interval with kind, estimate | `Interval`, `IntervalKind`, `Estimate` | typed |
-| Assumptions as certificates | `Assumed[A]`, `Normality`, `EqualVariance` | works |
-| Conventions | `TwoSidedRule`, `PValueKind`, `Exactness`, `Variances`, `Zeros`, `TieTolerance`, `LeveneCenter` | types work |
-| t and z tests, from data or summaries | `t_test_one`, `t_test_two`, `t_test_paired`, `t_test_summary` | typed |
-| Proportions and counts | `binomial_test`, `proportion_test`, `chi_square_goodness_of_fit`, `chi_square_independence`, `fisher_exact`, `mcnemar` | typed |
-| Several groups and post hoc | `anova_one_way`, `levene`, `bartlett`, `post_hoc`, `PostHoc` | typed |
-| Rank tests | `mann_whitney`, `wilcoxon_signed_rank`, `kruskal_wallis`, `friedman` | typed |
-| Goodness of fit, normality | `ks_one`, `ks_two`, `shapiro_wilk`, `anderson_darling` | typed |
-| Correlation, likelihood ratio | `correlation_test`, `likelihood_ratio` | typed |
-| Multiple testing | `adjust`, `reject`, `Adjust` | works except Hommel (matches statsmodels) |
-| Effect sizes | `Effect`, `EffectKind` | typed |
-| Power, solving for one unknown | `PowerQuery`, `PowerDesign`, `solve_power` | query validation works |
-| Resampling with user statistics | `Statistic`, `bootstrap`, `BootstrapInterval`, `permutation_test`, `PermutationScheme`, `monte_carlo_test`, `jackknife` | typed |
+| Estimates: t, Welch, paired, χ² (variance), Clopper–Pearson, Fisher z; bootstrap percentile for any estimand | `estimate`, `Estimate` | works |
+| Null model, p-values | `NullModel`, `null_model` (permutation nulls) | works |
+| Test result, interval with kind | `TestResult`, `Interval`, `IntervalKind` | works |
+| Assumptions as certificates (a pooled t test without `Assumed[EqualVariance]` raises `MissingAssumption`) | `Assumed[A]` | works |
+| Conventions | `TwoSidedRule` (doubling, minimum likelihood with R's and SciPy's 1 + 1e-7), `PValueKind`, `Exactness`, `Variances`, `Zeros`, `TieTolerance`, `LeveneCenter` | works |
+| t tests: one, two (Welch, pooled), paired, from summaries | `t_test_*` | works |
+| Exact binomial (Clopper–Pearson interval), χ² goodness of fit and independence (Yates), Fisher 2 × 2 | | works |
+| One-way ANOVA (classic, Welch), Levene (mean, median, trimmed), Bartlett, Kruskal–Wallis | | works |
+| Pearson (Fisher z interval), Spearman, likelihood ratio | | works |
+| Mann–Whitney: exact null as a Gaussian binomial in a `FiniteDiscrete`, or normal with tie and continuity corrections | `mann_whitney` | works |
+| Resampling with user statistics: bootstrap (percentile, basic), exact and randomised permutation tests, Monte Carlo tests, jackknife | | works (BCa, exact pairings not yet) |
+| Multiple testing | `adjust`, `reject` | works except Hommel |
+| Not yet | proportion z test, McNemar, Wilcoxon signed-rank, Friedman, KS, Shapiro–Wilk, Anderson–Darling, Kendall, post hoc, power | raise `Unsupported` |
 
 ## Models
 

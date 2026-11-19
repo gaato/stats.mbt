@@ -30,34 +30,77 @@ pub fn Empirical::new(
 }
 
 ///|
+/// The number of values <= x, by binary search.
+fn Empirical::count_le(self : Empirical, x : Double) -> Int {
+  let mut lo = 0
+  let mut hi = self.sorted.length()
+  while lo < hi {
+    let mid = (lo + hi) / 2
+    if self.sorted[mid] <= x {
+      lo = mid + 1
+    } else {
+      hi = mid
+    }
+  }
+  lo
+}
+
+///|
 pub impl Cdf for Empirical with cdf(self, x) {
-  ignore((self, x))
-  ...
+  self.count_le(x).to_double() / self.sorted.length().to_double()
+}
+
+///|
+pub impl Cdf for Empirical with sf(self, x) {
+  (self.sorted.length() - self.count_le(x)).to_double() /
+  self.sorted.length().to_double()
+}
+
+///|
+/// P(X >= x): the values not below x.
+pub impl Cdf for Empirical with sf_at_least(self, x) {
+  let mut lo = 0
+  let mut hi = self.sorted.length()
+  while lo < hi {
+    let mid = (lo + hi) / 2
+    if self.sorted[mid] < x {
+      lo = mid + 1
+    } else {
+      hi = mid
+    }
+  }
+  (self.sorted.length() - lo).to_double() / self.sorted.length().to_double()
 }
 
 ///|
 pub impl Quantile for Empirical with quantile(self, p) {
-  ignore((self, p))
-  ...
+  @describe.quantile_sorted(self.sorted[:], p, self.quantile_method)
 }
 
 ///|
 /// Bootstrap resampling is sampling from the empirical distribution.
 pub impl Sample for Empirical with sample(self, rng) {
-  ignore((self, rng))
-  ...
+  self.sorted[@num.uniform_below(rng, self.sorted.length().to_uint64()).to_int()]
 }
 
 ///|
 pub impl Moments for Empirical with mean(self) {
-  ignore(self)
-  ...
+  let mut s = @num.CompensatedSum::zero()
+  for x in self.sorted {
+    s = s.add(x)
+  }
+  Some(s.value() / self.sorted.length().to_double())
 }
 
 ///|
+/// The variance of the distribution itself: divisor n.
 pub impl Moments for Empirical with variance(self) {
-  ignore(self)
-  ...
+  let m = Moments::mean(self).unwrap()
+  let mut s = @num.CompensatedSum::zero()
+  for x in self.sorted {
+    s = s.add((x - m) * (x - m))
+  }
+  Some(s.value() / self.sorted.length().to_double())
 }
 
 ///|
@@ -76,8 +119,34 @@ pub fn FiniteDiscrete::new(
   offset : Int,
   probs : ArrayView[Double],
 ) -> FiniteDiscrete raise ParamError {
-  ignore((offset, probs))
-  ...
+  let n = probs.length()
+  if n == 0 {
+    raise InvalidParam(name="probs", value=0.0, reason="must not be empty")
+  }
+  let mut total = @num.CompensatedSum::zero()
+  for q in probs {
+    if !(q >= 0.0) {
+      raise InvalidParam(name="probs", value=q, reason="must be >= 0")
+    }
+    total = total.add(q)
+  }
+  if (total.value() - 1.0).abs() > 1.0e-9 {
+    raise InvalidParam(name="probs", value=total.value(), reason="must sum to 1")
+  }
+  let lower = FixedArray::make(n, 0.0)
+  let upper = FixedArray::make(n, 0.0)
+  let mut acc = @num.CompensatedSum::zero()
+  for i in 0..<n {
+    acc = acc.add(probs[i])
+    lower[i] = acc.value()
+  }
+  acc = @num.CompensatedSum::zero()
+  for i = n - 1; i >= 0; i = i - 1 {
+    // upper[i] = P(X > offset + i)
+    upper[i] = acc.value()
+    acc = acc.add(probs[i])
+  }
+  { offset, probs: FixedArray::from_iter(probs.iter()), lower, upper }
 }
 
 ///|
@@ -116,9 +185,31 @@ pub impl IntCdf for FiniteDiscrete with sf_int(self, k) {
 
 ///|
 pub impl IntQuantile for FiniteDiscrete with quantile_int(self, p) {
-  ignore((self, p))
-  ...
+  let mut lo = 0
+  let mut hi = self.lower.length() - 1
+  while lo < hi {
+    let mid = (lo + hi) / 2
+    if self.lower[mid] >= p {
+      hi = mid
+    } else {
+      lo = mid + 1
+    }
+  }
+  self.offset + lo
 }
+
+///|
+pub impl Quantile for FiniteDiscrete with quantile(self, p) {
+  IntQuantile::quantile_int(self, p).to_double()
+}
+
+///|
+pub impl Sample for FiniteDiscrete with sample(self, rng) {
+  Quantile::quantile(self, @num.uniform_open(rng))
+}
+
+///|
+pub impl Univariate for FiniteDiscrete
 
 ///|
 pub impl Univariate for Empirical

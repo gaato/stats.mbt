@@ -65,6 +65,6 @@ pub(all) enum Zeros {
 /// one. Without it, rounding makes statistics that are equal in exact
 /// arithmetic compare unequal and shifts randomisation p-values; SciPy
 /// uses a relative tolerance for the same reason.
-pub struct TieTolerance {
+pub(all) struct TieTolerance {
   relative : Double
 }

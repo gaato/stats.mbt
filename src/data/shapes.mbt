@@ -93,7 +93,7 @@ pub struct Blocks {
 ///|
 /// A sample known only through its summary, as in published tables.
 /// Tests that need nothing more (t tests, z tests) accept it.
-pub struct Summary {
+pub(all) struct Summary {
   n : Int
   mean : Double
   sd : Double
@@ -101,7 +101,7 @@ pub struct Summary {
 
 ///|
 /// Successes out of trials, for proportion and binomial tests.
-pub struct Proportion {
+pub(all) struct Proportion {
   successes : Int64
   trials : Int64
 }
@@ -109,7 +109,7 @@ pub struct Proportion {
 ///|
 /// Counts per category with optional null probabilities, for
 /// goodness-of-fit tests; without probabilities the null is uniform.
-pub struct CategoryCounts {
+pub(all) struct CategoryCounts {
   counts : FixedArray[Int64]
   null_probs : FixedArray[Double]?
 }
@@ -119,7 +119,7 @@ pub struct CategoryCounts {
 /// observed (false means right-censored), and the entry time for
 /// left-truncated (delayed-entry) data. Every survival module on mooncakes
 /// uses a record like this rather than parallel arrays.
-pub struct SurvivalRecord {
+pub(all) struct SurvivalRecord {
   time : Double
   event : Bool
   entry : Double
@@ -164,7 +164,7 @@ pub fn DataMatrix::at(self : DataMatrix, i : Int, j : Int) -> Double {
 ///|
 /// Equally spaced observations. `frequency` is the number per cycle
 /// (12 for monthly data with a yearly season), used by seasonal models.
-pub struct TimeSeries {
+pub(all) struct TimeSeries {
   values : FixedArray[Double]
   start : Double
   frequency : Int
@@ -172,6 +172,6 @@ pub struct TimeSeries {
 
 ///|
 /// Angles in radians, for directional statistics.
-pub struct Circular {
+pub(all) struct Circular {
   angles : FixedArray[Double]
 }

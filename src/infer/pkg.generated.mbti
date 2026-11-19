@@ -69,11 +69,9 @@ pub fn t_test_one(ArrayView[Double], mu~ : Double, alternative~ : Alternative, l
 
 pub fn t_test_paired(ArrayView[Double], ArrayView[Double], alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality]) -> TestResult raise QuestionError
 
-pub fn t_test_summary(@data.Summary, @data.Summary, variances~ : Variances, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality]) -> TestResult raise QuestionError
+pub fn t_test_summary(@data.Summary, @data.Summary, variances~ : Variances, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality], equal_variance? : Assumed[EqualVariance]) -> TestResult raise QuestionError
 
 pub fn t_test_two(ArrayView[Double], ArrayView[Double], variances~ : Variances, alternative~ : Alternative, level~ : Double, normality~ : Assumed[Normality], equal_variance? : Assumed[EqualVariance]) -> TestResult raise QuestionError
-
-pub fn welch_t_test(ArrayView[Double], ArrayView[Double], alternative? : Alternative, normality~ : Assumed[Normality]) -> TestResult raise @dist.ParamError
 
 pub fn wilcoxon_signed_rank(ArrayView[Double], y? : ArrayView[Double], alternative~ : Alternative, zeros~ : Zeros, exactness~ : Exactness, continuity~ : Bool) -> TestResult raise QuestionError
 
@@ -88,6 +86,9 @@ pub(all) suberror PowerError {
 pub(all) suberror QuestionError {
   ShapeMismatch(estimand~ : Estimand)
   TooFewPoints(needed~ : Int32, got~ : Int32)
+  MissingAssumption(name~ : String)
+  Degenerate(reason~ : String)
+  Unsupported(reason~ : String)
 }
 
 // Types and methods
@@ -302,7 +303,7 @@ pub struct TestResult {
   procedure : String
 }
 
-pub struct TieTolerance {
+pub(all) struct TieTolerance {
   relative : Double
 }
 

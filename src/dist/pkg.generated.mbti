@@ -467,6 +467,9 @@ pub impl Cdf for FiniteDiscrete
 pub impl IntCdf for FiniteDiscrete
 pub impl IntQuantile for FiniteDiscrete
 pub impl Mass for FiniteDiscrete
+pub impl Quantile for FiniteDiscrete
+pub impl Sample for FiniteDiscrete
+pub impl Univariate for FiniteDiscrete
 
 pub struct FisherF {
   // private fields

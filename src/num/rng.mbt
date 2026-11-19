@@ -83,10 +83,17 @@ pub fn uniform_open(rng : &RandomSource) -> Double {
 }
 
 ///|
-/// Uniform integer in [0, n), unbiased (Lemire's multiply-and-reject).
+/// Uniform integer in [0, n), n > 0, unbiased: words below 2^64 mod n are
+/// rejected so that every residue is equally likely.
 pub fn uniform_below(rng : &RandomSource, n : UInt64) -> UInt64 {
-  ignore((rng, n))
-  ...
+  let threshold = (0UL - n) % n
+  while true {
+    let x = rng.next_u64()
+    if x >= threshold {
+      return x % n
+    }
+  }
+  0
 }
 
 ///|
@@ -154,8 +161,12 @@ pub(all) enum DiscreteMethod {
 ///|
 /// Shuffle in place (Fisher–Yates), the core of permutation tests.
 pub fn[T] shuffle(rng : &RandomSource, xs : FixedArray[T]) -> Unit {
-  ignore((rng, xs))
-  ...
+  for i = xs.length() - 1; i > 0; i = i - 1 {
+    let j = uniform_below(rng, (i + 1).to_uint64()).to_int()
+    let t = xs[i]
+    xs[i] = xs[j]
+    xs[j] = t
+  }
 }
 
 ///|
