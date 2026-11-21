@@ -243,7 +243,7 @@ Not planned: a formula language and data frames.
 
 ## Development
 
-The toolchain is MoonBit 0.10.21, pinned in `moonbit-version`.
+The toolchain is MoonBit 0.10.22, pinned in `moonbit-version`.
 
 ```sh
 scripts/gates.sh
